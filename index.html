@@ -869,8 +869,17 @@ function showCandidatesPreview5(playerId) {
 }
 function showCardPreviews(playerId, card) {
   clearPathPreviews(); const pId = getControlledPlayerId(playerId), rank = card.r; let idx = 0, steps = 0;
-  if (rank === 'A') { for (let i = 0; i < 4; i++) { if (canMove(pId, i, 1)) showPathPreview(pId, i, 1, false, '#00e5ff'); if (canMove(pId, i, 11)) showPathPreview(pId, i, 11, false, '#b04fd6'); } return; }
-  if (rank === 'K') steps = 13;
+  if (rank === 'A') {
+    const spawnOk = canSpawn(pId);
+    if (spawnOk) { for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'HOME') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
+    for (let i = 0; i < 4; i++) { if (canMove(pId, i, 1)) showPathPreview(pId, i, 1, false, '#00e5ff'); if (canMove(pId, i, 11)) showPathPreview(pId, i, 11, false, '#b04fd6'); }
+    return;
+  }
+  if (rank === 'K') {
+    const spawnOk = canSpawn(pId);
+    if (spawnOk) { for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'HOME') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
+    steps = 13;
+  }
   else if (rank === '4') steps = -4;
   else if (rank === 'Q') steps = 12;
   else if (rank === '5') {
@@ -1257,6 +1266,7 @@ function onPawnClick(playerId, pawnIdx) {
     const cardIdx = state.hands[myPlayerIndex].indexOf(card);
 
     clearPathPreviews();
+    document.querySelectorAll('.pawn.selectable').forEach(p => p.classList.remove('selectable'));
     state.previewCardIdx = null;
     renderHand();
 
@@ -1340,6 +1350,7 @@ function onCardClick(playerId, cardIdx) {
   if (allUnplayable) { discardStuckCard(myPlayerIndex, cardIdx); return; }
   if (!isCardPlayable(myPlayerIndex, card)) { beep(200, 0.15, 'square'); return; }
   if (state.previewCardIdx === cardIdx) { clearPathPreviews(); state.previewCardIdx = null; playCard(playerId, cardIdx); return; }
+  clearSelection();
   state.previewCardIdx = cardIdx; renderHand(); showCardPreviews(playerId, card);
 }
 
@@ -1697,7 +1708,9 @@ async function saveGameState() {
       pendingSkip: state.pendingSkip,
       forcedDiscardFor: state.forcedDiscardFor,
       // On sauvegarde aussi les joueurs (pour les pseudos et avatars)
-      players: PLAYERS
+      players: PLAYERS,
+      // On ajoute qui a fait la dernière action pour éviter de s'auto-saborder
+      lastActionPlayer: myPlayerIndex
     };
 
     await window.FB.updateDoc(roomRef, { 
@@ -1737,13 +1750,15 @@ function listenToGameState() {
          }
       }
 
-      // NETTOYAGE LOCAL (pour ne pas être bloqué si l'adversaire a joué)
-      state.mode = null;
-      state.pendingSelection = null;
-      state.previewCardIdx = null;
-      clearSelection();
-      clearActions();
-      clearPathPreviews();
+      // NETTOYAGE LOCAL SEULEMENT SI C'EST L'AUTRE JOUEUR QUI A JOUÉ
+      if (parsed.lastActionPlayer !== myPlayerIndex) {
+          state.mode = null;
+          state.pendingSelection = null;
+          state.previewCardIdx = null;
+          clearSelection();
+          clearActions();
+          clearPathPreviews();
+      }
 
       // Mise à jour de l'affichage (Avatars)
       for (let i = 0; i < 4; i++) {
