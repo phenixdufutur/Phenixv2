@@ -776,6 +776,7 @@ function timeoutAction() {
   if (state.gameOver) return;
   const playerId = state.turn;
   if (PLAYERS[playerId].isBot) return;
+  if (playerId !== myPlayerIndex) return; // Seulement si c'est notre tour
 
   if (state.forcedDiscardFor === playerId) {
     const hand = state.hands[playerId];
@@ -1271,8 +1272,32 @@ function onPawnClick(playerId, pawnIdx) {
     renderHand();
 
     playCard(myPlayerIndex, cardIdx).then(() => {
-        // On relance la détection du clic pour traiter le mouvement/sortie
-        onPawnClick(playerId, pawnIdx);
+        // Au lieu de rappeler onPawnClick, on applique directement le mouvement
+        const pawn = state.pawns[playerId][pawnIdx];
+        if (state.mode === 'as_select') {
+            if (pawn.state === 'HOME' && canSpawn(pId)) {
+                state.mode = null; clearSelection(); clearActions(); 
+                executeSpawn(playerId, pawnIdx).then(() => endTurn());
+            } else if (pawn.state === 'TRACK') {
+                const c1 = canMove(playerId, pawnIdx, 1), c11 = canMove(playerId, pawnIdx, 11);
+                state.mode = null; clearSelection(); clearActions();
+                if (c1 && !c11) executeMove(playerId, pawnIdx, 1).then(() => endTurn());
+                else if (!c1 && c11) executeMove(playerId, pawnIdx, 11).then(() => endTurn());
+                else if (c1 && c11) {
+                    showPathPreview(playerId, pawnIdx, 1, false, '#00e5ff'); showPathPreview(playerId, pawnIdx, 11, false, '#b04fd6'); 
+                    addBtn('Avancer de 1', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 1).then(() => endTurn()); }); 
+                    addBtn('Avancer de 11', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 11).then(() => endTurn()); });
+                }
+            }
+        } else if (state.mode === 'k_select') {
+            if (pawn.state === 'HOME' && canSpawn(pId)) {
+                state.mode = null; clearSelection(); clearActions(); 
+                executeSpawn(playerId, pawnIdx).then(() => endTurn());
+            } else if (pawn.state === 'TRACK' && canMove(playerId, pawnIdx, 13)) {
+                state.mode = null; clearSelection(); clearActions(); 
+                executeMove(playerId, pawnIdx, 13).then(() => endTurn());
+            }
+        }
     });
     return;
   }
@@ -1570,6 +1595,7 @@ function endTurn() {
     state.pendingSkip = null;
     state.forcedDiscardFor = skipPid;
     renderHand(); updateTurnUI();
+    if (currentRoomCode) saveGameState(); // Sauvegarder l'état de skip
     if (PLAYERS[skipPid].isBot) {
       setTimeout(() => {
         const hand = state.hands[skipPid];
@@ -1638,7 +1664,25 @@ function pickBotCardIndex(playerId) {
   }
   return playable[0];
 }
-async function botPlay() { if (botPlaying || state.gameOver || !PLAYERS[state.turn].isBot) return; botPlaying = true; try { const playerId = state.turn, hand = state.hands[playerId]; if (hand.length === 0) { endTurn(); return; } const idx = pickBotCardIndex(playerId); await playCard(playerId, idx); } finally { botPlaying = false; } }
+async function botPlay() { 
+    if (botPlaying || state.gameOver || !PLAYERS[state.turn].isBot) return; 
+    botPlaying = true; 
+    try { 
+        const playerId = state.turn, hand = state.hands[playerId]; 
+        if (hand.length === 0) { endTurn(); return; } 
+        const idx = pickBotCardIndex(playerId); 
+        await playCard(playerId, idx); 
+    } catch(e) {
+        console.error("Bot play failed:", e);
+        endTurn(); // Fail-safe
+    } finally { 
+        botPlaying = false; 
+        // Enchaînement direct des bots sans attendre Firebase
+        if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver && !state.cardPlayedThisTurn) {
+            setTimeout(botPlay, 2000);
+        }
+    } 
+}
 
 function runLoader() {
   const loader = document.getElementById('loader'), fill = document.getElementById('loader-fill'), pctEl = document.getElementById('loader-pct'), msgEl = document.getElementById('loader-msg');
