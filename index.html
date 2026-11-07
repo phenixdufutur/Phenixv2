@@ -508,6 +508,7 @@ function authErrorMsg(err) {
 let currentRoomCode = null, roomListener = null, roomStarted = false, authMode = 'login', regAvatar = 'az', lastRoomData = null;
 let myPlayerIndex = 0; // 0 = Hôte, 1 = Joueur 2, etc.
 let gameStateListener = null; // Pour le multijoueur
+let botTimeout = null; // Pour éviter les doubles déclenchements
 
 function showAuthTab(mode) { authMode = mode; const reg = mode === 'register'; document.getElementById('auth-tab-login').classList.toggle('active', !reg); document.getElementById('auth-tab-register').classList.toggle('active', reg); document.getElementById('auth-register-fields').classList.toggle('show', reg); document.getElementById('auth-title').textContent = reg ? 'Inscription' : 'Connexion'; document.getElementById('auth-submit').textContent = reg ? 'Créer mon compte' : 'Se connecter'; document.getElementById('auth-pass').setAttribute('autocomplete', reg ? 'new-password' : 'current-password'); }
 function submitAuth() { if (authMode === 'register') registerUser(); else loginUser(); }
@@ -1673,6 +1674,22 @@ async function botPlay() {
     botPlaying = true; 
     try { 
         const playerId = state.turn, hand = state.hands[playerId]; 
+        if (state.forcedDiscardFor === playerId) {
+            if (hand.length > 0) {
+              const idx = Math.floor(Math.random() * hand.length);
+              const card = hand.splice(idx, 1)[0];
+              state.discard.push(card);
+              showDiscard(card);
+              beep(300, 0.15, 'square');
+              drawCard(playerId);
+            }
+            state.forcedDiscardFor = null;
+            state.cardPlayedThisTurn = true;
+            renderHand();
+            setTimeout(endTurn, 900);
+            return;
+        }
+
         if (hand.length === 0) { endTurn(); return; } 
         const idx = pickBotCardIndex(playerId); 
         await playCard(playerId, idx); 
@@ -1681,10 +1698,6 @@ async function botPlay() {
         endTurn(); // Fail-safe
     } finally { 
         botPlaying = false; 
-        // Enchaînement direct des bots sans attendre Firebase
-        if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver && !state.cardPlayedThisTurn) {
-            setTimeout(botPlay, 2000);
-        }
     } 
 }
 
@@ -1826,9 +1839,8 @@ function listenToGameState() {
       
       // C'est toujours l'hôte (0) qui gère les bots
       if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) {
-          if (!botPlaying && !state.cardPlayedThisTurn) {
-              setTimeout(botPlay, 2500);
-          }
+          if (botTimeout) clearTimeout(botTimeout);
+          botTimeout = setTimeout(botPlay, 2500);
       }
     }
   });
