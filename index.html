@@ -31,6 +31,7 @@ window.FB = { auth, db, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, 
 }
 html, body { height: 100%; width: 100%; overflow: hidden; background: #000; position: fixed; overscroll-behavior: none; }
 body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-select: none; -webkit-tap-highlight-color: transparent; }
+body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animation-play-state: paused !important; }
 .no-anims .float-ember, .no-anims .nest-ring, .no-anims .nest-ring.r2, .no-anims .nest-glow, .no-anims .nest-core, .no-anims .nest-fire .tongue, .no-anims .hole.base::after, .no-anims .ribbon-flow, .no-anims .card::after, .no-anims .btn::after, .no-anims .hex-btn-container, .no-anims .in-game-avatar.active-turn::before, .no-anims .turn-timer.active { animation: none !important; }
 .no-anims .float-ember, .no-anims .ribbon-flow { display: none !important; }
 #app { position: fixed; top: 0; left: 0; right: 0; bottom: 0; width: 100vw; height: 100dvh; background: #000; overflow: hidden; }
@@ -733,7 +734,21 @@ const PLAYERS = [
   { name:'Vert',  color:'#43A047', c3:'#145a18', isBot:true,  team:1, baseIdx:59, safeEntry:57, avatarFile:'ac' }
 ];
 const TRACE_COLORS = ['#00e5ff', '#b04fd6', '#E53935', '#43A047'];
+// ===== Vue personnelle : chaque joueur se voit à la place du bas gauche (rotation par re-placement des sièges) =====
+let viewShift = 0;                         // numéro de joueur affiché en bas à gauche
+const TRACK_STEP = TRACK.length / 4;       // cases entre deux départs
 function coordToPct(p) { return { x: (p.x + 1000) / 20, y: (1000 - p.y) / 20 }; }
+const seatOf = p => (p - viewShift + 4) % 4;   // place affichée d'un joueur
+function trackPct(k) { const n = TRACK.length; return coordToPct(TRACK[(((k - TRACK_STEP * viewShift) % n) + n) % n]); }
+function setView(me) {
+  viewShift = me;
+  for (let i = 0; i < 4; i++) {
+    const av = document.getElementById(`avatar-game-p${i}`); if (!av || !av.parentElement) continue;
+    const box = av.parentElement;
+    box.classList.remove('pos-p0', 'pos-p1', 'pos-p2', 'pos-p3');
+    box.classList.add('pos-p' + seatOf(i));
+  }
+}
 const SHOW_TRACK_RIBBON = true;
 
 const state = {
@@ -793,7 +808,7 @@ function timeoutAction() {
     clearSelection(); clearActions(); clearPathPreviews();
     renderHand();
     if (currentRoomCode) saveGameState();
-    setTimeout(endTurn, 1000);
+    setTimeout(endTurn, 500);
     return;
   }
 
@@ -808,7 +823,7 @@ function timeoutAction() {
   state.mode = null; state.pendingSelection = null; state.previewCardIdx = null;
   clearSelection(); clearActions(); clearPathPreviews();
   if (currentRoomCode) saveGameState();
-  setTimeout(endTurn, 1000);
+  setTimeout(endTurn, 500);
 }
 
 const pools = { rings: [], embers: [], flames: [] };
@@ -854,8 +869,8 @@ function isCellOccupied(destState, destIdx, sourcePlayerId, sourcePawnIdx) {
 function showPathPreview(sourcePlayerId, pawnIdx, steps, isFive = false, customColor = null) {
   const dest = computeDestination(sourcePlayerId, pawnIdx, steps, isFive); if (!dest) return;
   const board = document.getElementById('board'), color = customColor || PLAYERS[sourcePlayerId].color;
-  dest.trackPath.forEach(trackIdx => { const pos = coordToPct(TRACK[trackIdx]); const dot = document.createElement('div'); dot.className = 'path-dot'; dot.style.left = pos.x + '%'; dot.style.top = pos.y + '%'; dot.style.color = color; board.appendChild(dot); previewElements.push(dot); });
-  const destPos = dest.state === 'TRACK' ? coordToPct(TRACK[dest.idx]) : coordToPct(SAFE_ZONES[sourcePlayerId][dest.idx]);
+  dest.trackPath.forEach(trackIdx => { const pos = trackPct(trackIdx); const dot = document.createElement('div'); dot.className = 'path-dot'; dot.style.left = pos.x + '%'; dot.style.top = pos.y + '%'; dot.style.color = color; board.appendChild(dot); previewElements.push(dot); });
+  const destPos = dest.state === 'TRACK' ? trackPct(dest.idx) : coordToPct(SAFE_ZONES[seatOf(sourcePlayerId)][dest.idx]);
   const ring = document.createElement('div'); ring.className = 'dest-preview'; ring.style.left = destPos.x + '%'; ring.style.top = destPos.y + '%'; ring.style.color = color;
   if (isCellOccupied(dest.state, dest.idx, sourcePlayerId, pawnIdx)) ring.classList.add('occupied');
   board.appendChild(ring); previewElements.push(ring);
@@ -922,20 +937,21 @@ function isProtected(owner, pawnIdx) {
   return false;
 }
 
-function createDeck() { const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K']; const suits = ['♠','♥','♦','♣']; const d = []; for (const s of suits) for (const r of ranks) d.push({r, s}); d.push({r:'JOKER', s:null}); d.push({r:'PHOENIX', s:null}); d.push({r:'MANDALA', s:null}); return d.sort(() => Math.random() - 0.5); }
+function shuffleArr(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
+function createDeck() { const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K']; const suits = ['♠','♥','♦','♣']; const d = []; for (const s of suits) for (const r of ranks) d.push({r, s}); d.push({r:'JOKER', s:null}); d.push({r:'PHOENIX', s:null}); d.push({r:'MANDALA', s:null}); return shuffleArr(d); }
 function dealHands() { for (let i = 0; i < 4; i++) { state.hands[i] = []; for (let j = 0; j < 4; j++) if (state.deck.length > 0) state.hands[i].push(state.deck.pop()); } }
-function drawCard(playerId) { if (state.hands[playerId].length >= 4) return; if (state.deck.length === 0) { if (state.discard.length === 0) return; state.deck = state.discard.splice(0); state.deck.sort(() => Math.random() - 0.5); } if (state.deck.length > 0) { state.hands[playerId].push(state.deck.pop()); if (playerId === myPlayerIndex) state.freshCard = true; } }
+function drawCard(playerId) { if (state.hands[playerId].length >= 4) return; if (state.deck.length === 0) { if (state.discard.length === 0) return; state.deck = shuffleArr(state.discard.splice(0)); } if (state.deck.length > 0) { state.hands[playerId].push(state.deck.pop()); if (playerId === myPlayerIndex) state.freshCard = true; } }
 
 let nestTimer = null;
-function startNestTimer() { clearInterval(nestTimer); if (state.phoenixNest < 0 || state.gameOver || !animationsEnabled) return; nestTimer = setInterval(() => { if (!document.hidden && document.getElementById('game-screen').classList.contains('active')) fxEmbers(coordToPct(TRACK[state.phoenixNest]), 1, false); }, 2500); }
+function startNestTimer() { clearInterval(nestTimer); if (state.phoenixNest < 0 || state.gameOver || !animationsEnabled) return; nestTimer = setInterval(() => { if (!document.hidden && document.getElementById('game-screen').classList.contains('active')) fxEmbers(trackPct(state.phoenixNest), 1, false); }, 2500); }
 
 document.addEventListener('visibilitychange', () => {
   if (document.hidden) {
     clearInterval(nestTimer);
     clearInterval(turnTimerInterval);
-    document.querySelectorAll('*').forEach(el => { el.style.animationPlayState = 'paused'; });
+    document.body.classList.add('tab-hidden');
   } else {
-    document.querySelectorAll('*').forEach(el => { el.style.animationPlayState = ''; });
+    document.body.classList.remove('tab-hidden');
     if (document.getElementById('game-screen') && document.getElementById('game-screen').classList.contains('active')) {
       startNestTimer();
       if (state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot) startTimer();
@@ -1011,7 +1027,7 @@ function trackRibbonSVG() {
   const f = n => n.toFixed(2), pts = TRACK.map(coordToPct);
   const d = pts.map((p, i) => `${i ? 'L' : 'M'}${f(p.x)} ${f(p.y)}`).join(' ') + ' Z';
   let lanes = '';
-  for (let p = 0; p < 4; p++) { const e = coordToPct(TRACK[PLAYERS[p].safeEntry]); const s = SAFE_ZONES[p].map(coordToPct); const ld = `M${f(e.x)} ${f(e.y)} ` + s.map(q => `L${f(q.x)} ${f(q.y)}`).join(' '); lanes += `<path d="${ld}" class="lane-glow" style="stroke:${PLAYERS[p].color}"/><path d="${ld}" class="lane-line" style="stroke:${PLAYERS[p].color}"/>`; }
+  for (let p = 0; p < 4; p++) { const q = seatOf(p); const e = coordToPct(TRACK[PLAYERS[q].safeEntry]); const s = SAFE_ZONES[q].map(coordToPct); const ld = `M${f(e.x)} ${f(e.y)} ` + s.map(q => `L${f(q.x)} ${f(q.y)}`).join(' '); lanes += `<path d="${ld}" class="lane-glow" style="stroke:${PLAYERS[p].color}"/><path d="${ld}" class="lane-line" style="stroke:${PLAYERS[p].color}"/>`; }
   return `<svg id="track-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}" class="ribbon-glow"/><path d="${d}" class="ribbon-line"/>${lanes}</svg>` + `<svg id="track-svg-flow" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}" class="ribbon-flow"/></svg>`;
 }
 
@@ -1019,16 +1035,16 @@ function renderBoard() {
   const board = document.getElementById('board');
   board.querySelectorAll('.hole, .pawn, .mandala-aura, .nest, #track-svg, #track-svg-flow').forEach(e => e.remove());
   if (SHOW_TRACK_RIBBON) board.insertAdjacentHTML('afterbegin', trackRibbonSVG());
-  if (state.phoenixNest >= 0) { const pct = coordToPct(TRACK[state.phoenixNest]); const n = document.createElement('div'); n.className = 'nest'; n.style.left = pct.x + '%'; n.style.top = pct.y + '%'; n.innerHTML = '<div class="nest-glow"></div><div class="nest-ring"></div><div class="nest-ring r2"></div><div class="nest-core"></div><div class="nest-fire"><i class="tongue"></i><i class="tongue"></i><i class="tongue"></i></div>'; board.appendChild(n); }
+  if (state.phoenixNest >= 0) { const pct = trackPct(state.phoenixNest); const n = document.createElement('div'); n.className = 'nest'; n.style.left = pct.x + '%'; n.style.top = pct.y + '%'; n.innerHTML = '<div class="nest-glow"></div><div class="nest-ring"></div><div class="nest-ring r2"></div><div class="nest-core"></div><div class="nest-fire"><i class="tongue"></i><i class="tongue"></i><i class="tongue"></i></div>'; board.appendChild(n); }
   startNestTimer();
-  TRACK.forEach((pt, i) => { const pct = coordToPct(pt); const h = document.createElement('div'); h.className = 'hole'; const basePlayer = PLAYERS.findIndex(p => p.baseIdx === i); if (basePlayer >= 0) { h.classList.add('base'); h.style.color = PLAYERS[basePlayer].color; } h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); });
-  for (let p = 0; p < 4; p++) SAFE_ZONES[p].forEach((slot, k) => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole safe' + (k === 3 ? ' goal' : ''); h.style.color = PLAYERS[p].color; h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); });
-  for (let p = 0; p < 4; p++) { const corner = PLAYER_HOME_CORNER[p]; HOMES[corner].forEach(slot => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole home'; h.style.color = PLAYERS[p].color; h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); }); }
+  TRACK.forEach((pt, i) => { const pct = coordToPct(pt); const h = document.createElement('div'); h.className = 'hole'; const baseSeat = PLAYERS.findIndex(p => p.baseIdx === i); if (baseSeat >= 0) { h.classList.add('base'); h.style.color = PLAYERS[(baseSeat + viewShift) % 4].color; } h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); });
+  for (let p = 0; p < 4; p++) SAFE_ZONES[seatOf(p)].forEach((slot, k) => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole safe' + (k === 3 ? ' goal' : ''); h.style.color = PLAYERS[p].color; h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); });
+  for (let p = 0; p < 4; p++) { const corner = PLAYER_HOME_CORNER[seatOf(p)]; HOMES[corner].forEach(slot => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole home'; h.style.color = PLAYERS[p].color; h.style.left = pct.x + '%'; h.style.top = pct.y + '%'; board.appendChild(h); }); }
   for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const el = document.createElement('div'); el.className = 'pawn'; el.id = `pawn-${p}-${i}`; el.style.setProperty('--c', PLAYERS[p].color); el.style.setProperty('--c3', PLAYERS[p].c3); el.onclick = () => onPawnClick(p, i); board.appendChild(el); }
   updatePawnPositions();
 }
 
-function getPawnPos(playerId, pawnIdx) { const pawn = state.pawns[playerId] ? state.pawns[playerId][pawnIdx] : null; if (!pawn) return { x: 50, y: 50 }; if (pawn.state === 'HOME') return coordToPct(HOMES[PLAYER_HOME_CORNER[playerId]][pawn.homeSlot]); if (pawn.state === 'TRACK') return coordToPct(TRACK[pawn.trackIdx]); if (pawn.state === 'SAFE') return coordToPct(SAFE_ZONES[playerId][pawn.safeIdx]); return { x: 50, y: 50 }; }
+function getPawnPos(playerId, pawnIdx) { const pawn = state.pawns[playerId] ? state.pawns[playerId][pawnIdx] : null; if (!pawn) return { x: 50, y: 50 }; if (pawn.state === 'HOME') return coordToPct(HOMES[PLAYER_HOME_CORNER[seatOf(playerId)]][pawn.homeSlot]); if (pawn.state === 'TRACK') return trackPct(pawn.trackIdx); if (pawn.state === 'SAFE') return coordToPct(SAFE_ZONES[seatOf(playerId)][pawn.safeIdx]); return { x: 50, y: 50 }; }
 function updateAuraForPawn(p, i) {
   const id = `aura-${p}-${i}`; let a = document.getElementById(id);
   const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK';
@@ -1111,7 +1127,7 @@ function handleForcedDiscard(cardIdx) {
   renderHand();
   clearActions(); clearSelection(); clearPathPreviews();
   if (currentRoomCode) saveGameState();
-  setTimeout(endTurn, 800);
+  setTimeout(endTurn, 400);
 }
 
 function discardStuckCard(playerId, cardIdx) {
@@ -1122,7 +1138,7 @@ function discardStuckCard(playerId, cardIdx) {
   state.hands[playerId].splice(cardIdx, 1); state.discard.push(card); showDiscard(card); beep(400, 0.1);
   drawCard(playerId); renderHand();
   if (currentRoomCode) saveGameState();
-  setTimeout(endTurn, 800);
+  setTimeout(endTurn, 400);
 }
 
 function updateTurnUI() {
@@ -1188,21 +1204,25 @@ async function executeMove(playerId, pawnIdx, steps) {
   const isEnemyPush = (steps === 5) && PLAYERS[playerId].team !== PLAYERS[state.turn].team;
   const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`);
   if (el) el.style.willChange = 'transform';
-  const MOVE_DELAY = 180;
+  const MOVE_DELAY = 130;
+  const rec = currentRoomCode ? { p: playerId, i: pawnIdx, q: 0, done: false, path: [] } : null;
+  if (rec) pendingAnim.push(rec);
+  const rs = () => { if (rec) rec.path.push({ s: pawn.state, t: pawn.trackIdx, f: pawn.safeIdx }); };
   if (pawn.state === 'SAFE') {
-    for (let i = 0; i < steps; i++) { pawn.safeIdx = Math.min(3, pawn.safeIdx + 1); updateSinglePawn(playerId, pawnIdx); await sleep(MOVE_DELAY); }
+    for (let i = 0; i < steps; i++) { pawn.safeIdx = Math.min(3, pawn.safeIdx + 1); updateSinglePawn(playerId, pawnIdx); rs(); await sleep(MOVE_DELAY); }
     if (pawn.safeIdx === 3) { fxRing(getPawnPos(playerId, pawnIdx), '#ffd54a', 14); fxEmbers(getPawnPos(playerId, pawnIdx), 6, true); }
   } else if (pawn.state === 'TRACK') {
     if (steps < 0) {
-      for (let i = 0; i < Math.abs(steps); i++) { pawn.trackIdx = (pawn.trackIdx - 1 + TRACK.length) % TRACK.length; beep(400, 0.06); updateSinglePawn(playerId, pawnIdx); await sleep(MOVE_DELAY); }
+      for (let i = 0; i < Math.abs(steps); i++) { pawn.trackIdx = (pawn.trackIdx - 1 + TRACK.length) % TRACK.length; beep(400, 0.06); updateSinglePawn(playerId, pawnIdx); rs(); await sleep(MOVE_DELAY); }
     } else {
       for (let i = 1; i <= steps; i++) {
-        if (pawn.trackIdx === PLAYERS[playerId].safeEntry && !isEnemyPush) { pawn.state = 'SAFE'; pawn.safeIdx = steps - i; pawn.trackIdx = -1; beep(600, 0.1); updateSinglePawn(playerId, pawnIdx); await sleep(MOVE_DELAY); fxRing(getPawnPos(playerId, pawnIdx), PLAYERS[playerId].color, 12); if (pawn.safeIdx === 3) { fxRing(getPawnPos(playerId, pawnIdx), '#ffd54a', 16); fxEmbers(getPawnPos(playerId, pawnIdx), 8, true); } break; }
+        if (pawn.trackIdx === PLAYERS[playerId].safeEntry && !isEnemyPush) { pawn.state = 'SAFE'; pawn.safeIdx = steps - i; pawn.trackIdx = -1; beep(600, 0.1); updateSinglePawn(playerId, pawnIdx); rs(); await sleep(MOVE_DELAY); fxRing(getPawnPos(playerId, pawnIdx), PLAYERS[playerId].color, 12); if (pawn.safeIdx === 3) { fxRing(getPawnPos(playerId, pawnIdx), '#ffd54a', 16); fxEmbers(getPawnPos(playerId, pawnIdx), 8, true); } break; }
         pawn.trackIdx = (pawn.trackIdx + 1) % TRACK.length;
-        beep(400 + i * 20, 0.06); updateSinglePawn(playerId, pawnIdx); await sleep(MOVE_DELAY);
+        beep(400 + i * 20, 0.06); updateSinglePawn(playerId, pawnIdx); rs(); await sleep(MOVE_DELAY);
       }
     }
   }
+  if (rec) { rec.done = true; flushGameState(); }
   if (pawn.state === 'TRACK') await handleCapture(playerId, pawn);
   beep(700, 0.1);
   if (el) setTimeout(() => { el.style.willChange = ''; }, 250);
@@ -1214,14 +1234,14 @@ async function handleCapture(playerId, pawn) {
     for (let i = 0; i < 4; i++) {
       const enemy = state.pawns[p][i];
       if (enemy.state === 'TRACK' && enemy.trackIdx === pawn.trackIdx && !isProtected(p, i)) {
-        const cellPct = coordToPct(TRACK[pawn.trackIdx]);
+        const cellPct = trackPct(pawn.trackIdx);
         fxRing(cellPct, '#ff3d3d', 13); fxRing(cellPct, '#fff', 8); fxEmbers(cellPct, 6, true);
         enemy.state = 'HOME'; enemy.trackIdx = -1; enemy.homeSlot = findFreeHomeSlot(p);
         const el = document.getElementById(`pawn-${p}-${i}`);
         if (el) { flyHome(el); el.classList.add('captured'); setTimeout(()=>el.classList.remove('captured'), 1300); }
         updateSinglePawn(p, i);
         beep(150, 0.3, 'sawtooth');
-        await sleep(1500);
+        await sleep(800);
       }
     }
   }
@@ -1234,8 +1254,8 @@ async function executeSpawn(playerId, pawnIdx) {
   beep(800, 0.15); updateSinglePawn(playerId, pawnIdx);
   const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`);
   if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); }
-  const pct = coordToPct(TRACK[pawn.trackIdx]); fxRing(pct, PLAYERS[playerId].color, 13); fxRing(pct, '#fff', 8);
-  await sleep(400);
+  const pct = trackPct(pawn.trackIdx); fxRing(pct, PLAYERS[playerId].color, 13); fxRing(pct, '#fff', 8);
+  await sleep(250);
   if (currentRoomCode) saveGameState();
 }
 function clearSelection() { state.pendingSelection = null; document.querySelectorAll('.pawn.selectable').forEach(p => p.classList.remove('selectable')); clearPathPreviews(); }
@@ -1245,9 +1265,9 @@ function addBtn(text, onClick, cls) { const btn = document.createElement('button
 function selectPawn(playerId, steps) {
   const pId = getControlledPlayerId(playerId), cands = [];
   for (let i = 0; i < 4; i++) if (canMove(pId, i, steps)) cands.push(i);
-  if (cands.length === 0) { setTimeout(endTurn, 1000); return; }
+  if (cands.length === 0) { setTimeout(endTurn, 500); return; }
   clearPathPreviews(); showCandidatesPreview(pId, steps);
-  if (cands.length === 1) { setTimeout(() => executeMove(pId, cands[0], steps).then(() => endTurn()), 350); return; }
+  if (cands.length === 1) { setTimeout(() => executeMove(pId, cands[0], steps).then(() => endTurn()), 60); return; }
   state.pendingSelection = { playerId: pId, steps, candidates: cands };
   cands.forEach(i => { const el = document.getElementById(`pawn-${pId}-${i}`); if (el) el.classList.add('selectable'); });
 }
@@ -1391,7 +1411,7 @@ async function playCard(playerId, cardIdx) {
   state.undo = { playerId, card, cardIdx, drawn: state.hands[playerId].length > handBefore ? state.hands[playerId][state.hands[playerId].length - 1] : null };
   renderHand();
   if (currentRoomCode) saveGameState();
-  if (!['A', 'K', 'J', '5', '7', '10', 'JOKER', 'MANDALA'].includes(card.r)) await sleep(1000);
+  if (!['A', 'K', 'J', '5', '7', '10', 'JOKER', 'MANDALA'].includes(card.r)) await sleep(PLAYERS[playerId].isBot ? 700 : 120);
   await processCard(playerId, card);
 }
 
@@ -1431,10 +1451,10 @@ async function processCard(playerId, card) {
       beep(500, 0.3); updateTurnUI(); updatePawnPositions(); fxMandala();
     }
     if (currentRoomCode) saveGameState();
-    setTimeout(endTurn, 900); return;
+    setTimeout(endTurn, 450); return;
   }
   if (rank === 'PHOENIX') {
-    if (!state.pawns[pId].some(p => p.state === 'TRACK')) { setTimeout(endTurn, 1000); return; }
+    if (!state.pawns[pId].some(p => p.state === 'TRACK')) { setTimeout(endTurn, 500); return; }
     if (isBot) { const trackPawns = []; for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') trackPawns.push(i); const pick = trackPawns[Math.floor(Math.random() * trackPawns.length)]; if (Math.random() < 0.5 || state.phoenixNest < 0 || pawnsAt(state.phoenixNest).length > 0) await executePhoenixFire(pId, pick); else await executePhoenixTeleport(pId, pick); return endTurn(); }
     state.mode = 'phoenix_select'; state.phoenixPlayer = pId;
     for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable');
@@ -1532,7 +1552,7 @@ async function processCard(playerId, card) {
     return;
   }
   if (rank === 'J') {
-    if (!hasValidSwap(pId)) { setTimeout(endTurn, 1000); return; }
+    if (!hasValidSwap(pId)) { setTimeout(endTurn, 500); return; }
     if (isBot) { const mine = [], targets = []; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (state.pawns[p][i].state !== 'TRACK') continue; if (p === pId) mine.push(i); else if (!isProtected(p, i)) targets.push({ p, i }); } if (mine.length && targets.length) { const a = mine[Math.floor(Math.random() * mine.length)]; const t = targets[Math.floor(Math.random() * targets.length)]; await executeSwap(pId, a, t.p, t.i); await sleep(500); } return endTurn(); }
     state.mode = 'swapAlly'; state.swapAlly = -1;
     for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if (pawn.state !== 'TRACK') continue; document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
@@ -1546,13 +1566,13 @@ async function processCard(playerId, card) {
 async function executePhoenixFire(playerId, pawnIdx) {
   clearPathPreviews();
   const pawn = state.pawns[playerId][pawnIdx];
-  const origin = coordToPct(TRACK[pawn.trackIdx]);
+  const origin = trackPct(pawn.trackIdx);
   const zone = []; for (let k = 1; k <= 6; k++) zone.push((pawn.trackIdx + k) % TRACK.length);
   beep(200, 0.4, 'sawtooth');
   fxRing(origin, '#ffb300', 18); fxEmbers(origin, 8, true);
-  zone.forEach((idx, k) => { const pct = coordToPct(TRACK[idx]); setTimeout(() => { fxFlame(pct); fxEmbers(pct, 3, true); }, k * 110); });
+  zone.forEach((idx, k) => { const pct = trackPct(idx); setTimeout(() => { fxFlame(pct); fxEmbers(pct, 3, true); }, k * 110); });
   const hitPawns = [];
-  for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtected(p, i)) hitPawns.push({p, i, pct: coordToPct(TRACK[idx])}); }
+  for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtected(p, i)) hitPawns.push({p, i, pct: trackPct(idx)}); }
   await sleep(1800);
   for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } }
   updatePawnPositions();
@@ -1570,16 +1590,16 @@ async function executeSwap(playerA, pawnA, playerB, pawnB) {
   if (elA) elA.classList.add('swapping');
   if (elB) elB.classList.add('swapping');
   beep(400, 0.15);
-  await sleep(600);
+  await sleep(350);
 
   const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp;
   updatePawnPositions();
   beep(800, 0.2);
-  await sleep(900);
+  await sleep(550);
 
   if (elA) elA.classList.remove('swapping');
   if (elB) elB.classList.remove('swapping');
-  await sleep(300);
+  await sleep(150);
   if (currentRoomCode) saveGameState();
 }
 
@@ -1601,7 +1621,7 @@ function endTurn() {
     state.forcedDiscardFor = skipPid;
     renderHand(); updateTurnUI();
     if (currentRoomCode) saveGameState();
-    if (PLAYERS[skipPid].isBot) {
+    if (PLAYERS[skipPid].isBot && (!currentRoomCode || myPlayerIndex === 0)) {
       setTimeout(() => {
         const hand = state.hands[skipPid];
         if (hand.length > 0) {
@@ -1615,7 +1635,7 @@ function endTurn() {
         state.forcedDiscardFor = null;
         state.cardPlayedThisTurn = true;
         renderHand();
-        setTimeout(endTurn, 900);
+        setTimeout(endTurn, 450);
       }, 1200);
     }
     return;
@@ -1625,10 +1645,10 @@ function endTurn() {
   
   if (currentRoomCode) {
     saveGameState();
-    // En multi, on ne déclenche pas botPlay ici, on laisse onSnapshot s'en charger
+    if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) scheduleBot(1200);
   } else {
     if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) {
-        setTimeout(botPlay, 3000);
+        setTimeout(botPlay, 1200);
     }
   }
 }
@@ -1686,7 +1706,7 @@ async function botPlay() {
             state.forcedDiscardFor = null;
             state.cardPlayedThisTurn = true;
             renderHand();
-            setTimeout(endTurn, 900);
+            setTimeout(endTurn, 450);
             return;
         }
 
@@ -1732,11 +1752,13 @@ window.closeBotDifficulty = function() { document.getElementById('bot-difficulty
 window.startGameWithBots = function(diff) { state.botDifficulty = diff || 'medium'; closeBotDifficulty(); startGame(false); };
 
 function startGame(isMulti = false) {
+  setView(isMulti ? myPlayerIndex : 0);
   if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('game-screen').classList.add('active');
   
   if (isMulti) {
+    resetSync();
     if (myPlayerIndex === 0) { // L'hôte initialise
       initGame(true);
       saveGameState();
@@ -1750,111 +1772,170 @@ function startGame(isMulti = false) {
 }
 
 // ================= MULTIJOUEUR SYNCHRONISATION =================
-async function saveGameState() {
-  if (!currentRoomCode) return;
-  try {
-    const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
-    
-    // On extrait uniquement les données logiques du jeu (pas l'interface locale)
-    const syncData = {
-      turn: state.turn,
-      deck: state.deck,
-      discard: state.discard,
-      hands: state.hands,
-      pawns: state.pawns,
-      mandala: state.mandala,
-      phoenixNest: state.phoenixNest,
-      gameOver: state.gameOver,
-      cardPlayedThisTurn: state.cardPlayedThisTurn,
-      pendingSkip: state.pendingSkip,
-      forcedDiscardFor: state.forcedDiscardFor,
-      // On sauvegarde aussi les joueurs (pour les pseudos et avatars)
-      players: PLAYERS,
-      // 👇 CRUCIAL : On ajoute qui a fait la dernière action pour éviter de s'auto-saborder
-      lastActionPlayer: myPlayerIndex
-    };
+let syncSeq = 0, lastAppliedSeq = 0, hasApplied = false, lastRaw = '', pendingAnim = [], animHistory = [], saveTimer = null, applyChain = Promise.resolve(), lastDiscardKey = '';
+const REMOTE_STEP = 110;
+function resetSync() { syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = ''; pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = ''; clearTimeout(saveTimer); saveTimer = null; }
+function scheduleBot(ms) { clearTimeout(botTimeout); botTimeout = setTimeout(() => { if (!state.gameOver && PLAYERS[state.turn].isBot) botPlay(); }, ms); }
+function getWinnerTeam(pawns) {
+  const A = [...pawns[0], ...pawns[2]].every(p => p.state === 'SAFE');
+  const B = [...pawns[1], ...pawns[3]].every(p => p.state === 'SAFE');
+  return A ? 'A' : (B ? 'B' : null);
+}
 
-    await window.FB.updateDoc(roomRef, { 
-        gameState: JSON.stringify(syncData) 
-    });
-  } catch(e) { console.error("Erreur sauvegarde:", e); }
+// Plusieurs appels dans le même instant = une seule écriture (plus rapide, moins de conflits)
+function saveGameState() {
+  if (!currentRoomCode || saveTimer) return;
+  saveTimer = setTimeout(flushGameState, 0);
+}
+function flushGameState() {
+  clearTimeout(saveTimer); saveTimer = null;
+  const code = currentRoomCode;
+  if (!code) return;
+  try {
+    syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1;
+    lastAppliedSeq = syncSeq;
+    const ready = pendingAnim.filter(a => a.done);
+    pendingAnim = pendingAnim.filter(a => !a.done);
+    ready.forEach(a => { a.q = syncSeq; delete a.done; });
+    animHistory = animHistory.concat(ready).slice(-12);
+    const syncData = {
+      turn: state.turn, deck: state.deck, discard: state.discard, hands: state.hands, pawns: state.pawns,
+      mandala: state.mandala, phoenixNest: state.phoenixNest, gameOver: state.gameOver,
+      cardPlayedThisTurn: state.cardPlayedThisTurn, pendingSkip: state.pendingSkip, forcedDiscardFor: state.forcedDiscardFor,
+      players: PLAYERS.map(p => ({ name: p.name, avatarFile: p.avatarFile, isBot: p.isBot })),
+      seq: syncSeq, anim: animHistory, lastActionPlayer: myPlayerIndex
+    };
+    const roomRef = window.FB.doc(window.FB.db, 'rooms', code);
+    window.FB.updateDoc(roomRef, { gameState: JSON.stringify(syncData) }).catch(e => { console.error("Erreur sauvegarde:", e); });
+  } catch (e) { console.error("Erreur sauvegarde:", e); }
+}
+
+async function replayPath(a) {
+  const pw = state.pawns[a.p] && state.pawns[a.p][a.i]; if (!pw) return;
+  for (let k = 0; k < a.path.length; k++) {
+    const st = a.path[k];
+    pw.state = st.s; pw.trackIdx = st.t; pw.safeIdx = st.f;
+    updateSinglePawn(a.p, a.i); beep(400 + k * 20, 0.05);
+    if (document.hidden) continue;
+    await sleep(REMOTE_STEP);
+  }
+}
+
+function leaveGameRemote() {
+  state.gameOver = true;
+  if (gameStateListener) { gameStateListener(); gameStateListener = null; }
+  currentRoomCode = null; roomStarted = false;
+  clearInterval(nestTimer); stopTimer(); clearTimeout(botTimeout);
+  showToast("Un joueur a quitté la partie", 'error');
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('main-menu').classList.add('active');
+}
+
+async function applyRemoteState(parsed, raw, closed) {
+  const own = parsed.lastActionPlayer === myPlayerIndex;
+  const seq = parsed.seq || 0;
+  if (seq) { if (own && seq <= lastAppliedSeq) return; if (!own && seq < lastAppliedSeq) return; }
+  if (raw === lastRaw) return;
+  const first = !hasApplied, prevSeq = lastAppliedSeq;
+  hasApplied = true; lastRaw = raw; lastAppliedSeq = Math.max(lastAppliedSeq, seq);
+
+  // 1) On rejoue les déplacements case par case chez les autres joueurs
+  if (!first && !own && !document.hidden && Array.isArray(parsed.anim)) {
+    const todo = parsed.anim.filter(a => a.q > prevSeq && a.path && a.path.length);
+    for (const a of todo) await replayPath(a);
+  }
+
+  const wasOver = state.gameOver, prevMandala = state.mandala;
+  const prev = JSON.parse(JSON.stringify(state.pawns));
+
+  state.turn = parsed.turn; state.deck = parsed.deck; state.discard = parsed.discard; state.hands = parsed.hands;
+  state.pawns = parsed.pawns; state.mandala = parsed.mandala; state.phoenixNest = parsed.phoenixNest;
+  state.gameOver = parsed.gameOver; state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
+  state.pendingSkip = parsed.pendingSkip; state.forcedDiscardFor = parsed.forcedDiscardFor;
+
+  if (parsed.players) for (let i = 0; i < 4; i++) { PLAYERS[i].name = parsed.players[i].name; PLAYERS[i].avatarFile = parsed.players[i].avatarFile; PLAYERS[i].isBot = parsed.players[i].isBot; }
+
+  if (!own) { state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; clearSelection(); clearActions(); clearPathPreviews(); }
+
+  for (let i = 0; i < 4; i++) {
+    const av = document.getElementById(`avatar-game-p${i}`);
+    av.style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
+    const turnCls = av.classList.contains('active-turn');
+    av.className = `in-game-avatar square`;
+    if (turnCls) av.classList.add('active-turn');
+    if (i === myPlayerIndex && playerProfile.avatarShape === 'round') av.classList.remove('square');
+    document.getElementById(`name-game-p${i}`).textContent = PLAYERS[i].name;
+    av.parentElement.style.setProperty('--c', PLAYERS[i].color);
+  }
+
+  // 2) Effets visuels : prise, sortie de base, échange, téléportation
+  if (!first && !own) {
+    const moved = [];
+    for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
+      const a = prev[p][i], b = state.pawns[p][i], el = document.getElementById(`pawn-${p}-${i}`);
+      if (a.state === 'TRACK' && b.state === 'HOME') {
+        const pct = trackPct(a.trackIdx); fxRing(pct, '#ff3d3d', 13); fxRing(pct, '#fff', 8); fxEmbers(pct, 6, true);
+        if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); }
+        beep(150, 0.3, 'sawtooth');
+      } else if (a.state === 'HOME' && b.state === 'TRACK') {
+        if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); }
+        const pct = trackPct(b.trackIdx); fxRing(pct, PLAYERS[p].color, 13); fxRing(pct, '#fff', 8); beep(800, 0.15);
+      } else if (a.state === 'TRACK' && b.state === 'TRACK' && a.trackIdx !== b.trackIdx) moved.push({ p, i, idx: b.trackIdx });
+    }
+    if (moved.length >= 2) {
+      moved.forEach(m => { const el = document.getElementById(`pawn-${m.p}-${m.i}`); if (el) { el.classList.add('swapping'); setTimeout(() => el.classList.remove('swapping'), 900); } });
+      beep(800, 0.2);
+    } else if (moved.length === 1) fxRing(trackPct(moved[0].idx), '#ffb300', 16);
+    if (!prevMandala && state.mandala) { beep(500, 0.3); fxMandala(); }
+  }
+
+  updatePawnPositions();
+  renderHand();
+  updateTurnUI();
+
+  const lastCard = state.discard.length > 0 ? state.discard[state.discard.length - 1] : null;
+  const key = lastCard ? lastCard.r + (lastCard.s || '') + ':' + state.discard.length : '';
+  if (lastCard && key !== lastDiscardKey) showDiscard(lastCard);
+  lastDiscardKey = key;
+
+  // 3) Fin de partie visible chez tout le monde
+  if (state.gameOver && !wasOver) {
+    const w = getWinnerTeam(state.pawns);
+    if (w) {
+      clearInterval(nestTimer); stopTimer();
+      document.getElementById('ov-title').textContent = '🏆 Victoire !';
+      document.getElementById('ov-msg').textContent = `Équipe ${w} gagne !`;
+      document.getElementById('overlay').classList.add('show');
+    }
+  }
+  if (closed && !getWinnerTeam(state.pawns)) { leaveGameRemote(); return; }
+
+  // 4) L'hôte fait jouer les bots
+  if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) scheduleBot(1200);
 }
 
 function listenToGameState() {
   if (gameStateListener) gameStateListener();
   const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
-  
   gameStateListener = window.FB.onSnapshot(roomRef, (docSnap) => {
     if (!docSnap.exists()) return;
     const data = docSnap.data();
-    
-    if (data.gameState) {
-      const parsed = JSON.parse(data.gameState);
-      
-      state.turn = parsed.turn;
-      state.deck = parsed.deck;
-      state.discard = parsed.discard;
-      state.hands = parsed.hands;
-      state.pawns = parsed.pawns;
-      state.mandala = parsed.mandala;
-      state.phoenixNest = parsed.phoenixNest;
-      state.gameOver = parsed.gameOver;
-      state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
-      state.pendingSkip = parsed.pendingSkip;
-      state.forcedDiscardFor = parsed.forcedDiscardFor;
-
-      if (parsed.players) {
-         for(let i=0; i<4; i++) {
-             PLAYERS[i].name = parsed.players[i].name;
-             PLAYERS[i].avatarFile = parsed.players[i].avatarFile;
-             PLAYERS[i].isBot = parsed.players[i].isBot;
-         }
-      }
-
-      // 👇 CRUCIAL : Ne nettoyer l'interface QUE si c'est l'AUTRE joueur qui a joué
-      if (parsed.lastActionPlayer !== myPlayerIndex) {
-          state.mode = null;
-          state.pendingSelection = null;
-          state.previewCardIdx = null;
-          clearSelection();
-          clearActions();
-          clearPathPreviews();
-      }
-
-      // Mise à jour de l'affichage (Avatars)
-      for (let i = 0; i < 4; i++) {
-          document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
-          document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
-          if (i === myPlayerIndex && playerProfile.avatarShape === 'round') document.getElementById(`avatar-game-p${i}`).classList.remove('square');
-          document.getElementById(`name-game-p${i}`).textContent = PLAYERS[i].name;
-          document.getElementById(`avatar-game-p${i}`).parentElement.style.setProperty('--c', PLAYERS[i].color);
-      }
-
-      updatePawnPositions();
-      renderHand();
-      updateTurnUI();
-      
-      const lastCard = state.discard.length > 0 ? state.discard[state.discard.length - 1] : null;
-      if(lastCard) showDiscard(lastCard);
-      
-      // C'est toujours l'hôte (0) qui gère les bots
-      if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) {
-          if (botTimeout) clearTimeout(botTimeout);
-          botTimeout = setTimeout(botPlay, 2500);
-      }
-    }
-  });
+    if (!data.gameState) return;
+    let parsed; try { parsed = JSON.parse(data.gameState); } catch (e) { return; }
+    const closed = data.status === 'closed', raw = data.gameState;
+    applyChain = applyChain.then(() => applyRemoteState(parsed, raw, closed)).catch(e => console.error("Erreur synchro:", e));
+  }, (err) => { console.error("Erreur écoute:", err); });
 }
 
 function backToMenu() { 
   if(confirm("Voulez-vous vraiment quitter la partie ?")) { 
     state.gameOver = true; 
     if (currentRoomCode) {
-       saveGameState(); // On sauvegarde la fin
+       flushGameState(); // On sauvegarde la fin immédiatement
        if(gameStateListener) { gameStateListener(); gameStateListener = null; }
        const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
        window.FB.updateDoc(roomRef, { status: 'closed' }).catch(()=>{});
-       currentRoomCode = null;
+       currentRoomCode = null; roomStarted = false; clearTimeout(botTimeout);
     }
     clearInterval(nestTimer); 
     stopTimer(); 
