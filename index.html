@@ -1492,7 +1492,11 @@ async function processCard(playerId, card) {
     return;
   }
   if (rank === '10') {
-    if (isBot) { await autoSelectRandom(pId, 10); return endTurn(); }
+    if (isBot) { 
+        const moved = await autoSelectRandom(pId, 10); 
+        if (!moved) state.pendingSkip = (state.turn + 1) % 4;
+        return endTurn(); 
+    }
     state.mode = 'ten_choice';
     if (somePawnCanMove(pId, 10)) addBtn('Avancer de 10', () => { clearActions(); selectPawn(pId, 10); });
     addBtn('Passer le tour', () => {
@@ -1595,7 +1599,7 @@ function endTurn() {
     state.pendingSkip = null;
     state.forcedDiscardFor = skipPid;
     renderHand(); updateTurnUI();
-    if (currentRoomCode) saveGameState(); // Sauvegarder l'état de skip
+    if (currentRoomCode) saveGameState();
     if (PLAYERS[skipPid].isBot) {
       setTimeout(() => {
         const hand = state.hands[skipPid];
