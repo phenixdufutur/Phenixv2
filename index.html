@@ -29,7 +29,7 @@ window.FB = { auth, db, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, 
   --safe-top: env(safe-area-inset-top, 0px); --safe-bottom: env(safe-area-inset-bottom, 0px);
   --banner-height: 18vh;
 }
-html, body { height: 100%; width: 100%; overflow: hidden; background: #000; }
+html, body { height: 100%; width: 100%; overflow: hidden; background: #000; position: fixed; overscroll-behavior: none; }
 body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-select: none; -webkit-tap-highlight-color: transparent; }
 .no-anims .float-ember, .no-anims .nest-ring, .no-anims .nest-ring.r2, .no-anims .nest-glow, .no-anims .nest-core, .no-anims .nest-fire .tongue, .no-anims .hole.base::after, .no-anims .ribbon-flow, .no-anims .card::after, .no-anims .btn::after, .no-anims .hex-btn-container, .no-anims .in-game-avatar.active-turn::before, .no-anims .turn-timer.active { animation: none !important; }
 .no-anims .float-ember, .no-anims .ribbon-flow { display: none !important; }
@@ -750,7 +750,19 @@ let audioCtx = null, muted = false, botPlaying = false, animationsEnabled = true
 
 function toggleSound() { muted = !muted; document.getElementById('btn-mute').textContent = muted ? '🔇' : '🔊'; }
 function toggleAnimations() { animationsEnabled = !animationsEnabled; document.getElementById('btn-anims').textContent = animationsEnabled ? '✨' : '🚫'; if (animationsEnabled) document.body.classList.remove('no-anims'); else document.body.classList.add('no-anims'); }
-function toggleFullscreen() { if (!document.fullscreenElement) { document.documentElement.requestFullscreen().catch(err => {}); } else { if (document.exitFullscreen) document.exitFullscreen(); } }
+function toggleFullscreen() { 
+    if (!document.fullscreenElement) { 
+        document.documentElement.requestFullscreen().catch(err => {
+            // Si l'API fullscreen échoue (souvent sur iOS), on tente une alternative
+            document.body.style.height = '100vh';
+        }); 
+        if (screen.orientation && screen.orientation.lock) {
+            screen.orientation.lock('portrait').catch(()=>{});
+        }
+    } else { 
+        if (document.exitFullscreen) document.exitFullscreen(); 
+    } 
+}
 function beep(freq, dur, type='sine') { if (muted) return; try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination); g.gain.setValueAtTime(0.06, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); } catch(e) {} }
 function setPos(el, pos) { el.style.setProperty('--x', pos.x); el.style.setProperty('--y', pos.y); }
 function getControlledPlayerId(playerId) { const myPawns = state.pawns[playerId]; if (myPawns.every(p => p.state === 'SAFE')) { const team = PLAYERS[playerId].team; if (team === 0) return playerId === 0 ? 2 : 0; if (team === 1) return playerId === 1 ? 3 : 1; } return playerId; }
@@ -932,10 +944,10 @@ function initGame(isHost = true) {
     clearPathPreviews();
     pools.rings.forEach(e => e.style.display = 'none'); pools.embers.forEach(e => e.style.display = 'none'); pools.flames.forEach(e => e.style.display = 'none');
 
-    // L'INITIALISATION DE BASE (POUR TOUT LE MONDE, HOTE COMME INVITE)
+    // L'INITIALISATION DE BASE (POUR TOUT LE MONDE)
     state.pawns = [[],[],[],[]];
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) state.pawns[p].push({ state:'HOME', trackIdx:-1, safeIdx:-1, homeSlot:i });
-    state.hands = [[],[],[],[]]; // On initialise les mains vides
+    state.hands = [[],[],[],[]];
 
     if (isHost) {
       if (currentRoomCode && lastRoomData && lastRoomData.players) {
@@ -973,7 +985,7 @@ function initGame(isHost = true) {
       state.phoenixNest = cands[Math.floor(Math.random() * cands.length)];
     }
 
-    // On s'assure que les avatars correspondent toujours aux bons joueurs, peu importe qui regarde l'écran.
+    // On s'assure que les avatars correspondent toujours aux bons joueurs
     for (let i = 0; i < 4; i++) {
         document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
         document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
@@ -1010,17 +1022,17 @@ function renderBoard() {
   updatePawnPositions();
 }
 
-function getPawnPos(playerId, pawnIdx) { const pawn = state.pawns[playerId][pawnIdx]; if (!pawn) return { x: 50, y: 50 }; if (pawn.state === 'HOME') return coordToPct(HOMES[PLAYER_HOME_CORNER[playerId]][pawn.homeSlot]); if (pawn.state === 'TRACK') return coordToPct(TRACK[pawn.trackIdx]); if (pawn.state === 'SAFE') return coordToPct(SAFE_ZONES[playerId][pawn.safeIdx]); return { x: 50, y: 50 }; }
+function getPawnPos(playerId, pawnIdx) { const pawn = state.pawns[playerId] ? state.pawns[playerId][pawnIdx] : null; if (!pawn) return { x: 50, y: 50 }; if (pawn.state === 'HOME') return coordToPct(HOMES[PLAYER_HOME_CORNER[playerId]][pawn.homeSlot]); if (pawn.state === 'TRACK') return coordToPct(TRACK[pawn.trackIdx]); if (pawn.state === 'SAFE') return coordToPct(SAFE_ZONES[playerId][pawn.safeIdx]); return { x: 50, y: 50 }; }
 function updateAuraForPawn(p, i) {
   const id = `aura-${p}-${i}`; let a = document.getElementById(id);
-  const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK';
+  const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK';
   if (active) { const pos = getPawnPos(p, i); if (!pos) { if (a) a.remove(); return; } if (!a) { a = document.createElement('div'); a.id = id; a.className = 'mandala-aura'; a.innerHTML = '<i></i>'; document.getElementById('board').appendChild(a); } setPos(a, pos); }
   else if (a) a.remove();
 }
 function updateSinglePawn(playerId, pawnIdx) { const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`); if (!el) return; const pos = getPawnPos(playerId, pawnIdx); if (pos) setPos(el, pos); updateAuraForPawn(playerId, pawnIdx); }
 function updatePawnPositions() {
   for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const el = document.getElementById(`pawn-${p}-${i}`); if (!el) continue; const pos = getPawnPos(p, i); if (pos) setPos(el, pos); updateAuraForPawn(p, i); }
-  document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); });
+  document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); });
 }
 
 function isCardPlayable(playerId, card) {
