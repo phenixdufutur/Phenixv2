@@ -752,13 +752,8 @@ function toggleSound() { muted = !muted; document.getElementById('btn-mute').tex
 function toggleAnimations() { animationsEnabled = !animationsEnabled; document.getElementById('btn-anims').textContent = animationsEnabled ? '✨' : '🚫'; if (animationsEnabled) document.body.classList.remove('no-anims'); else document.body.classList.add('no-anims'); }
 function toggleFullscreen() { 
     if (!document.fullscreenElement) { 
-        document.documentElement.requestFullscreen().catch(err => {
-            // Si l'API fullscreen échoue (souvent sur iOS), on tente une alternative
-            document.body.style.height = '100vh';
-        }); 
-        if (screen.orientation && screen.orientation.lock) {
-            screen.orientation.lock('portrait').catch(()=>{});
-        }
+        document.documentElement.requestFullscreen().catch(err => {});
+        if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(()=>{});
     } else { 
         if (document.exitFullscreen) document.exitFullscreen(); 
     } 
@@ -944,10 +939,10 @@ function initGame(isHost = true) {
     clearPathPreviews();
     pools.rings.forEach(e => e.style.display = 'none'); pools.embers.forEach(e => e.style.display = 'none'); pools.flames.forEach(e => e.style.display = 'none');
 
-    // L'INITIALISATION DE BASE (POUR TOUT LE MONDE)
+    // L'INITIALISATION DE BASE (POUR TOUT LE MONDE, HOTE COMME INVITE)
     state.pawns = [[],[],[],[]];
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) state.pawns[p].push({ state:'HOME', trackIdx:-1, safeIdx:-1, homeSlot:i });
-    state.hands = [[],[],[],[]];
+    state.hands = [[],[],[],[]]; // On initialise les mains vides
 
     if (isHost) {
       if (currentRoomCode && lastRoomData && lastRoomData.players) {
@@ -985,7 +980,7 @@ function initGame(isHost = true) {
       state.phoenixNest = cands[Math.floor(Math.random() * cands.length)];
     }
 
-    // On s'assure que les avatars correspondent toujours aux bons joueurs
+    // On s'assure que les avatars correspondent toujours aux bons joueurs, peu importe qui regarde l'écran.
     for (let i = 0; i < 4; i++) {
         document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
         document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
@@ -1710,6 +1705,7 @@ async function saveGameState() {
   try {
     const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
     
+    // On extrait uniquement les données logiques du jeu (pas l'interface locale)
     const syncData = {
       turn: state.turn,
       deck: state.deck,
@@ -1722,6 +1718,7 @@ async function saveGameState() {
       cardPlayedThisTurn: state.cardPlayedThisTurn,
       pendingSkip: state.pendingSkip,
       forcedDiscardFor: state.forcedDiscardFor,
+      // On sauvegarde aussi les joueurs (pour les pseudos et avatars)
       players: PLAYERS
     };
 
@@ -1742,6 +1739,7 @@ function listenToGameState() {
     if (data.gameState) {
       const parsed = JSON.parse(data.gameState);
       
+      // On met à jour SEULEMENT les données du jeu
       state.turn = parsed.turn;
       state.deck = parsed.deck;
       state.discard = parsed.discard;
@@ -1754,6 +1752,7 @@ function listenToGameState() {
       state.pendingSkip = parsed.pendingSkip;
       state.forcedDiscardFor = parsed.forcedDiscardFor;
 
+      // Mise à jour des infos joueurs
       if (parsed.players) {
          for(let i=0; i<4; i++) {
              PLAYERS[i].name = parsed.players[i].name;
@@ -1762,6 +1761,15 @@ function listenToGameState() {
          }
       }
 
+      // NETTOYAGE LOCAL (pour ne pas être bloqué si l'adversaire a joué)
+      state.mode = null;
+      state.pendingSelection = null;
+      state.previewCardIdx = null;
+      clearSelection();
+      clearActions();
+      clearPathPreviews();
+
+      // Mise à jour de l'affichage (Avatars)
       for (let i = 0; i < 4; i++) {
           document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
           document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
@@ -1777,6 +1785,7 @@ function listenToGameState() {
       const lastCard = state.discard.length > 0 ? state.discard[state.discard.length - 1] : null;
       if(lastCard) showDiscard(lastCard);
       
+      // C'est toujours l'hôte (0) qui gère les bots
       if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) {
           setTimeout(botPlay, 3000);
       }
