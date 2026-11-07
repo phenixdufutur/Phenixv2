@@ -1240,7 +1240,49 @@ function autoSelectRandom(playerId, steps) {
 
 function onPawnClick(playerId, pawnIdx) {
   const pId = getControlledPlayerId(state.turn);
-  if (state.turn === myPlayerIndex && state.previewCardIdx !== null) { const card = state.hands[myPlayerIndex][state.previewCardIdx]; clearPathPreviews(); state.previewCardIdx = null; playCard(myPlayerIndex, state.hands[myPlayerIndex].indexOf(card)); return; }
+  
+  // Si une carte est en prévisualisation et qu'on clique sur un pion
+  if (state.turn === myPlayerIndex && state.previewCardIdx !== null) {
+    const card = state.hands[myPlayerIndex][state.previewCardIdx];
+    const cardIdx = state.hands[myPlayerIndex].indexOf(card);
+    
+    clearPathPreviews(); 
+    state.previewCardIdx = null;
+    renderHand();
+    
+    playCard(myPlayerIndex, cardIdx).then(() => {
+        if (playerId === pId) {
+            const pawn = state.pawns[playerId][pawnIdx];
+            if (state.mode === 'as_select') {
+                if (pawn.state === 'HOME' && canSpawn(pId)) {
+                    state.mode = null; clearSelection(); clearActions(); 
+                    executeSpawn(playerId, pawnIdx).then(() => endTurn());
+                } else if (pawn.state === 'TRACK') {
+                    const c1 = canMove(playerId, pawnIdx, 1), c11 = canMove(playerId, pawnIdx, 11);
+                    state.mode = null; clearSelection(); clearActions();
+                    if (c1 && !c11) executeMove(playerId, pawnIdx, 1).then(() => endTurn());
+                    else if (!c1 && c11) executeMove(playerId, pawnIdx, 11).then(() => endTurn());
+                    else if (c1 && c11) {
+                        showPathPreview(playerId, pawnIdx, 1, false, '#00e5ff'); showPathPreview(playerId, pawnIdx, 11, false, '#b04fd6'); 
+                        addBtn('Avancer de 1', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 1).then(() => endTurn()); }); 
+                        addBtn('Avancer de 11', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 11).then(() => endTurn()); });
+                    }
+                }
+            } else if (state.mode === 'k_select') {
+                if (pawn.state === 'HOME' && canSpawn(pId)) {
+                    state.mode = null; clearSelection(); clearActions(); 
+                    executeSpawn(playerId, pawnIdx).then(() => endTurn());
+                } else if (pawn.state === 'TRACK' && canMove(playerId, pawnIdx, 13)) {
+                    state.mode = null; clearSelection(); clearActions(); 
+                    executeMove(playerId, pawnIdx, 13).then(() => endTurn());
+                }
+            }
+        }
+    });
+    return;
+  }
+  
+  // Sinon, comportement normal
   if (state.mode === 'move5') {
     if (!canMove(playerId, pawnIdx, 5, true)) return;
     if (playerId !== pId && isPawnOnOwnBase(playerId, pawnIdx)) return;
@@ -1652,8 +1694,26 @@ async function saveGameState() {
   if (!currentRoomCode) return;
   try {
     const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
+    
+    // On extrait uniquement les données logiques du jeu (pas l'interface locale)
+    const syncData = {
+      turn: state.turn,
+      deck: state.deck,
+      discard: state.discard,
+      hands: state.hands,
+      pawns: state.pawns,
+      mandala: state.mandala,
+      phoenixNest: state.phoenixNest,
+      gameOver: state.gameOver,
+      cardPlayedThisTurn: state.cardPlayedThisTurn,
+      pendingSkip: state.pendingSkip,
+      forcedDiscardFor: state.forcedDiscardFor,
+      // On sauvegarde aussi les joueurs (pour les pseudos et avatars)
+      players: PLAYERS
+    };
+
     await window.FB.updateDoc(roomRef, { 
-        gameState: JSON.stringify({ state: state, players: PLAYERS }) 
+        gameState: JSON.stringify(syncData) 
     });
   } catch(e) { console.error("Erreur sauvegarde:", e); }
 }
@@ -1668,7 +1728,21 @@ function listenToGameState() {
     
     if (data.gameState) {
       const parsed = JSON.parse(data.gameState);
-      Object.assign(state, parsed.state);
+      
+      // On met à jour SEULEMENT les données du jeu
+      state.turn = parsed.turn;
+      state.deck = parsed.deck;
+      state.discard = parsed.discard;
+      state.hands = parsed.hands;
+      state.pawns = parsed.pawns;
+      state.mandala = parsed.mandala;
+      state.phoenixNest = parsed.phoenixNest;
+      state.gameOver = parsed.gameOver;
+      state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
+      state.pendingSkip = parsed.pendingSkip;
+      state.forcedDiscardFor = parsed.forcedDiscardFor;
+
+      // Mise à jour des infos joueurs
       if (parsed.players) {
          for(let i=0; i<4; i++) {
              PLAYERS[i].name = parsed.players[i].name;
@@ -1677,7 +1751,7 @@ function listenToGameState() {
          }
       }
 
-      // Update UI sans bouger les positions logiques
+      // Mise à jour de l'affichage (Avatars)
       for (let i = 0; i < 4; i++) {
           document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
           document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
@@ -1693,6 +1767,7 @@ function listenToGameState() {
       const lastCard = state.discard.length > 0 ? state.discard[state.discard.length - 1] : null;
       if(lastCard) showDiscard(lastCard);
       
+      // C'est toujours l'hôte (0) qui gère les bots
       if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) {
           setTimeout(botPlay, 3000);
       }
