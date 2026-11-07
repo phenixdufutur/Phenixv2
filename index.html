@@ -1709,7 +1709,7 @@ async function saveGameState() {
       forcedDiscardFor: state.forcedDiscardFor,
       // On sauvegarde aussi les joueurs (pour les pseudos et avatars)
       players: PLAYERS,
-      // On ajoute qui a fait la dernière action pour éviter de s'auto-saborder
+      // 👇 CRUCIAL : On ajoute qui a fait la dernière action pour éviter de s'auto-saborder
       lastActionPlayer: myPlayerIndex
     };
 
@@ -1750,7 +1750,7 @@ function listenToGameState() {
          }
       }
 
-      // NETTOYAGE LOCAL SEULEMENT SI C'EST L'AUTRE JOUEUR QUI A JOUÉ
+      // 👇 CRUCIAL : Ne nettoyer l'interface QUE si c'est l'AUTRE joueur qui a joué
       if (parsed.lastActionPlayer !== myPlayerIndex) {
           state.mode = null;
           state.pendingSelection = null;
