@@ -1606,10 +1606,13 @@ function endTurn() {
 
   renderHand(); updateTurnUI();
   
-  if (currentRoomCode) saveGameState();
-
-  if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) {
-      setTimeout(botPlay, 3000);
+  if (currentRoomCode) {
+    saveGameState();
+    // En multi, on ne déclenche pas botPlay ici, on laisse onSnapshot s'en charger
+  } else {
+    if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) {
+        setTimeout(botPlay, 3000);
+    }
   }
 }
 
@@ -1739,7 +1742,6 @@ function listenToGameState() {
     if (data.gameState) {
       const parsed = JSON.parse(data.gameState);
       
-      // On met à jour SEULEMENT les données du jeu
       state.turn = parsed.turn;
       state.deck = parsed.deck;
       state.discard = parsed.discard;
@@ -1752,7 +1754,6 @@ function listenToGameState() {
       state.pendingSkip = parsed.pendingSkip;
       state.forcedDiscardFor = parsed.forcedDiscardFor;
 
-      // Mise à jour des infos joueurs
       if (parsed.players) {
          for(let i=0; i<4; i++) {
              PLAYERS[i].name = parsed.players[i].name;
