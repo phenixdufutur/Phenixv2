@@ -2278,10 +2278,7 @@ function backToMenu() {
 }
 </script>
 <script>
-/* ===== MENU LIGUE ===== */
-/* ===== PHOENIX JACKAROO — MENU LIGUE (module autonome) =====
-   Ajout : <script src="ligue.js"></script> juste avant </body> de index.html.
-   Aucune modification du jeu : le module se branche sur ses fonctions existantes. */
+/* MENU LIGUE */
 (() => {
 'use strict';
 const $ = i => document.getElementById(i), F = () => window.FB, me = () => F() && F().auth.currentUser;
@@ -2292,8 +2289,8 @@ const divOf = x => DV.find(d => x >= d.a && x < d.b) || DV[9];
 const diffOf = l => l >= 8 ? 'easy' : l >= 4 ? 'medium' : 'expert';
 const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8}];
 const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20}];
-let L = {xp:0,ws:0,ls:0,best:0,w:0,l:0,p:0,dp:{},wp:{},hi:0}, S = {friends:[],inbox:[],rd:0}, FS = {}, FL = {};
-let T = 'home', R = null, LGMODE = null, done = false, open = false, busy = false;
+let L = {xp:0,ws:0,ls:0,best:0,dp:{},wp:{},hi:0,st:{},ate:0,eaten:0,bx:0,sh:0,dl:'',dd:0,t:0,tr:{}}, S = {friends:[],inbox:[],rd:0}, FS = {}, FL = {};
+let T = 'home', R = null, LGMODE = null, done = false, open = false, busy = false, ST = 'stats', KIND = null, gc = {ate:0, eaten:0, prev:null}, wasG = false, FD = {};
 
 /* ---------- STYLE ---------- */
 const css = `
@@ -2338,6 +2335,12 @@ const css = `
 .lg-eb{position:absolute;bottom:-10px;width:8px;height:8px;border-radius:50%;animation:lgE 3s ease-out forwards}
 .lg-mic{position:absolute;left:50%;bottom:-3.4cqw;transform:translateX(-50%);width:7cqw;height:7cqw;min-width:24px;min-height:24px;border-radius:50%;border:1.5px solid var(--cyan);background:rgba(4,16,48,.92);color:#fff;font-size:3.4cqw;display:flex;align-items:center;justify-content:center;z-index:30;cursor:pointer;padding:0}
 .lg-mic.mu{border-color:#ff5252;background:rgba(80,10,16,.92)}.lg-mic.talk{border-color:#00ffa8;box-shadow:0 0 12px #00ffa8;animation:lgV .18s infinite alternate}
+.lg-nav button{font-size:.62em}.lg-nav button b{font-size:2em}.lg-hero{display:flex;gap:12px;align-items:center}
+.lg-emb{width:84px;height:84px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(230,195,92,.35),rgba(4,16,48,.9) 70%);border:3px solid var(--gold);animation:lgP2 2.2s infinite alternate}.lg-emb b{font-size:2.6em;color:var(--gold-2);text-shadow:0 0 14px var(--gold)}
+.lg-path{display:flex;gap:5px;padding:4px 2px}.lg-path span{flex:1;text-align:center;padding:6px 0;border-radius:8px;background:rgba(0,0,0,.45);border:1px solid #234;color:#567;font-weight:800;font-size:.85em}.lg-path .dn{color:#001;background:linear-gradient(180deg,var(--cyan),#0a8);border-color:var(--cyan)}.lg-path .cur{color:#000;background:linear-gradient(180deg,var(--gold-2),var(--gold));border-color:var(--gold);box-shadow:0 0 14px var(--gold);transform:scale(1.2)}
+.lg-tr{text-align:center;padding:12px 8px;border-radius:14px;border:1.5px solid #234;background:rgba(0,0,0,.4);filter:grayscale(1);opacity:.8}.lg-tr.u{filter:none;opacity:1;border-color:var(--gold);box-shadow:0 0 16px rgba(230,195,92,.5);background:linear-gradient(160deg,rgba(60,45,10,.6),rgba(4,16,48,.9))}.lg-tr>i{font-style:normal;font-size:2.4em;display:block}
+.lg-it{display:flex;gap:12px;align-items:center}.lg-it .ic{font-size:40px;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(0,229,255,.3),rgba(4,16,48,.9));border:1.5px solid var(--cyan);flex:none;box-shadow:0 0 14px rgba(0,229,255,.4)}
+@keyframes lgP2{from{box-shadow:0 0 14px var(--gold),inset 0 0 12px rgba(0,229,255,.4)}to{box-shadow:0 0 34px var(--gold),inset 0 0 22px rgba(0,229,255,.7)}}
 @keyframes lgF{from{opacity:0}to{opacity:1}}@keyframes lgP{from{transform:scale(.9);filter:drop-shadow(0 0 20px var(--cyan))}to{transform:scale(1.1);filter:drop-shadow(0 0 50px var(--gold))}}
 @keyframes lgR{to{transform:rotate(360deg)}}@keyframes lgE{to{transform:translate(var(--dx),-110vh);opacity:0}}@keyframes lgV{from{transform:translateX(-50%) translateX(-1.5px) scale(1)}to{transform:translateX(-50%) translateX(1.5px) scale(1.12)}}`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
@@ -2364,24 +2367,27 @@ function dayKey() { return new Date().toISOString().slice(0, 10); }
 function weekKey() { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + 'W' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); }
 function roll() { if (L.dp.day !== dayKey()) L.dp = {day:dayKey(), cl:[]}; if (L.wp.week !== weekKey()) L.wp = {week:weekKey(), cl:[]}; }
 function bump(k, v) { roll(); L.dp[k] = (L.dp[k] || 0) + (v || 1); L.wp[k] = k === 'streak' ? Math.max(L.wp[k] || 0, v) : (L.wp[k] || 0) + (v || 1); }
-function save() { try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} }
+function save() { checkTr(); L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} try { const a = A0(); F().setDoc(sref(me().uid), {lg:{xp:L.xp, ws:L.ws, best:L.best, w:a.w, p:a.p}}, {merge:true}).catch(() => {}); } catch (e) {} }
+function pushProfile() { saveProfile(); updateCurrencyUI(); try { F().updateDoc(uref(), {gold:playerProfile.gold, gems:playerProfile.gems}).catch(() => {}); } catch (e) {} }
+const A0 = () => (L.st && L.st.all) || {p:0, w:0, l:0};
 async function load() {
   const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) L = Object.assign(L, l); } catch (e) {}
-  try { const s = await F().getDoc(uref()); if (s.exists() && s.data().league && (s.data().league.p || 0) >= (L.p || 0)) L = Object.assign(L, s.data().league); } catch (e) {}
+  try { const s = await F().getDoc(uref()), rl = s.exists() && s.data().league; if (rl && (rl.t || 0) > (L.t || 0)) L = Object.assign(L, rl); } catch (e) {} L.st = L.st || {}; L.tr = L.tr || {};
   roll(); if (!L.hi) { L.hi = 1; sendInbox(u.uid, {type:'info', name:'Phoenix Jackaroo', text:'🔥 Bienvenue dans la Ligue ! Gagne des parties, relève les défis et grimpe jusqu’au Phénix Légendaire.'}); save(); }
 }
 
 /* ---------- XP ---------- */
 function settle(win, pions) {
   const d = divOf(L.xp), r = {win, d0:d, x0:L.xp}; roll();
-  if (win) { L.ws++; L.ls = 0; L.w++; L.best = Math.max(L.best, L.ws); const sm = L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1, base = 200 + (pions ? 50 : 0);
-    r.g = Math.round(base * d.m * sm); Object.assign(r, {base, sm, dm:d.m, pions}); L.xp += r.g; bump('win'); bump('streak', L.ws);
-  } else { L.ws = 0; L.ls++; L.l++; const lm = L.ls >= 3 ? .7 : L.ls === 2 ? .85 : 1; r.lm = lm; r.g = -Math.round(100 * lm); L.xp = Math.max(d.a, L.xp + r.g); }
-  L.p++; bump('play'); r.d1 = divOf(L.xp); save(); return r;
+  if (win) { L.ws++; L.ls = 0; L.best = Math.max(L.best, L.ws); const sm = L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1, base = 200 + (pions ? 50 : 0), bx = L.bx > 0 ? 2 : 1; if (bx > 1) L.bx--;
+    r.g = Math.round(base * d.m * sm * bx); Object.assign(r, {base, sm, dm:d.m, pions, bx}); L.xp += r.g; bump('win'); bump('streak', L.ws);
+  } else { if (L.sh > 0 && L.ws > 0) { L.sh--; r.sh = 1; } else L.ws = 0; L.ls++; const lm = L.ls >= 3 ? .7 : L.ls === 2 ? .85 : 1; r.lm = lm; r.g = -Math.round(100 * lm); L.xp = Math.max(d.a, L.xp + r.g); }
+  bump('play'); r.d1 = divOf(L.xp); save(); return r;
 }
+function record(win, kind) { const s = L.st = L.st || {}; ['all', kind].forEach(k => { const o = s[k] = s[k] || {p:0, w:0, l:0}; o.p++; o[win ? 'w' : 'l']++; }); L.ate = (L.ate || 0) + gc.ate; L.eaten = (L.eaten || 0) + gc.eaten; }
 async function finish(win, pions) {
   const r = settle(win, pions), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
-  let h = win ? line('Victoire', '+200 XP') + (r.pions ? line('Bonus 4 pions', '+50 XP') : '') + line('Division ×' + r.dm, '') + line('Série ×' + r.sm, '') : line('Défaite', '−100 XP') + (r.lm < 1 ? line('Protection défaites ×' + r.lm, '') : '');
+  let h = win ? line('Victoire', '+200 XP') + (r.pions ? line('Bonus 4 pions', '+50 XP') : '') + line('Division ×' + r.dm, '') + line('Série ×' + r.sm, '') + (r.bx > 1 ? line('⚡ Boost XP', '×2') : '') : line('Défaite', '−100 XP') + (r.lm < 1 ? line('Protection défaites ×' + r.lm, '') : '') + (r.sh ? line('🛡️ Bouclier', 'série conservée') : '');
   h += `<div style="font-size:2.2em;font-weight:900;color:${win ? '#00ffa8' : '#ff8a8a'};margin:10px 0">${r.g > 0 ? '+' : ''}${r.g} XP</div>`;
   const d = r.d1; h += `<div class="lg-gauge"><i style="width:${Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100)}%"></i><span>${L.xp} / ${d.b > 1e8 ? '∞' : d.b} XP</span></div>`;
   beep && beep(win ? 660 : 220, .25, 'triangle'); await dlg(win ? '🏆 Victoire !' : 'Défaite', h, [{t:'Continuer',v:1,c:'g'}], win ? 'ok' : 'err');
@@ -2405,10 +2411,10 @@ const unread = () => S.inbox.filter(m => m.ts > (S.rd || 0)).length;
 function initSocial() {
   const u = me(); if (!u || initSocial.on) return; initSocial.on = 1;
   F().onSnapshot(sref(u.uid), s => { const d = s.exists() ? s.data() : {}; S = {friends:d.friends || [], inbox:d.inbox || [], rd:d.rd || 0};
-    S.friends.forEach(f => { if (!FL[f.uid]) FL[f.uid] = F().onSnapshot(sref(f.uid), x => { FS[f.uid] = x.exists() ? x.data().seen : 0; if (open && T === 'friends') render(); }); });
+    S.friends.forEach(f => { if (!FL[f.uid]) FL[f.uid] = F().onSnapshot(sref(f.uid), x => { FS[f.uid] = x.exists() ? x.data().seen : 0; FD[f.uid] = x.exists() ? x.data() : {}; if (open && T === 'friends') render(); }); });
     if (open) render(); badge(); }, () => {});
   const ping = () => { if (!document.hidden) F().setDoc(sref(u.uid), {seen:Date.now(), pseudo:playerProfile.pseudo, av:playerProfile.avatarFile}, {merge:true}).catch(() => {}); };
-  ping(); setInterval(ping, 25000); load().then(() => open && render());
+  ping(); setInterval(ping, 25000); load().then(() => { save(); open && render(); });
 }
 function badge() { const n = unread(); document.querySelectorAll('.lg-bd').forEach(b => { b.textContent = n; b.style.display = n ? 'block' : 'none'; }); }
 async function addFriend(p) {
@@ -2446,7 +2452,7 @@ const myP = (ready, seat) => ({uid:me().uid, pseudo:playerProfile.pseudo, avatar
 async function create(mode, isPub) {
   if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); if (busy) return; busy = true;
   try { let code = null; for (let i = 0; i < 6 && !code; i++) { const c = String(1000 + Math.floor(Math.random() * 9000)), s = await F().getDoc(room(c)); if (!s.exists() || s.data().status !== 'waiting') code = c; }
-    if (!code) throw 0; const d = {host:me().uid, code, players:[myP(true, 0)], fillBots:true, botDifficulty:diffOf(divOf(L.xp).l), status:'waiting', gameState:null, lg:mode};
+    if (!code) throw 0; const d = {host:me().uid, code, players:[myP(true, 0)], fillBots:true, botDifficulty:diffOf(divOf(L.xp).l), status:'waiting', gameState:null, lg:mode, kind:isPub ? 'mm' : mode === 'solo' ? 'bots' : 'priv'};
     await F().setDoc(room(code), d); if (isPub) F().setDoc(pub(), {r:{[code]:{code, host:me().uid, ts:Date.now()}}}, {merge:true}).catch(() => {});
     roomStarted = false; currentRoomCode = code; enter(code, mode === 'solo' ? 'Salon Co-op' : isPub ? 'Recherche de joueurs…' : 'Salon privé');
   } catch (e) { currentRoomCode = null; err('Création impossible', 'Le salon n’a pas pu être créé. Réessaie dans un instant.'); }
@@ -2471,7 +2477,7 @@ function enter(code, title) {
   roomListener = F().onSnapshot(room(code), s => {
     if (!s.exists()) { toast('Le salon n’existe plus', 'error'); return leave(false); } const d = s.data();
     if (d.status === 'closed') { toast('Le salon a été fermé', 'error'); return leave(false); }
-    R.d = d; if (d.status === 'playing') { LGMODE = d.lg || null; done = false; lastRoomData = d; currentRoomCode = code; roomStarted = false; closeLG(); launchFromRoom(); return; } if (open) render();
+    R.d = d; if (d.status === 'playing') { LGMODE = d.lg || null; KIND = d.kind || null; done = false; lastRoomData = d; currentRoomCode = code; roomStarted = false; closeLG(); launchFromRoom(); return; } if (open) render();
   }, e => toast('Erreur salon : ' + e.message, 'error'));
 }
 function leave(remote) {
@@ -2490,10 +2496,10 @@ async function launch() {
   if (pl.length < 2 && !R.bots) return err('Joueurs manquants', 'Active les Bots ou attends un autre joueur.'); if (pl.some(p => p.uid !== me().uid && !p.ready)) return err('Joueurs pas prêts', 'Tous les joueurs doivent être prêts.');
   try { F().setDoc(pub(), {r:{[R.code]:null}}, {merge:true}).catch(() => {}); await F().updateDoc(room(R.code), {status:'playing', fillBots:R.bots, botDifficulty:diffOf(divOf(L.xp).l)}); } catch (e) { err('Lancement impossible', 'La partie n’a pas pu démarrer.'); }
 }
-function solo() { LGMODE = 'solo'; done = false; state.botDifficulty = diffOf(divOf(L.xp).l); currentRoomCode = null; roomStarted = false; closeLG(); startGame(false); }
+function solo() { LGMODE = 'solo'; KIND = 'bots'; done = false; state.botDifficulty = diffOf(divOf(L.xp).l); currentRoomCode = null; roomStarted = false; closeLG(); startGame(false); }
 
 /* ---------- VUES ---------- */
-const NAVS = [['home','🏆','Ligue'],['profile','👤','Profil'],['friends','👥','Amis'],['inbox','✉️','Messages']];
+const NAVS = [['home','🏆','Ligue'],['stats','📊','Stats'],['shop','🛒','Shop'],['friends','👥','Amis'],['inbox','✉️','Msg'],['profile','👤','Profil']];
 function render() {
   const d = divOf(L.xp), u = me();
   TOP.innerHTML = `<div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)}"></div><div><b>${esc(playerProfile.pseudo)}</b><small>Div. ${d.l} · ${esc(d.n)}</small></div><div class="lg-cur">🪙 ${(playerProfile.gold || 0).toLocaleString('fr-FR')}<br>💎 ${(playerProfile.gems || 0).toLocaleString('fr-FR')}</div><button class="lg-x" data-a="close">✕</button>`;
@@ -2504,10 +2510,11 @@ function render() {
 const gauge = d => { const p = Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100); return `<div class="lg-gauge"><i data-w="${p.toFixed(1)}"></i><span>${L.xp.toLocaleString('fr-FR')} / ${d.b > 1e8 ? '∞' : d.b.toLocaleString('fr-FR')} XP · ${Math.floor(p)}%</span></div>`; };
 const sm = () => L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1;
 const V = {
-  home: d => `<div class="lg-card gold"><div class="lg-row lg-sp" style="margin-bottom:8px"><span>Progression · <b style="color:var(--gold)">×${d.m}</b></span><span style="text-align:right">🔥 <b>${L.ws}</b> (×${sm()})</span></div>${gauge(d)}<button class="lg-b s" style="margin-top:8px;width:100%" data-a="divs">📜 Voir les divisions & le barème</button></div>
+  home: d => `${hero(d)}
   <div class="lg-card"><h3>🌐 Ligue en ligne</h3><p>Affronte des joueurs en temps réel, gagne de l’XP et franchis les divisions.</p><button class="lg-b" data-a="mm">Chercher une partie</button><div class="lg-row" style="margin-top:8px"><button class="lg-b s" data-a="cr">Créer un salon</button><input class="lg-in" id="lgc" placeholder="Code" maxlength="4" inputmode="numeric" oninput="this.value=this.value.replace(/\\D/g,'')"><button class="lg-b s g" data-a="jn">Rejoindre</button></div></div>
   <div class="lg-card gold"><h3>⚔️ Solo vs Bots</h3><p>Adversaire actuel : <b style="color:var(--gold)">${BOTS[d.l]}</b> (niveau ${diffOf(d.l) === 'easy' ? 'Nul' : diffOf(d.l) === 'medium' ? 'Moyen' : 'Expert'}). Joue seul ou invite un ami.</p><div class="lg-row"><button class="lg-b g" data-a="solo">Jouer solo</button><button class="lg-b" data-a="coop">🤝 Co-op</button></div></div>
   <div class="lg-card"><h3>🎯 Défis</h3>${chal()}</div>`,
+  stats: () => statsV(), shop: () => shopV(),
   room: () => { const d = R && R.d; if (!d) return '<div class="lg-card">Connexion au salon…</div>'; const u = me(), host = d.host === u.uid, cl = ['#1E88E5','#FFF176','#E53935','#43A047'], meP = d.players.find(p => p.uid === u.uid), sl = seatList(d.players);
     return `<div class="lg-card gold"><p style="margin:0;text-align:center">${esc(R.title)}${d.lg === 'solo' ? ' · Co-op' : ''}</p><div class="lg-code">${d.code}</div><div class="lg-row"><button class="lg-b s" data-a="cp">📋 Copier</button><button class="lg-b s g" data-a="inv">📨 Inviter un ami</button></div></div>
     <div class="lg-card"><div class="lg-slots">${[0,1,2,3].map(i => { const p = sl[i]; return p ? `<div class="lg-sl" style="--sc:${cl[i]}" data-a="pc" data-v="${i}"><div class="lg-av ${sq()}" style="${av(p.avatarFile)}"></div><b>${p.uid === d.host ? '👑 ' : ''}${esc(p.pseudo)}</b><br><small>${p.ready ? '✅ Prêt' : '⏳ En attente'} · Éq. ${i % 2 ? 'B' : 'A'}</small></div>` : `<div class="lg-sl" style="--sc:${cl[i]};opacity:.85" data-a="seat" data-v="${i}"><div class="lg-av" style="display:flex;align-items:center;justify-content:center;font-size:24px">${R.bots ? '🤖' : '＋'}</div><b>${R.bots ? 'Bot' : 'Place libre'}</b><br><small>Éq. ${i % 2 ? 'B' : 'A'} · 🪑 S’asseoir</small></div>`; }).join('')}</div><p style="margin:10px 0 0;font-size:.8em">Touche un siège libre pour t’y asseoir. Sièges 1 & 3 = Équipe A, sièges 2 & 4 = Équipe B. Le siège 1 doit être occupé par un joueur.</p>
@@ -2515,15 +2522,54 @@ const V = {
     ${host ? '<button class="lg-b g" data-a="go">▶ Lancer la partie</button>' : `<button class="lg-b ${meP && meP.ready ? '' : 'g'}" data-a="rdy">${meP && meP.ready ? 'Annuler « Prêt »' : 'Je suis prêt !'}</button>`}<button class="lg-b r" data-a="lv">Quitter le salon</button>`; },
   profile: d => `<div class="lg-card gold" style="text-align:center"><div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)};width:96px;height:96px;margin:0 auto 10px;cursor:pointer" data-a="avs"></div><button class="lg-b s" data-a="avs">🖼️ Changer d’avatar</button>
     <div class="lg-row" style="margin-top:12px"><input class="lg-in" id="lgn" maxlength="16" value="${esc(playerProfile.pseudo)}"><button class="lg-b s g" data-a="nm" style="flex:none">Enregistrer</button></div></div>
-  <div class="lg-card"><h3>Division ${d.l} · ${esc(d.n)}</h3>${gauge(d)}<div class="lg-st" style="margin-top:10px"><div><b>${L.p}</b>Parties</div><div><b>${L.w}</b>Victoires</div><div><b>${L.l}</b>Défaites</div><div><b>${L.p ? Math.round(L.w / L.p * 100) : 0}%</b>Victoires</div><div><b>${L.ws}</b>Série en cours</div><div><b>${L.best}</b>Meilleure série</div></div></div>
+  <div class="lg-card"><h3>Division ${d.l} · ${esc(d.n)}</h3>${gauge(d)}<div class="lg-st" style="margin-top:10px"><div><b>${A0().p}</b>Parties</div><div><b>${A0().w}</b>Victoires</div><div><b>${A0().l}</b>Défaites</div><div><b>${A0().p ? Math.round(A0().w / A0().p * 100) : 0}%</b>Victoires</div><div><b>${L.ws}</b>Série en cours</div><div><b>${L.best}</b>Meilleure série</div></div></div>
   <div class="lg-card"><h3>Mon code ami</h3><p style="word-break:break-all;font-size:.8em">${me() ? me().uid : ''}</p><button class="lg-b s" data-a="cpu">📋 Copier mon code</button></div>
   <button class="lg-b r" data-a="out">Se déconnecter</button>`,
-  friends: () => `<div class="lg-card"><h3>Ajouter un ami</h3><div class="lg-row"><input class="lg-in" id="lgf" placeholder="Code ami du joueur"><button class="lg-b s g" data-a="af" style="flex:none">Envoyer</button></div></div>
+  friends: () => `${rank()}<div class="lg-card"><h3>Ajouter un ami</h3><div class="lg-row"><input class="lg-in" id="lgf" placeholder="Code ami du joueur"><button class="lg-b s g" data-a="af" style="flex:none">Envoyer</button></div></div>
   <div class="lg-card"><h3>Mes amis (${S.friends.length})</h3>${S.friends.length ? S.friends.map((f, i) => `<div class="lg-li"><div class="lg-av ${sq()}" style="${av(f.av)}"><i class="lg-dot ${online(f.uid) ? 'on' : ''}"></i></div><div class="t"><b>${esc(f.pseudo)}</b><small>${online(f.uid) ? '🟢 En ligne' : '⚫ Hors ligne'}</small></div>${R && online(f.uid) ? `<button class="lg-b s g" data-a="fi" data-v="${i}">Inviter</button>` : ''}</div>`).join('') : '<p>Pas encore d’amis. Clique sur l’avatar d’un joueur dans un salon pour lui envoyer une demande !</p>'}${R ? '' : '<p style="font-size:.8em;margin:0">Crée un salon pour inviter un ami connecté.</p>'}</div>`,
   inbox: () => { const l = S.inbox.slice().sort((a, b) => b.ts - a.ts); return `<div class="lg-card"><h3>Messagerie</h3>${l.length ? l.map(m => { const i = S.inbox.indexOf(m);
     return `<div class="lg-li" style="${m.ts > S.rd ? 'border:1px solid var(--cyan)' : ''}">${m.av ? `<div class="lg-av ${sq()}" style="${av(m.av)}"></div>` : '<div style="font-size:30px">📣</div>'}<div class="t"><b>${m.type === 'fr' ? esc(m.name) + ' veut être ton ami' : m.type === 'inv' ? esc(m.name) + ' t’invite à jouer' : esc(m.name || 'Info')}</b><small>${m.type === 'info' ? esc(m.text) : m.type === 'inv' ? 'Salon ' + esc(m.code) : 'Demande d’ami'}</small></div>
     ${m.type === 'fr' ? `<button class="lg-b s g" data-a="ok" data-v="${i}">✔</button><button class="lg-b s r" data-a="del" data-v="${i}">✕</button>` : m.type === 'inv' ? `<button class="lg-b s g" data-a="ji" data-v="${i}">Rejoindre</button><button class="lg-b s r" data-a="del" data-v="${i}">✕</button>` : `<button class="lg-b s" data-a="del" data-v="${i}">✕</button>`}</div>`; }).join('') : '<p>Aucun message pour le moment.</p>'}</div>`; }
 };
+const TROPHIES = [
+  {i:'🥇',n:'Première victoire',d:'Gagne 1 partie',v:() => A0().w,m:1},{i:'🔥',n:'En feu',d:'Série de 5 victoires',v:() => L.best,m:5},
+  {i:'⚔️',n:'Vétéran',d:'Joue 50 parties',v:() => A0().p,m:50},{i:'🏆',n:'Champion',d:'Gagne 25 parties',v:() => A0().w,m:25},
+  {i:'💥',n:'Chasseur',d:'Mange 50 pions',v:() => L.ate || 0,m:50},{i:'🌐',n:'Roi du multijoueur',d:'Gagne 10 parties multijoueur',v:() => ((L.st || {}).mm || {}).w || 0,m:10},
+  {i:'🤖',n:'Briseur de bots',d:'Gagne 20 parties contre les bots',v:() => ((L.st || {}).bots || {}).w || 0,m:20},{i:'🦅',n:'Phénix Légendaire',d:'Atteins la Division 1',v:() => L.xp,m:90000},
+  {i:'❓',n:'???',d:'Bientôt…',v:() => 0,m:1,soon:1},{i:'❓',n:'???',d:'Bientôt…',v:() => 0,m:1,soon:1}];
+const ITEMS = [{id:'bx',i:'⚡',n:'Boost XP ×2',d:'Double les XP de tes 3 prochaines victoires de Ligue.',cur:'gems',p:25,have:() => L.bx || 0},{id:'sh',i:'🛡️',n:'Bouclier de série',d:'Ta prochaine défaite ne casse pas ta série de victoires.',cur:'gold',p:800,have:() => L.sh || 0}];
+function checkTr() { L.tr = L.tr || {}; TROPHIES.forEach(t => { if (!t.soon && !L.tr[t.n] && t.v() >= t.m) { L.tr[t.n] = 1; sendInbox(me().uid, {type:'info', name:'Trophée débloqué', text:`${t.i} ${t.n} — ${t.d}`}); toast(`🏆 Trophée débloqué : ${t.n}`, 'success'); } }); }
+function hero(d) {
+  const nx = DV.find(x => x.l === d.l - 1), a = A0(), ok = L.dl === dayKey(), n3 = DAILY.filter(c => prog(L.dp, c.k) >= c.n).length;
+  return `<div class="lg-card gold lg-hero"><div class="lg-emb"><b>${d.l}</b></div><div style="flex:1;min-width:0"><div style="color:var(--gold);font-weight:900;font-size:1.2em">${esc(d.n)}</div><small style="color:#9fc3ea">Division ${d.l} · gains ×${d.m}</small><div style="margin:6px 0">${gauge(d)}</div><small style="color:#9fc3ea">${nx ? `Encore <b style="color:#fff">${(d.b - L.xp).toLocaleString('fr-FR')} XP</b> pour devenir « ${esc(nx.n)} »` : '👑 Rang maximum atteint !'}</small></div></div>
+  <div class="lg-path">${DV.map(x => `<span class="${x.l === d.l ? 'cur' : x.l > d.l ? 'dn' : ''}">${x.l}</span>`).join('')}</div>
+  <div class="lg-st" style="grid-template-columns:repeat(3,1fr)"><div><b>🔥 ${L.ws}</b>Série ×${sm()}</div><div><b>${L.best}</b>Record série</div><div><b>${a.p ? Math.round(a.w / a.p * 100) : 0}%</b>Victoires</div></div>
+  <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<button class="lg-b s" style="margin-top:8px;width:100%" data-a="divs">📜 Divisions & barème</button></div>`;
+}
+function dailyGift() {
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return; L.dd = L.dl === y ? (L.dd || 0) + 1 : 1; L.dl = dayKey();
+  const day = (L.dd - 1) % 7 + 1, g = 100 * day, gm = day === 7 ? 10 : 0; playerProfile.gold = (playerProfile.gold || 0) + g; playerProfile.gems = (playerProfile.gems || 0) + gm; pushProfile(); save();
+  good('Cadeau du jour !', `Jour ${day}/7 · 🪙 +${g}${gm ? ' · 💎 +' + gm : ''}<br>Reviens demain pour la suite !`); render();
+}
+function statsV() {
+  const s = L.st || {}, a = A0(), pc = o => o && o.p ? Math.round(o.w / o.p * 100) : 0, tab = `<div class="lg-row"><button class="lg-b s ${ST === 'troph' ? 'g' : ''}" data-a="st" data-v="troph">🏆 Trophées</button><button class="lg-b s ${ST === 'stats' ? 'g' : ''}" data-a="st" data-v="stats">📊 Stats</button></div>`;
+  if (ST === 'troph') { const real = TROPHIES.filter(t => !t.soon), n = real.filter(t => t.v() >= t.m).length;
+    return tab + `<div class="lg-card gold"><h3>Mes trophées</h3><p style="margin:0">${n} / ${real.length} débloqués · d’autres arrivent bientôt !</p></div><div class="lg-slots">${TROPHIES.map(t => { const u = !t.soon && t.v() >= t.m, p = Math.min(100, t.v() / t.m * 100); return `<div class="lg-tr ${u ? 'u' : ''}"><i>${t.i}</i><b>${t.n}</b><br><small style="color:#9fc3ea">${t.d}</small>${t.soon ? '' : `<div class="lg-gauge" style="height:10px;margin-top:6px"><i style="width:${p}%"></i></div><small>${Math.min(t.v(), t.m).toLocaleString('fr-FR')} / ${t.m.toLocaleString('fr-FR')}</small>`}</div>`; }).join('')}</div>`; }
+  const row = (n, o, ic) => `<div class="lg-card"><div class="lg-row lg-sp"><b>${ic} ${n}</b><b style="text-align:right;color:var(--gold)">${pc(o)}%</b></div><div class="lg-gauge" style="height:12px;margin:6px 0"><i style="width:${pc(o)}%"></i></div><small style="color:#9fc3ea">${o ? o.p : 0} parties · ${o ? o.w : 0} victoires · ${o ? o.l : 0} défaites</small></div>`;
+  return tab + `<div class="lg-card gold"><h3>Mes statistiques</h3><div class="lg-st"><div><b>${a.p}</b>Parties jouées</div><div><b>${pc(a)}%</b>de victoires</div><div><b>${a.w}</b>Victoires</div><div><b>${a.l}</b>Défaites</div><div><b>${L.ate || 0}</b>💥 Pions mangés</div><div><b>${L.eaten || 0}</b>💀 Mes pions mangés</div></div></div>` + row('Multijoueur', s.mm, '🌐') + row('Salon privé', s.priv, '🔒') + row('Contre les bots', s.bots, '🤖');
+}
+function shopV() {
+  return `<div class="lg-card gold"><h3>🛒 Boutique</h3><p style="margin:0">Tu as 🪙 <b>${(playerProfile.gold || 0).toLocaleString('fr-FR')}</b> et 💎 <b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>. Gagne-en avec les défis et le cadeau du jour !</p></div>` + ITEMS.map(x => `<div class="lg-card"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('') + '<div class="lg-card" style="text-align:center;opacity:.7"><div style="font-size:34px">🔒</div><p style="margin:0">De nouveaux articles arrivent bientôt…</p></div>';
+}
+async function buy(id) {
+  const x = ITEMS.find(i => i.id === id), c = x.cur, ic = c === 'gems' ? '💎' : '🪙'; if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
+  if (!await dlg(x.n, `Acheter pour ${ic} ${x.p} ?`, [{t:'Annuler',v:0},{t:'Acheter',v:1,c:'g'}])) return;
+  playerProfile[c] -= x.p; if (id === 'bx') L.bx = (L.bx || 0) + 3; else L.sh = (L.sh || 0) + 1; pushProfile(); save(); good('Achat réussi !', `${x.i} ${esc(x.n)} ajouté à ton inventaire.`); render();
+}
+function rank() {
+  const list = [{pseudo:playerProfile.pseudo, av:playerProfile.avatarFile, xp:L.xp, ws:L.ws, me:1}].concat(S.friends.map(f => { const g = FD[f.uid] || {}, l = g.lg || {}; return {pseudo:g.pseudo || f.pseudo, av:g.av || f.av, xp:l.xp || 0, ws:l.ws || 0}; })).sort((a, b) => b.xp - a.xp);
+  return `<div class="lg-card gold"><h3>🏅 Classement entre amis</h3>${list.map((p, i) => `<div class="lg-li" style="${p.me ? 'border:1px solid var(--gold)' : ''}"><div style="font-size:22px;width:30px;text-align:center;flex:none">${['🥇','🥈','🥉'][i] || i + 1}</div><div class="lg-av ${sq()}" style="${av(p.av)};width:38px;height:38px"></div><div class="t"><b>${esc(p.pseudo)}${p.me ? ' (toi)' : ''}</b><small>Div ${divOf(p.xp).l} · ${esc(divOf(p.xp).n)} · 🔥 ${p.ws}</small></div><b style="color:var(--gold);flex:none">${p.xp.toLocaleString('fr-FR')}</b></div>`).join('')}</div>`;
+}
 function chal() {
   roll(); const row = (c, b, id) => { const p = Math.min(prog(b, c.k), c.n), ok = (b.cl || []).includes(id), full = p >= c.n;
     return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
@@ -2531,7 +2577,7 @@ function chal() {
 }
 function claim(id) {
   const c = (id[0] === 'd' ? DAILY : WEEKLY)[+id.slice(1)], b = id[0] === 'd' ? L.dp : L.wp; if (!c || prog(b, c.k) < c.n || (b.cl || []).includes(id)) return;
-  (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; saveProfile(); updateCurrencyUI(); save(); sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP et ${c.g} gemmes !`});
+  (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; pushProfile(); save(); sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP et ${c.g} gemmes !`});
   good('Défi réussi !', `+${c.xp} XP · 💎 +${c.g}`); render();
 }
 
@@ -2551,7 +2597,7 @@ const A = {
   out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { await F().signOut(F().auth); location.reload(); } },
   af: async () => { const id = ($('lgf').value || '').trim(); if (id.length < 10) return err('Code invalide', 'Colle le code ami complet du joueur (visible dans son Profil).'); if (id === me().uid) return err('Oups', 'Tu ne peux pas t’ajouter toi-même.');
     const s = await F().getDoc(sref(id)).catch(() => null); addFriend({uid:id, pseudo:(s && s.exists() && s.data().pseudo) || 'ce joueur'}); },
-  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v)
+  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v), dg: dailyGift, st: e => { ST = e.dataset.v; render(); }, buy: e => buy(e.dataset.v)
 };
 root.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (t && A[t.dataset.a]) A[t.dataset.a](t); });
 function openLG() { if (!me()) return toast('Connecte-toi d’abord !', 'error'); open = true; root.classList.add('on'); T = R ? 'room' : 'home'; initSocial(); render(); anim(); }
@@ -2565,13 +2611,23 @@ function anim() { if (!open) return; const w = cv.width = root.clientWidth, h = 
 /* ---------- BRANCHEMENT SUR LE JEU (sans le modifier) ---------- */
 const safeOpen = tab => { try { openLG(); if (tab && open) { T = tab; render(); } } catch (x) { console.error(x); toast('Erreur Ligue : ' + x.message, 'error'); } };
 document.addEventListener('click', e => { const hx = e.target.closest('.hex-btn-container'), mb = e.target.closest('.bottom-bar .icon-btn');
-  if (hx && /Ligues/i.test(hx.textContent)) { e.stopImmediatePropagation(); e.preventDefault(); safeOpen(); }
+  const tb = hx && (/Ligues/i.test(hx.textContent) ? 'home' : /Boutique/i.test(hx.textContent) ? 'shop' : /Troph|Stats/i.test(hx.textContent) ? 'stats' : null);
+  if (tb) { e.stopImmediatePropagation(); e.preventDefault(); safeOpen(tb === 'home' ? undefined : tb); }
   else if (mb && mb.textContent.includes('💬')) { e.stopImmediatePropagation(); e.preventDefault(); safeOpen('inbox'); } }, true);
-console.log('Menu Ligue chargé'); setTimeout(() => toast('Menu Ligue chargé ✔', 'success'), 2500);
+
 setInterval(() => { if (me()) initSocial(); }, 1500);
 if (window.processCard) { const pc = window.processCard; window.processCard = function (p, c) { try { if (LGMODE && c && p === myPlayerIndex) { if (c.r === 'PHOENIX') bump('phoenix'); if (c.r === 'MANDALA') bump('mandala'); } } catch (e) {} return pc.apply(this, arguments); }; }
-setInterval(() => { if (!LGMODE || done || !state.gameOver || !$('overlay').classList.contains('show')) return; done = true;
-  const t = $('ov-msg').textContent, winA = /Équipe A/.test(t), mineA = myPlayerIndex % 2 === 0; finish(winA === mineA, state.pawns[myPlayerIndex].every(p => p.state === 'SAFE')); }, 800);
+const homeN = pid => { let n = 0; for (let p = 0; p < 4; p++) if (PLAYERS[p].team !== PLAYERS[pid].team) n += state.pawns[p].filter(x => x.state === 'HOME').length; return n; };
+if (window.handleCapture) { const hc = window.handleCapture; window.handleCapture = async function (pid) { let b = 0, hu = false; try { hu = !PLAYERS[pid].isBot; if (hu) b = homeN(pid); } catch (e) {} const r = await hc.apply(this, arguments); try { if (hu) gc.ate += Math.max(0, homeN(pid) - b); } catch (e) {} return r; }; }
+setInterval(() => {
+  const g = $('game-screen') && $('game-screen').classList.contains('active');
+  if (g && !wasG) { done = false; gc = {ate:0, eaten:0, prev:null}; } if (!g && wasG) { LGMODE = null; KIND = null; } wasG = g; if (!g || done) return;
+  const mine = state.pawns && state.pawns[myPlayerIndex]; if (mine) { const cur = mine.map(p => p.state); if (gc.prev) cur.forEach((s, i) => { if (gc.prev[i] === 'TRACK' && s === 'HOME') gc.eaten++; }); gc.prev = cur; }
+  if (!state.gameOver || !$('overlay').classList.contains('show')) return; done = true;
+  const t = $('ov-msg').textContent, win = /Équipe A/.test(t) === (myPlayerIndex % 2 === 0), pions = state.pawns[myPlayerIndex].every(p => p.state === 'SAFE');
+  record(win, KIND || (currentRoomCode ? 'priv' : 'bots'));
+  if (LGMODE) finish(win, pions); else { save(); toast(win ? '🏆 Victoire enregistrée dans tes stats' : 'Partie enregistrée dans tes stats', 'success'); }
+}, 500);
 
 /* ---------- CHAT VOCAL (WebRTC, signalisation Firestore voice/{code}) ---------- */
 const V2 = {on:false, p:{}, mu:{}, stream:null, off:null, code:null};
