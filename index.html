@@ -615,15 +615,23 @@ function renderRoomSlots() {
   list.innerHTML = html;
   const me = user && players.find(p => p.uid === user.uid); const btn = document.getElementById('btn-ready'); if (btn) btn.textContent = me && me.ready ? 'Annuler « Prêt »' : 'Je suis prêt !';
 }
+/* Sièges : chaque joueur a un champ seat (0-3). Sans seat → premier siège libre. Sièges 0 & 2 = équipe A, 1 & 3 = équipe B. */
+function seatList(players) {
+  const r = [null, null, null, null], rest = [];
+  (players || []).forEach(p => { if (p && p.seat >= 0 && p.seat < 4 && !r[p.seat]) r[p.seat] = p; else if (p) rest.push(p); });
+  rest.forEach(p => { const i = r.findIndex(x => !x); if (i >= 0) r[i] = p; });
+  return r;
+}
 function launchFromRoom() {
   if (roomStarted) return;
   roomStarted = true;
   state.botDifficulty = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
   const user = window.FB.auth.currentUser;
   const players = lastRoomData.players || [];
-  myPlayerIndex = players.findIndex(p => p.uid === user.uid);
+  const sl = seatList(players);
+  myPlayerIndex = sl.findIndex(p => p && p.uid === user.uid);
   if (myPlayerIndex === -1) myPlayerIndex = 0;
-  roomUids = players.map(p => p.uid);
+  roomUids = sl.map(p => p ? p.uid : null);
   if (roomListener) { roomListener(); roomListener = null; }
   currentRoomCode = lastRoomData.code;
   startGame(true);
@@ -1076,7 +1084,7 @@ function initGame(isHost = true) {
 
     if (isHost) {
       if (currentRoomCode && lastRoomData && lastRoomData.players) {
-        const rp = lastRoomData.players;
+        const rp = seatList(lastRoomData.players);
         PLAYERS[0].name = rp[0] ? rp[0].pseudo : playerProfile.pseudo;
         PLAYERS[0].avatarFile = rp[0] ? rp[0].avatarFile : playerProfile.avatarFile;
         PLAYERS[0].isBot = false;
@@ -2268,6 +2276,342 @@ function backToMenu() {
     document.getElementById('main-menu').classList.add('active');
   }
 }
+</script>
+<script>
+/* ===== MENU LIGUE ===== */
+/* ===== PHOENIX JACKAROO — MENU LIGUE (module autonome) =====
+   Ajout : <script src="ligue.js"></script> juste avant </body> de index.html.
+   Aucune modification du jeu : le module se branche sur ses fonctions existantes. */
+(() => {
+'use strict';
+const $ = i => document.getElementById(i), F = () => window.FB, me = () => F() && F().auth.currentUser;
+const esc = s => escapeHTML(s), toast = (m, t) => showToast(m, t);
+const DV = [[10,'Débutant',0,1500,1],[9,'Apprenti',1500,3000,1.2],[8,'Adepte',3000,6000,1.4],[7,'Vétéran',6000,12000,1.6],[6,'Maître',12000,20000,1.8],[5,'Élixir',20000,30000,2],[4,'Seigneur',30000,45000,2.2],[3,'Grand Maître',45000,65000,2.4],[2,"Phénix d'Argent",65000,90000,2.6],[1,'Phénix Légendaire',90000,1e9,3]].map(a => ({l:a[0],n:a[1],a:a[2],b:a[3],m:a[4]}));
+const BOTS = {10:'Débutant',9:'Novice',8:'Rusé',7:'Stratège',6:'Redoutable',5:'Expert',4:'Implacable',3:'Maître des flammes',2:'Phénix Noir',1:'Phénix Ultime Imbattable'};
+const divOf = x => DV.find(d => x >= d.a && x < d.b) || DV[9];
+const diffOf = l => l >= 8 ? 'easy' : l >= 4 ? 'medium' : 'expert';
+const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8}];
+const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20}];
+let L = {xp:0,ws:0,ls:0,best:0,w:0,l:0,p:0,dp:{},wp:{},hi:0}, S = {friends:[],inbox:[],rd:0}, FS = {}, FL = {};
+let T = 'home', R = null, LGMODE = null, done = false, open = false, busy = false;
+
+/* ---------- STYLE ---------- */
+const css = `
+.lg{position:absolute;inset:0;z-index:300;display:none;flex-direction:column;color:#fff;background:linear-gradient(180deg,rgba(2,8,24,.72),rgba(2,8,24,.92)),var(--bg-menu) center/cover no-repeat,#020814;padding-top:var(--safe-top);font-size:clamp(13px,3.6vw,16px)}
+.lg.on{display:flex}.lg canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.lg>*:not(canvas){position:relative;z-index:2}
+.lg-top{display:flex;align-items:center;gap:10px;margin:10px;padding:8px 12px;border:1.5px solid var(--cyan);border-radius:16px;background:linear-gradient(160deg,rgba(10,35,85,.9),rgba(4,16,48,.95));box-shadow:0 0 18px rgba(0,229,255,.4)}
+.lg-av{width:48px;height:48px;border-radius:50%;border:2.5px solid var(--gold);background:#000 center/cover;box-shadow:0 0 12px rgba(230,195,92,.6);flex:none;position:relative}
+.lg-av.sq{border-radius:10px}.lg-top b{display:block;text-shadow:0 0 8px var(--cyan)}.lg-top small{color:var(--gold);font-weight:700}
+.lg-cur{margin-left:auto;text-align:right;font-weight:700;line-height:1.5}
+.lg-x{background:none;border:1.5px solid var(--cyan);color:#fff;border-radius:50%;width:34px;height:34px;font-size:16px;cursor:pointer;flex:none}
+.lg-main{flex:1;overflow-y:auto;padding:4px 10px 10px;display:flex;flex-direction:column;gap:12px;-webkit-overflow-scrolling:touch}
+.lg-card{border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));box-shadow:0 0 14px rgba(0,229,255,.18)}
+.lg-card.gold{border-color:var(--gold);box-shadow:0 0 14px rgba(230,195,92,.3)}
+.lg-card h3{color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}.lg-card p{color:#b9d2f3;line-height:1.4;margin-bottom:10px;font-size:.92em}
+.lg-gauge{height:22px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.6);overflow:hidden;position:relative}
+.lg-gauge i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--gold));box-shadow:0 0 14px var(--cyan);transition:width 1.1s cubic-bezier(.4,0,.2,1)}
+.lg-gauge span{position:absolute;inset:0;text-align:center;font-size:12px;line-height:22px;font-weight:700;text-shadow:0 0 4px #000}
+.lg-row{display:flex;gap:8px;align-items:center}.lg-row>*{flex:1}.lg-sp{justify-content:space-between}
+.lg-b{padding:11px 10px;border:1.5px solid var(--cyan);border-radius:12px;background:linear-gradient(180deg,rgba(0,229,255,.22),rgba(4,16,48,.85));color:#fff;font-weight:800;text-transform:uppercase;font-size:.9em;cursor:pointer;transition:.2s;width:100%}
+.lg-b:hover,.lg-b:active{background:var(--cyan);color:#000;box-shadow:0 0 14px var(--cyan)}
+.lg-b.g{border-color:var(--gold);background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85))}.lg-b.g:hover,.lg-b.g:active{background:var(--gold);color:#000;box-shadow:0 0 14px var(--gold)}
+.lg-b.r{border-color:#ff5252}.lg-b.s{padding:6px 10px;width:auto;font-size:.8em}.lg-b:disabled{opacity:.4;pointer-events:none}
+.lg-in{width:100%;padding:11px;border-radius:12px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:16px;text-align:center;outline:none}.lg-in:focus{border-color:var(--cyan);box-shadow:0 0 10px var(--cyan)}
+.lg-nav{display:flex;margin:0 10px calc(10px + var(--safe-bottom));border:1.5px solid var(--cyan);border-radius:18px;background:rgba(4,16,48,.95);overflow:hidden}
+.lg-nav button{flex:1;padding:9px 2px;background:none;border:0;color:#9fc3ea;font-size:.75em;font-weight:700;cursor:pointer;position:relative}.lg-nav button b{display:block;font-size:1.6em}
+.lg-nav button.on{color:#fff;background:linear-gradient(180deg,rgba(0,229,255,.28),transparent);text-shadow:0 0 8px var(--cyan)}
+.lg-bd{position:absolute;top:3px;right:18%;background:#ff3d57;border-radius:10px;min-width:17px;height:17px;font-size:11px;line-height:17px;box-shadow:0 0 8px #ff3d57}
+.lg-st{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lg-st div{background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center;color:#9fc3ea;font-size:.8em}.lg-st b{display:block;color:#fff;font-size:1.4em}
+.lg-li{display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:8px}.lg-li .t{flex:1;min-width:0}.lg-li .t small{display:block;color:#9fc3ea}
+.lg-dot{position:absolute;right:-2px;bottom:-2px;width:14px;height:14px;border-radius:50%;background:#556;border:2px solid #041030}.lg-dot.on{background:#00ffa8;box-shadow:0 0 8px #00ffa8}
+.lg-slots{display:grid;grid-template-columns:1fr 1fr;gap:8px}.lg-sl{text-align:center;padding:10px;border-radius:14px;border:2px solid var(--sc);background:rgba(0,0,0,.4);cursor:pointer}.lg-sl .lg-av{margin:0 auto 6px;border-color:var(--sc)}
+.lg-code{font-size:2.6em;letter-spacing:.3em;text-align:center;color:var(--gold-2);text-shadow:0 0 18px var(--gold);font-weight:900}
+.lg-ch{margin-bottom:10px}.lg-ch .lg-gauge{height:12px;margin-top:5px}.lg-ch .lg-gauge i{transition:none}
+.lg-ov{position:absolute;inset:0;z-index:320;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,20,.88);backdrop-filter:blur(8px);animation:lgF .3s}
+.lg-dl{width:100%;max-width:420px;max-height:88%;overflow-y:auto;border:2px solid var(--cyan);border-radius:20px;padding:18px;text-align:center;background:linear-gradient(160deg,rgba(10,35,85,.96),rgba(4,16,48,.98));box-shadow:0 0 30px rgba(0,229,255,.5)}
+.lg-dl.err{border-color:#ff5252;box-shadow:0 0 30px rgba(255,82,82,.5)}.lg-dl.ok{border-color:#00ffa8;box-shadow:0 0 30px rgba(0,255,168,.4)}
+.lg-dl h2{color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:10px;text-shadow:0 0 14px var(--gold)}.lg-dl .m{color:#cfe2ff;line-height:1.5;margin-bottom:14px}.lg-dl .lg-row{margin-top:8px}
+.lg-up{flex-direction:column;text-align:center;background:radial-gradient(circle,rgba(0,229,255,.25),rgba(2,8,20,.97) 70%);overflow:hidden}
+.lg-up .em{font-size:110px;animation:lgP 1.4s infinite alternate;position:relative}.lg-up .em:before{content:'';position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(var(--cyan),var(--gold),var(--cyan));-webkit-mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);animation:lgR 4s linear infinite}
+.lg-up h1{font-size:2.4em;color:var(--gold);letter-spacing:5px;text-shadow:0 0 25px var(--gold);margin:14px 0}.lg-up p{font-size:1.3em;color:var(--cyan);margin-bottom:22px}
+.lg-eb{position:absolute;bottom:-10px;width:8px;height:8px;border-radius:50%;animation:lgE 3s ease-out forwards}
+.lg-mic{position:absolute;left:50%;bottom:-3.4cqw;transform:translateX(-50%);width:7cqw;height:7cqw;min-width:24px;min-height:24px;border-radius:50%;border:1.5px solid var(--cyan);background:rgba(4,16,48,.92);color:#fff;font-size:3.4cqw;display:flex;align-items:center;justify-content:center;z-index:30;cursor:pointer;padding:0}
+.lg-mic.mu{border-color:#ff5252;background:rgba(80,10,16,.92)}.lg-mic.talk{border-color:#00ffa8;box-shadow:0 0 12px #00ffa8;animation:lgV .18s infinite alternate}
+@keyframes lgF{from{opacity:0}to{opacity:1}}@keyframes lgP{from{transform:scale(.9);filter:drop-shadow(0 0 20px var(--cyan))}to{transform:scale(1.1);filter:drop-shadow(0 0 50px var(--gold))}}
+@keyframes lgR{to{transform:rotate(360deg)}}@keyframes lgE{to{transform:translate(var(--dx),-110vh);opacity:0}}@keyframes lgV{from{transform:translateX(-50%) translateX(-1.5px) scale(1)}to{transform:translateX(-50%) translateX(1.5px) scale(1.12)}}`;
+const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
+const root = document.createElement('div'); root.className = 'lg'; root.innerHTML = '<canvas></canvas><div class="lg-top"></div><div class="lg-main"></div><div class="lg-nav"></div>';
+($('app') || document.body).appendChild(root);
+const TOP = root.children[1], MAIN = root.children[2], NAV = root.children[3], cv = root.children[0];
+
+/* ---------- OUTILS ---------- */
+const av = f => `background-image:url('avatar/${String(f || 'az').replace(/[^a-z0-9_-]/gi, '')}.jpg')`;
+const sq = () => playerProfile.avatarShape === 'round' ? '' : 'sq';
+function dlg(title, msg, btns, kind) {
+  return new Promise(res => {
+    const o = document.createElement('div'); o.className = 'lg-ov';
+    o.innerHTML = `<div class="lg-dl ${kind || ''}"><h2>${title}</h2><div class="m">${msg}</div><div class="lg-row" style="flex-wrap:wrap"></div></div>`;
+    const row = o.querySelector('.lg-row');
+    (btns || [{t:'OK',v:true}]).forEach(b => { const e = document.createElement('button'); e.className = 'lg-b ' + (b.c || ''); e.textContent = b.t; e.onclick = () => { o.remove(); res(b.v); }; row.appendChild(e); });
+    ($('app') || document.body).appendChild(o);
+  });
+}
+const err = (t, m) => dlg(t, m, [{t:'Compris',v:1}], 'err'), good = (t, m) => dlg(t, m, [{t:'Super !',v:1,c:'g'}], 'ok');
+const uref = () => F().doc(F().db, 'users', me().uid), sref = id => F().doc(F().db, 'social', id), mk = () => Math.random().toString(36).slice(2, 9);
+const prog = (b, k) => Math.min(b[k] || 0, 9999);
+function dayKey() { return new Date().toISOString().slice(0, 10); }
+function weekKey() { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + 'W' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); }
+function roll() { if (L.dp.day !== dayKey()) L.dp = {day:dayKey(), cl:[]}; if (L.wp.week !== weekKey()) L.wp = {week:weekKey(), cl:[]}; }
+function bump(k, v) { roll(); L.dp[k] = (L.dp[k] || 0) + (v || 1); L.wp[k] = k === 'streak' ? Math.max(L.wp[k] || 0, v) : (L.wp[k] || 0) + (v || 1); }
+function save() { try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} }
+async function load() {
+  const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) L = Object.assign(L, l); } catch (e) {}
+  try { const s = await F().getDoc(uref()); if (s.exists() && s.data().league && (s.data().league.p || 0) >= (L.p || 0)) L = Object.assign(L, s.data().league); } catch (e) {}
+  roll(); if (!L.hi) { L.hi = 1; sendInbox(u.uid, {type:'info', name:'Phoenix Jackaroo', text:'🔥 Bienvenue dans la Ligue ! Gagne des parties, relève les défis et grimpe jusqu’au Phénix Légendaire.'}); save(); }
+}
+
+/* ---------- XP ---------- */
+function settle(win, pions) {
+  const d = divOf(L.xp), r = {win, d0:d, x0:L.xp}; roll();
+  if (win) { L.ws++; L.ls = 0; L.w++; L.best = Math.max(L.best, L.ws); const sm = L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1, base = 200 + (pions ? 50 : 0);
+    r.g = Math.round(base * d.m * sm); Object.assign(r, {base, sm, dm:d.m, pions}); L.xp += r.g; bump('win'); bump('streak', L.ws);
+  } else { L.ws = 0; L.ls++; L.l++; const lm = L.ls >= 3 ? .7 : L.ls === 2 ? .85 : 1; r.lm = lm; r.g = -Math.round(100 * lm); L.xp = Math.max(d.a, L.xp + r.g); }
+  L.p++; bump('play'); r.d1 = divOf(L.xp); save(); return r;
+}
+async function finish(win, pions) {
+  const r = settle(win, pions), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
+  let h = win ? line('Victoire', '+200 XP') + (r.pions ? line('Bonus 4 pions', '+50 XP') : '') + line('Division ×' + r.dm, '') + line('Série ×' + r.sm, '') : line('Défaite', '−100 XP') + (r.lm < 1 ? line('Protection défaites ×' + r.lm, '') : '');
+  h += `<div style="font-size:2.2em;font-weight:900;color:${win ? '#00ffa8' : '#ff8a8a'};margin:10px 0">${r.g > 0 ? '+' : ''}${r.g} XP</div>`;
+  const d = r.d1; h += `<div class="lg-gauge"><i style="width:${Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100)}%"></i><span>${L.xp} / ${d.b > 1e8 ? '∞' : d.b} XP</span></div>`;
+  beep && beep(win ? 660 : 220, .25, 'triangle'); await dlg(win ? '🏆 Victoire !' : 'Défaite', h, [{t:'Continuer',v:1,c:'g'}], win ? 'ok' : 'err');
+  if (r.d1.l < r.d0.l) { sendInbox(me().uid, {type:'info', name:'Promotion', text:`🔥 Tu accèdes à la Division ${r.d1.l} – ${r.d1.n} !`}); await promo(r.d1); }
+  location.reload();
+}
+function promo(d) {
+  return new Promise(res => {
+    const o = document.createElement('div'); o.className = 'lg-ov lg-up'; o.style.flexDirection = 'column';
+    o.innerHTML = `<div class="em">🔥</div><h1>PROMOTION !</h1><p>Division ${d.l} — ${esc(d.n)}</p><button class="lg-b g" style="width:200px">Continuer</button>`;
+    for (let i = 0; i < 40; i++) { const e = document.createElement('i'); e.className = 'lg-eb'; e.style.cssText = `left:${Math.random() * 100}%;--dx:${Math.random() * 120 - 60}px;background:${Math.random() > .5 ? '#00e5ff' : '#ffd54a'};animation-delay:${Math.random() * 1.5}s;animation-duration:${2 + Math.random() * 2}s`; o.appendChild(e); }
+    o.querySelector('button').onclick = () => { o.remove(); res(); }; ($('app') || document.body).appendChild(o);
+    [523, 659, 784, 1047].forEach((f, i) => setTimeout(() => beep && beep(f, .35, 'triangle'), i * 160));
+  });
+}
+
+/* ---------- SOCIAL (Firestore : social/{uid}) ---------- */
+async function sendInbox(uid, m) { m.id = mk(); m.ts = Date.now(); try { await F().setDoc(sref(uid), {inbox: F().arrayUnion(m)}, {merge:true}); } catch (e) { return false; } return true; }
+const isFr = uid => S.friends.some(f => f.uid === uid), online = uid => Date.now() - (FS[uid] || 0) < 65000;
+const unread = () => S.inbox.filter(m => m.ts > (S.rd || 0)).length;
+function initSocial() {
+  const u = me(); if (!u || initSocial.on) return; initSocial.on = 1;
+  F().onSnapshot(sref(u.uid), s => { const d = s.exists() ? s.data() : {}; S = {friends:d.friends || [], inbox:d.inbox || [], rd:d.rd || 0};
+    S.friends.forEach(f => { if (!FL[f.uid]) FL[f.uid] = F().onSnapshot(sref(f.uid), x => { FS[f.uid] = x.exists() ? x.data().seen : 0; if (open && T === 'friends') render(); }); });
+    if (open) render(); badge(); }, () => {});
+  const ping = () => { if (!document.hidden) F().setDoc(sref(u.uid), {seen:Date.now(), pseudo:playerProfile.pseudo, av:playerProfile.avatarFile}, {merge:true}).catch(() => {}); };
+  ping(); setInterval(ping, 25000); load().then(() => open && render());
+}
+function badge() { const n = unread(); document.querySelectorAll('.lg-bd').forEach(b => { b.textContent = n; b.style.display = n ? 'block' : 'none'; }); }
+async function addFriend(p) {
+  if (!me() || p.uid === me().uid) return; if (isFr(p.uid)) return err('Déjà amis', `${esc(p.pseudo)} fait déjà partie de tes amis.`);
+  const ok = await sendInbox(p.uid, {type:'fr', from:me().uid, name:playerProfile.pseudo, av:playerProfile.avatarFile});
+  ok ? good('Demande envoyée', `${esc(p.pseudo)} recevra ta demande d’ami dans sa messagerie.`) : err('Envoi impossible', 'La demande n’a pas pu être envoyée. Vérifie ta connexion.');
+}
+async function acceptFr(m) {
+  try { await F().setDoc(sref(me().uid), {friends:F().arrayUnion({uid:m.from, pseudo:m.name, av:m.av}), inbox:F().arrayRemove(m)}, {merge:true});
+    await F().setDoc(sref(m.from), {friends:F().arrayUnion({uid:me().uid, pseudo:playerProfile.pseudo, av:playerProfile.avatarFile})}, {merge:true});
+    sendInbox(m.from, {type:'info', name:playerProfile.pseudo, text:`🤝 ${playerProfile.pseudo} a accepté ta demande d’ami !`}); toast(`${m.name} est maintenant ton ami`, 'success');
+  } catch (e) { err('Erreur', 'Impossible d’accepter la demande pour le moment.'); }
+}
+const rm = m => F().setDoc(sref(me().uid), {inbox:F().arrayRemove(m)}, {merge:true}).catch(() => {});
+async function invite(f) {
+  if (!R) return; const ok = await sendInbox(f.uid, {type:'inv', from:me().uid, name:playerProfile.pseudo, av:playerProfile.avatarFile, code:R.code});
+  ok ? toast(`Invitation envoyée à ${f.pseudo}`, 'success') : err('Invitation impossible', 'Ton ami n’a pas pu être invité.');
+}
+async function inviteDlg() {
+  const on = S.friends.filter(f => online(f.uid)); if (!on.length) return err('Aucun ami connecté', 'Tes amis doivent être en ligne pour recevoir une invitation.');
+  const o = document.createElement('div'); o.className = 'lg-ov'; o.innerHTML = `<div class="lg-dl"><h2>Inviter un ami</h2>${on.map((f, i) => `<div class="lg-li"><div class="lg-av ${sq()}" style="${av(f.av)}"></div><div class="t"><b>${esc(f.pseudo)}</b></div><button class="lg-b s g" data-i="${i}">Inviter</button></div>`).join('')}<button class="lg-b" style="margin-top:6px">Fermer</button></div>`;
+  o.onclick = e => { const i = e.target.dataset.i; if (i !== undefined) { invite(on[i]); e.target.disabled = true; e.target.textContent = '✔'; } else if (e.target.tagName === 'BUTTON') o.remove(); };
+  ($('app') || document.body).appendChild(o);
+}
+async function playerCard(p) {
+  const u = me(), self = p.uid === u.uid, f = isFr(p.uid);
+  const b = [{t:'Fermer', v:0}]; if (!self && !f) b.unshift({t:'➕ Ajouter en ami', v:1, c:'g'});
+  const r = await dlg(esc(p.pseudo), `<div class="lg-av ${''}" style="${av(p.avatarFile)};width:90px;height:90px;margin:0 auto 10px"></div>${self ? 'C’est toi !' : f ? '🤝 Vous êtes amis' : 'Envoyer une demande d’ami ?'}`, b);
+  if (r === 1) addFriend(p);
+}
+
+/* ---------- SALONS (collection rooms, même format que le jeu) ---------- */
+const room = c => F().doc(F().db, 'rooms', c), pub = () => F().doc(F().db, 'meta', 'openrooms');
+const myP = (ready, seat) => ({uid:me().uid, pseudo:playerProfile.pseudo, avatarFile:playerProfile.avatarFile, ready, seat});
+async function create(mode, isPub) {
+  if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); if (busy) return; busy = true;
+  try { let code = null; for (let i = 0; i < 6 && !code; i++) { const c = String(1000 + Math.floor(Math.random() * 9000)), s = await F().getDoc(room(c)); if (!s.exists() || s.data().status !== 'waiting') code = c; }
+    if (!code) throw 0; const d = {host:me().uid, code, players:[myP(true, 0)], fillBots:true, botDifficulty:diffOf(divOf(L.xp).l), status:'waiting', gameState:null, lg:mode};
+    await F().setDoc(room(code), d); if (isPub) F().setDoc(pub(), {r:{[code]:{code, host:me().uid, ts:Date.now()}}}, {merge:true}).catch(() => {});
+    roomStarted = false; currentRoomCode = code; enter(code, mode === 'solo' ? 'Salon Co-op' : isPub ? 'Recherche de joueurs…' : 'Salon privé');
+  } catch (e) { currentRoomCode = null; err('Création impossible', 'Le salon n’a pas pu être créé. Réessaie dans un instant.'); }
+  busy = false;
+}
+async function join(code, quiet) {
+  if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); if (!/^\d{4}$/.test(code)) return err('Code invalide', 'Entre le code à 4 chiffres du salon.');
+  try { const s = await F().getDoc(room(code)); if (!s.exists()) { quiet || err('Salon introuvable', 'Aucun salon ne correspond à ce code.'); return false; }
+    const d = s.data(); if (d.status !== 'waiting') { quiet || err('Salon indisponible', 'Ce salon est fermé ou la partie a déjà commencé.'); return false; }
+    if (!d.players.some(p => p.uid === me().uid)) { const sl = seatList(d.players), s = (d.lg === 'solo' ? [2,1,3,0] : [0,1,2,3]).find(i => !sl[i]); if (s === undefined) { quiet || err('Salon complet', 'Les 4 places sont déjà prises.'); return false; } await F().updateDoc(room(code), {players:F().arrayUnion(myP(false, s))}); }
+    roomStarted = false; currentRoomCode = code; enter(code, 'Salon ' + code); return true;
+  } catch (e) { quiet || err('Connexion impossible', 'Impossible de rejoindre ce salon.'); return false; }
+}
+async function matchmake() {
+  if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); toast('Recherche d’une partie…');
+  try { const s = await F().getDoc(pub()), r = (s.exists() && s.data().r) || {}, now = Date.now();
+    for (const c of Object.values(r).filter(x => x && now - x.ts < 6e5 && x.host !== me().uid).sort((a, b) => a.ts - b.ts)) if (await join(c.code, true)) return;
+  } catch (e) {} create('online', true);
+}
+function enter(code, title) {
+  R = {code, title, bots:true, d:null}; T = 'room'; if (roomListener) roomListener(); open || openLG(); render();
+  roomListener = F().onSnapshot(room(code), s => {
+    if (!s.exists()) { toast('Le salon n’existe plus', 'error'); return leave(false); } const d = s.data();
+    if (d.status === 'closed') { toast('Le salon a été fermé', 'error'); return leave(false); }
+    R.d = d; if (d.status === 'playing') { LGMODE = d.lg || null; done = false; lastRoomData = d; currentRoomCode = code; roomStarted = false; closeLG(); launchFromRoom(); return; } if (open) render();
+  }, e => toast('Erreur salon : ' + e.message, 'error'));
+}
+function leave(remote) {
+  if (roomListener) { roomListener(); roomListener = null; } const c = R && R.code, host = R && R.d && R.d.host === me().uid;
+  if (remote && c) leaveRoomRemote(c); if (host && c) F().setDoc(pub(), {r:{[c]:null}}, {merge:true}).catch(() => {});
+  R = null; currentRoomCode = null; lastRoomData = null; T = 'home'; open && render();
+}
+async function moveSeat(i) {
+  try { const d = (await F().getDoc(room(R.code))).data(), sl = seatList(d.players); if (sl[i]) return toast('Ce siège est déjà pris', 'error'); if (sl[i] === undefined) return;
+    await F().updateDoc(room(R.code), {players:d.players.map(p => p.uid === me().uid ? {...p, seat:i, ready:p.uid === d.host ? true : false} : p)}); toast('Tu es au siège ' + (i + 1), 'success');
+  } catch (e) { err('Changement impossible', 'Le siège n’a pas pu être changé.'); }
+}
+async function ready() { try { const d = (await F().getDoc(room(R.code))).data(); await F().updateDoc(room(R.code), {players:d.players.map(p => p.uid === me().uid ? {...p, ready:!p.ready} : p)}); } catch (e) { err('Erreur', 'Statut non mis à jour.'); } }
+async function launch() {
+  const d = R.d, pl = d.players; if (d.host !== me().uid) return err('Hôte uniquement', 'Seul l’hôte peut lancer la partie.'); if (!seatList(pl)[0]) return err('Siège 1 vide', 'Un joueur doit occuper le siège 1 : c’est lui qui gère la partie. Rassieds-toi ou demande à un joueur de le prendre.');
+  if (pl.length < 2 && !R.bots) return err('Joueurs manquants', 'Active les Bots ou attends un autre joueur.'); if (pl.some(p => p.uid !== me().uid && !p.ready)) return err('Joueurs pas prêts', 'Tous les joueurs doivent être prêts.');
+  try { F().setDoc(pub(), {r:{[R.code]:null}}, {merge:true}).catch(() => {}); await F().updateDoc(room(R.code), {status:'playing', fillBots:R.bots, botDifficulty:diffOf(divOf(L.xp).l)}); } catch (e) { err('Lancement impossible', 'La partie n’a pas pu démarrer.'); }
+}
+function solo() { LGMODE = 'solo'; done = false; state.botDifficulty = diffOf(divOf(L.xp).l); currentRoomCode = null; roomStarted = false; closeLG(); startGame(false); }
+
+/* ---------- VUES ---------- */
+const NAVS = [['home','🏆','Ligue'],['profile','👤','Profil'],['friends','👥','Amis'],['inbox','✉️','Messages']];
+function render() {
+  const d = divOf(L.xp), u = me();
+  TOP.innerHTML = `<div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)}"></div><div><b>${esc(playerProfile.pseudo)}</b><small>Div. ${d.l} · ${esc(d.n)}</small></div><div class="lg-cur">🪙 ${(playerProfile.gold || 0).toLocaleString('fr-FR')}<br>💎 ${(playerProfile.gems || 0).toLocaleString('fr-FR')}</div><button class="lg-x" data-a="close">✕</button>`;
+  NAV.innerHTML = NAVS.map(n => `<button class="${T === n[0] || (T === 'room' && n[0] === 'home') ? 'on' : ''}" data-a="tab" data-v="${n[0]}"><b>${n[1]}</b>${n[2]}${n[0] === 'inbox' ? '<i class="lg-bd" style="display:none"></i>' : ''}</button>`).join('');
+  MAIN.innerHTML = (V[T] || V.home)(d); badge();
+  requestAnimationFrame(() => { const g = MAIN.querySelector('[data-w]'); if (g) g.style.width = g.dataset.w + '%'; });
+}
+const gauge = d => { const p = Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100); return `<div class="lg-gauge"><i data-w="${p.toFixed(1)}"></i><span>${L.xp.toLocaleString('fr-FR')} / ${d.b > 1e8 ? '∞' : d.b.toLocaleString('fr-FR')} XP · ${Math.floor(p)}%</span></div>`; };
+const sm = () => L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1;
+const V = {
+  home: d => `<div class="lg-card gold"><div class="lg-row lg-sp" style="margin-bottom:8px"><span>Progression · <b style="color:var(--gold)">×${d.m}</b></span><span style="text-align:right">🔥 <b>${L.ws}</b> (×${sm()})</span></div>${gauge(d)}<button class="lg-b s" style="margin-top:8px;width:100%" data-a="divs">📜 Voir les divisions & le barème</button></div>
+  <div class="lg-card"><h3>🌐 Ligue en ligne</h3><p>Affronte des joueurs en temps réel, gagne de l’XP et franchis les divisions.</p><button class="lg-b" data-a="mm">Chercher une partie</button><div class="lg-row" style="margin-top:8px"><button class="lg-b s" data-a="cr">Créer un salon</button><input class="lg-in" id="lgc" placeholder="Code" maxlength="4" inputmode="numeric" oninput="this.value=this.value.replace(/\\D/g,'')"><button class="lg-b s g" data-a="jn">Rejoindre</button></div></div>
+  <div class="lg-card gold"><h3>⚔️ Solo vs Bots</h3><p>Adversaire actuel : <b style="color:var(--gold)">${BOTS[d.l]}</b> (niveau ${diffOf(d.l) === 'easy' ? 'Nul' : diffOf(d.l) === 'medium' ? 'Moyen' : 'Expert'}). Joue seul ou invite un ami.</p><div class="lg-row"><button class="lg-b g" data-a="solo">Jouer solo</button><button class="lg-b" data-a="coop">🤝 Co-op</button></div></div>
+  <div class="lg-card"><h3>🎯 Défis</h3>${chal()}</div>`,
+  room: () => { const d = R && R.d; if (!d) return '<div class="lg-card">Connexion au salon…</div>'; const u = me(), host = d.host === u.uid, cl = ['#1E88E5','#FFF176','#E53935','#43A047'], meP = d.players.find(p => p.uid === u.uid), sl = seatList(d.players);
+    return `<div class="lg-card gold"><p style="margin:0;text-align:center">${esc(R.title)}${d.lg === 'solo' ? ' · Co-op' : ''}</p><div class="lg-code">${d.code}</div><div class="lg-row"><button class="lg-b s" data-a="cp">📋 Copier</button><button class="lg-b s g" data-a="inv">📨 Inviter un ami</button></div></div>
+    <div class="lg-card"><div class="lg-slots">${[0,1,2,3].map(i => { const p = sl[i]; return p ? `<div class="lg-sl" style="--sc:${cl[i]}" data-a="pc" data-v="${i}"><div class="lg-av ${sq()}" style="${av(p.avatarFile)}"></div><b>${p.uid === d.host ? '👑 ' : ''}${esc(p.pseudo)}</b><br><small>${p.ready ? '✅ Prêt' : '⏳ En attente'} · Éq. ${i % 2 ? 'B' : 'A'}</small></div>` : `<div class="lg-sl" style="--sc:${cl[i]};opacity:.85" data-a="seat" data-v="${i}"><div class="lg-av" style="display:flex;align-items:center;justify-content:center;font-size:24px">${R.bots ? '🤖' : '＋'}</div><b>${R.bots ? 'Bot' : 'Place libre'}</b><br><small>Éq. ${i % 2 ? 'B' : 'A'} · 🪑 S’asseoir</small></div>`; }).join('')}</div><p style="margin:10px 0 0;font-size:.8em">Touche un siège libre pour t’y asseoir. Sièges 1 & 3 = Équipe A, sièges 2 & 4 = Équipe B. Le siège 1 doit être occupé par un joueur.</p>
+    ${host ? `<label class="lg-row lg-sp" style="margin-top:10px"><span>🤖 Compléter avec des Bots</span><input type="checkbox" data-a="bots" ${R.bots ? 'checked' : ''} style="flex:none;width:22px;height:22px"></label>` : ''}</div>
+    ${host ? '<button class="lg-b g" data-a="go">▶ Lancer la partie</button>' : `<button class="lg-b ${meP && meP.ready ? '' : 'g'}" data-a="rdy">${meP && meP.ready ? 'Annuler « Prêt »' : 'Je suis prêt !'}</button>`}<button class="lg-b r" data-a="lv">Quitter le salon</button>`; },
+  profile: d => `<div class="lg-card gold" style="text-align:center"><div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)};width:96px;height:96px;margin:0 auto 10px;cursor:pointer" data-a="avs"></div><button class="lg-b s" data-a="avs">🖼️ Changer d’avatar</button>
+    <div class="lg-row" style="margin-top:12px"><input class="lg-in" id="lgn" maxlength="16" value="${esc(playerProfile.pseudo)}"><button class="lg-b s g" data-a="nm" style="flex:none">Enregistrer</button></div></div>
+  <div class="lg-card"><h3>Division ${d.l} · ${esc(d.n)}</h3>${gauge(d)}<div class="lg-st" style="margin-top:10px"><div><b>${L.p}</b>Parties</div><div><b>${L.w}</b>Victoires</div><div><b>${L.l}</b>Défaites</div><div><b>${L.p ? Math.round(L.w / L.p * 100) : 0}%</b>Victoires</div><div><b>${L.ws}</b>Série en cours</div><div><b>${L.best}</b>Meilleure série</div></div></div>
+  <div class="lg-card"><h3>Mon code ami</h3><p style="word-break:break-all;font-size:.8em">${me() ? me().uid : ''}</p><button class="lg-b s" data-a="cpu">📋 Copier mon code</button></div>
+  <button class="lg-b r" data-a="out">Se déconnecter</button>`,
+  friends: () => `<div class="lg-card"><h3>Ajouter un ami</h3><div class="lg-row"><input class="lg-in" id="lgf" placeholder="Code ami du joueur"><button class="lg-b s g" data-a="af" style="flex:none">Envoyer</button></div></div>
+  <div class="lg-card"><h3>Mes amis (${S.friends.length})</h3>${S.friends.length ? S.friends.map((f, i) => `<div class="lg-li"><div class="lg-av ${sq()}" style="${av(f.av)}"><i class="lg-dot ${online(f.uid) ? 'on' : ''}"></i></div><div class="t"><b>${esc(f.pseudo)}</b><small>${online(f.uid) ? '🟢 En ligne' : '⚫ Hors ligne'}</small></div>${R && online(f.uid) ? `<button class="lg-b s g" data-a="fi" data-v="${i}">Inviter</button>` : ''}</div>`).join('') : '<p>Pas encore d’amis. Clique sur l’avatar d’un joueur dans un salon pour lui envoyer une demande !</p>'}${R ? '' : '<p style="font-size:.8em;margin:0">Crée un salon pour inviter un ami connecté.</p>'}</div>`,
+  inbox: () => { const l = S.inbox.slice().sort((a, b) => b.ts - a.ts); return `<div class="lg-card"><h3>Messagerie</h3>${l.length ? l.map(m => { const i = S.inbox.indexOf(m);
+    return `<div class="lg-li" style="${m.ts > S.rd ? 'border:1px solid var(--cyan)' : ''}">${m.av ? `<div class="lg-av ${sq()}" style="${av(m.av)}"></div>` : '<div style="font-size:30px">📣</div>'}<div class="t"><b>${m.type === 'fr' ? esc(m.name) + ' veut être ton ami' : m.type === 'inv' ? esc(m.name) + ' t’invite à jouer' : esc(m.name || 'Info')}</b><small>${m.type === 'info' ? esc(m.text) : m.type === 'inv' ? 'Salon ' + esc(m.code) : 'Demande d’ami'}</small></div>
+    ${m.type === 'fr' ? `<button class="lg-b s g" data-a="ok" data-v="${i}">✔</button><button class="lg-b s r" data-a="del" data-v="${i}">✕</button>` : m.type === 'inv' ? `<button class="lg-b s g" data-a="ji" data-v="${i}">Rejoindre</button><button class="lg-b s r" data-a="del" data-v="${i}">✕</button>` : `<button class="lg-b s" data-a="del" data-v="${i}">✕</button>`}</div>`; }).join('') : '<p>Aucun message pour le moment.</p>'}</div>`; }
+};
+function chal() {
+  roll(); const row = (c, b, id) => { const p = Math.min(prog(b, c.k), c.n), ok = (b.cl || []).includes(id), full = p >= c.n;
+    return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
+  return '<b style="color:var(--cyan)">Quotidiens</b><br>' + DAILY.map((c, i) => row(c, L.dp, 'd' + i)).join('') + '<b style="color:var(--cyan)">Hebdomadaires</b><br>' + WEEKLY.map((c, i) => row(c, L.wp, 'w' + i)).join('');
+}
+function claim(id) {
+  const c = (id[0] === 'd' ? DAILY : WEEKLY)[+id.slice(1)], b = id[0] === 'd' ? L.dp : L.wp; if (!c || prog(b, c.k) < c.n || (b.cl || []).includes(id)) return;
+  (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; saveProfile(); updateCurrencyUI(); save(); sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP et ${c.g} gemmes !`});
+  good('Défi réussi !', `+${c.xp} XP · 💎 +${c.g}`); render();
+}
+
+/* ---------- ACTIONS ---------- */
+const A = {
+  close: () => closeLG(), tab: e => { T = e.dataset.v === 'home' && R ? 'room' : e.dataset.v; if (T === 'inbox') { S.rd = Date.now(); F().setDoc(sref(me().uid), {rd:S.rd}, {merge:true}).catch(() => {}); } render(); },
+  mm: matchmake, cr: () => create('online', false), jn: () => join(($('lgc') || {}).value || ''), solo: solo, coop: () => create('solo', false),
+  divs: () => dlg('Divisions', `<div style="text-align:left;font-size:.9em">${DV.map(d => `<div class="lg-row lg-sp" style="margin:4px 0;${d.l === divOf(L.xp).l ? 'color:var(--gold);font-weight:800' : ''}"><span>Div ${d.l} · ${esc(d.n)}</span><span style="text-align:right;flex:none">×${d.m}</span></div>`).join('')}<hr style="border-color:#234;margin:8px 0">Victoire +200 XP · 4 pions +50 XP · Défaite −100 XP<br>Série : 3 ✕1.5 · 4 ✕1.75 · 5+ ✕2<br>Défaites d’affilée : 2 ✕0.85 · 3+ ✕0.70</div>`),
+  cp: () => { navigator.clipboard ? navigator.clipboard.writeText(R.code).then(() => toast('Code copié !', 'success')) : toast('Code : ' + R.code); }, inv: inviteDlg,
+  pc: e => { const p = seatList(R.d.players)[+e.dataset.v]; p && playerCard(p); }, seat: e => moveSeat(+e.dataset.v), bots: e => { R.bots = e.checked; render(); },
+  go: launch, rdy: ready, lv: () => leave(true),
+  avs: () => { const o = document.createElement('div'); o.className = 'lg-ov'; o.innerHTML = `<div class="lg-dl"><h2>Choisis ton avatar</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${AVATAR_FILES.map(f => `<div class="lg-av ${sq()}" data-f="${f}" style="${av(f)};width:100%;height:auto;aspect-ratio:1;cursor:pointer"></div>`).join('')}</div><button class="lg-b" style="margin-top:12px">Fermer</button></div>`;
+    o.onclick = async e => { const f = e.target.dataset.f; if (f) { playerProfile.avatarFile = f; saveProfile(); applyProfileUI(); o.remove(); try { await F().updateDoc(uref(), {avatarFile:f}); } catch (x) {} F().setDoc(sref(me().uid), {av:f}, {merge:true}).catch(() => {}); toast('Avatar mis à jour', 'success'); render(); } else if (e.target.tagName === 'BUTTON') o.remove(); }; ($('app') || document.body).appendChild(o); },
+  nm: async () => { const v = ($('lgn').value || '').trim(); if (v.length < 3) return err('Pseudo trop court', 'Ton pseudo doit contenir au moins 3 caractères.'); if (v === playerProfile.pseudo) return;
+    playerProfile.pseudo = v; saveProfile(); applyProfileUI(); try { await F().updateDoc(uref(), {pseudo:v}); } catch (e) {} F().setDoc(sref(me().uid), {pseudo:v}, {merge:true}).catch(() => {}); toast('Pseudo enregistré', 'success'); render(); },
+  cpu: () => { navigator.clipboard ? navigator.clipboard.writeText(me().uid).then(() => toast('Code ami copié !', 'success')) : toast('Copie impossible', 'error'); },
+  out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { await F().signOut(F().auth); location.reload(); } },
+  af: async () => { const id = ($('lgf').value || '').trim(); if (id.length < 10) return err('Code invalide', 'Colle le code ami complet du joueur (visible dans son Profil).'); if (id === me().uid) return err('Oups', 'Tu ne peux pas t’ajouter toi-même.');
+    const s = await F().getDoc(sref(id)).catch(() => null); addFriend({uid:id, pseudo:(s && s.exists() && s.data().pseudo) || 'ce joueur'}); },
+  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v)
+};
+root.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (t && A[t.dataset.a]) A[t.dataset.a](t); });
+function openLG() { if (!me()) return toast('Connecte-toi d’abord !', 'error'); open = true; root.classList.add('on'); T = R ? 'room' : 'home'; initSocial(); render(); anim(); }
+function closeLG() { open = false; root.classList.remove('on'); }
+
+/* ---------- PARTICULES ---------- */
+const cx = cv.getContext('2d'); let P = [];
+function anim() { if (!open) return; const w = cv.width = root.clientWidth, h = cv.height = root.clientHeight; if (!P.length) P = Array.from({length:45}, () => ({x:Math.random(), y:Math.random(), s:Math.random() * 2.5 + 1, v:Math.random() * .0016 + .0004, c:Math.random() > .35 ? '#00e5ff' : '#ffd54a'}));
+  cx.clearRect(0, 0, w, h); P.forEach(p => { p.y -= p.v; if (p.y < 0) { p.y = 1; p.x = Math.random(); } cx.globalAlpha = .75; cx.fillStyle = p.c; cx.shadowColor = p.c; cx.shadowBlur = 8; cx.beginPath(); cx.arc(p.x * w, p.y * h, p.s, 0, 7); cx.fill(); }); requestAnimationFrame(anim); }
+
+/* ---------- BRANCHEMENT SUR LE JEU (sans le modifier) ---------- */
+const safeOpen = tab => { try { openLG(); if (tab && open) { T = tab; render(); } } catch (x) { console.error(x); toast('Erreur Ligue : ' + x.message, 'error'); } };
+document.addEventListener('click', e => { const hx = e.target.closest('.hex-btn-container'), mb = e.target.closest('.bottom-bar .icon-btn');
+  if (hx && /Ligues/i.test(hx.textContent)) { e.stopImmediatePropagation(); e.preventDefault(); safeOpen(); }
+  else if (mb && mb.textContent.includes('💬')) { e.stopImmediatePropagation(); e.preventDefault(); safeOpen('inbox'); } }, true);
+console.log('Menu Ligue chargé'); setTimeout(() => toast('Menu Ligue chargé ✔', 'success'), 2500);
+setInterval(() => { if (me()) initSocial(); }, 1500);
+if (window.processCard) { const pc = window.processCard; window.processCard = function (p, c) { try { if (LGMODE && c && p === myPlayerIndex) { if (c.r === 'PHOENIX') bump('phoenix'); if (c.r === 'MANDALA') bump('mandala'); } } catch (e) {} return pc.apply(this, arguments); }; }
+setInterval(() => { if (!LGMODE || done || !state.gameOver || !$('overlay').classList.contains('show')) return; done = true;
+  const t = $('ov-msg').textContent, winA = /Équipe A/.test(t), mineA = myPlayerIndex % 2 === 0; finish(winA === mineA, state.pawns[myPlayerIndex].every(p => p.state === 'SAFE')); }, 800);
+
+/* ---------- CHAT VOCAL (WebRTC, signalisation Firestore voice/{code}) ---------- */
+const V2 = {on:false, p:{}, mu:{}, stream:null, off:null, code:null};
+const vdoc = () => F().doc(F().db, 'voice', V2.code);
+async function voiceStart() {
+  if (V2.on) return; V2.on = true; V2.code = currentRoomCode; const u = me(), ids = (roomUids || []).filter(Boolean); if (ids.length < 2) { V2.on = false; return; }
+  try { V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me'); } catch (e) { toast('Micro refusé : tu peux écouter mais pas parler', 'error'); }
+  const clear = {}; ids.forEach(o => { clear['m_' + u.uid + '_' + o] = ''; }); await F().setDoc(vdoc(), clear, {merge:true}).catch(() => {});
+  V2.off = F().onSnapshot(vdoc(), s => { const d = s.data() || {}; ids.filter(o => o !== u.uid).forEach(o => sig(o, d['m_' + o + '_' + u.uid])); }, () => {});
+  ids.filter(o => o > u.uid).forEach(async o => { const x = peer(o); await x.pc.setLocalDescription(await x.pc.createOffer()); x.out.o = x.pc.localDescription.sdp; push(o, x); });
+}
+function peer(o) {
+  if (V2.p[o]) return V2.p[o]; const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}), x = {pc, out:{}, seen:0}; V2.p[o] = x;
+  const tr = pc.addTransceiver('audio', {direction:'sendrecv'}); if (V2.track) tr.sender.replaceTrack(V2.track);
+  pc.onicecandidate = e => { if (e.candidate) { x.out.c = (x.out.c || []).concat([e.candidate.toJSON()]); push(o, x); } };
+  pc.ontrack = e => { const ms = e.streams[0] || new MediaStream([e.track]); x.a = new Audio(); x.a.srcObject = ms; x.a.muted = !!V2.mu[o]; x.a.play().catch(() => {}); watch(ms, o); }; return x;
+}
+const push = (o, x) => F().setDoc(vdoc(), {['m_' + me().uid + '_' + o]:JSON.stringify(x.out)}, {merge:true}).catch(() => {});
+async function sig(o, raw) {
+  if (!raw) return; let m; try { m = JSON.parse(raw); } catch (e) { return; } const x = peer(o), pc = x.pc;
+  try { if (m.o && !x.got && me().uid > o) { x.got = 1; await pc.setRemoteDescription({type:'offer', sdp:m.o}); await pc.setLocalDescription(await pc.createAnswer()); x.out.a = pc.localDescription.sdp; push(o, x); }
+    if (m.a && !x.ans && me().uid < o) { x.ans = 1; await pc.setRemoteDescription({type:'answer', sdp:m.a}); }
+    while (pc.remoteDescription && m.c && x.seen < m.c.length) await pc.addIceCandidate(m.c[x.seen++]).catch(() => {}); } catch (e) {}
+}
+const LV = {}; let ac;
+function watch(ms, key) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); const an = ac.createAnalyser(); an.fftSize = 256; ac.createMediaStreamSource(ms).connect(an); LV[key] = an; } catch (e) {} }
+function voiceStop() { if (!V2.on) return; V2.on = false; if (V2.off) V2.off(); Object.values(V2.p).forEach(x => { try { x.pc.close(); } catch (e) {} }); V2.p = {}; if (V2.stream) V2.stream.getTracks().forEach(t => t.stop()); V2.stream = V2.track = null; Object.keys(LV).forEach(k => delete LV[k]); document.querySelectorAll('.lg-mic').forEach(b => b.remove()); }
+function mics() {
+  const names = (lastRoomData && lastRoomData.players) || []; document.querySelectorAll('.player-container').forEach(c => {
+    const n = c.querySelector('.game-pseudo'); if (!n) return; const pl = names.find(p => p.pseudo === n.textContent); if (!pl) return; let b = c.querySelector('.lg-mic');
+    if (!b) { b = document.createElement('button'); b.className = 'lg-mic'; b.onclick = e => { e.stopPropagation(); const mine = pl.uid === me().uid;
+        if (mine) { if (!V2.track) return toast('Micro indisponible', 'error'); V2.track.enabled = !V2.track.enabled; V2.mu[pl.uid] = !V2.track.enabled; } else { V2.mu[pl.uid] = !V2.mu[pl.uid]; const x = V2.p[pl.uid]; if (x && x.a) x.a.muted = V2.mu[pl.uid]; } }; c.appendChild(b); }
+    b.dataset.u = pl.uid; b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤'; b.classList.toggle('mu', !!V2.mu[pl.uid]);
+  });
+}
+setInterval(() => { const g = $('game-screen') && $('game-screen').classList.contains('active'), live = g && currentRoomCode && roomUids && !state.gameOver;
+  if (live && !V2.on) voiceStart(); if (!g && V2.on) voiceStop(); if (V2.on) mics(); }, 1200);
+setInterval(() => { if (!V2.on) return; document.querySelectorAll('.lg-mic').forEach(b => { const u = b.dataset.u, an = LV[u === (me() || {}).uid ? 'me' : u]; if (!an || V2.mu[u]) return b.classList.remove('talk'); const a = new Uint8Array(an.frequencyBinCount); an.getByteFrequencyData(a); b.classList.toggle('talk', a.reduce((s, v) => s + v, 0) / a.length > 12); }); }, 150);
+})();
+
 </script>
 </body>
 </html>
