@@ -372,6 +372,24 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 #btn-voice{margin-left:auto;border-color:var(--gold)!important}
 #btn-voice.on{border-color:#00ffa8!important;box-shadow:0 0 12px #00ffa8!important}
 #btn-voice.mu{border-color:#ff5252!important;background:rgba(80,10,16,.92)!important}
+/* ===== Menu principal 2026 : tuiles claires, aérées ===== */
+#main-menu{padding:3cqw 4.5cqw;padding-top:calc(13cqw + var(--safe-top));justify-content:flex-start;gap:4cqw}
+#main-menu .top-bar{padding:2.4cqw 3.4cqw;border-radius:5cqw;background:rgba(5,16,46,.82);border:1px solid rgba(0,229,255,.3);backdrop-filter:blur(10px)}
+#main-menu .avatar-frame{width:13cqw;height:13cqw}
+.menu-grid{grid-template-columns:1fr 1fr;gap:3.6cqw;padding:2cqw 0;align-content:start;flex-grow:0}
+.hex-btn-container{flex-direction:column;align-items:flex-start;justify-content:space-between;gap:3cqw;min-height:34cqw;padding:4cqw;border-radius:6cqw;background:linear-gradient(160deg,rgba(18,52,120,.78),rgba(5,16,46,.9));border:1.5px solid rgba(0,229,255,.28);box-shadow:0 8px 24px rgba(0,0,0,.4);backdrop-filter:blur(8px);filter:none!important;animation:none!important;transition:transform .15s,border-color .2s}
+.hex-btn-container:active{transform:scale(.97);border-color:var(--cyan)}
+.hex-btn{width:14cqw;height:14cqw;clip-path:none;border-radius:4.4cqw;background:rgba(0,229,255,.14);border:1px solid rgba(0,229,255,.38)}
+.hex-btn::before{display:none}
+.hex-icon{font-size:7.6cqw;filter:none}
+.hex-label{text-align:left;text-transform:none;font-size:4.5cqw;letter-spacing:0;font-weight:800;color:#fff;text-shadow:none}
+.hex-label small{display:block;margin-top:.8cqw;font-size:3cqw;font-weight:500;color:#9fc3ea;line-height:1.35}
+.hex-btn-container.primary{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-start;gap:4.4cqw;min-height:0;padding:4.6cqw;background:linear-gradient(135deg,#f6d77c,#b8860b);border-color:#fff1b8;box-shadow:0 10px 30px rgba(230,195,92,.4)}
+.hex-btn-container.primary .hex-btn{background:rgba(42,28,2,.22);border-color:rgba(42,28,2,.35)}
+.hex-btn-container.primary .hex-label{color:#2a1c02;font-size:5.8cqw}.hex-btn-container.primary .hex-label small{color:rgba(42,28,2,.75);font-size:3.3cqw}
+.hex-btn-container.primary::after{content:'›';margin-left:auto;font-size:9cqw;color:rgba(42,28,2,.6);line-height:1}
+#main-menu .bottom-bar{margin-top:auto;border-radius:6cqw;background:rgba(5,16,46,.82)}
+.menu-grid .hex-btn-container:last-child{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:flex-start;gap:4.4cqw;min-height:0}
 </style>
 </head>
 <body>
@@ -509,12 +527,12 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
     </div>
   </div>
   <div class="menu-grid">
-    <div class="hex-btn-container primary" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">🌐</div></div><div class="hex-label">Jouer</div></div>
-    <div class="hex-btn-container" onclick="openLobbyScreen()"><div class="hex-btn"><div class="hex-icon">🔒</div></div><div class="hex-label">Partie<br>privée</div></div>
-    <div class="hex-btn-container" onclick="openLeagueView('home')"><div class="hex-btn"><div class="hex-icon">🏆</div></div><div class="hex-label">Ligues</div></div>
-    <div class="hex-btn-container" onclick="window.openPhoenixWallet()"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Pièces &amp;<br>Boutique</div></div>
-    <div class="hex-btn-container" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">⚔️</div></div><div class="hex-label">Jouer vs<br>Bots</div></div>
-    <div class="hex-btn-container" onclick="openLeagueView('stats')"><div class="hex-btn"><div class="hex-icon">📊</div></div><div class="hex-label">Trophées<br>Stats</div></div>
+    <div class="hex-btn-container primary" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">🌐</div></div><div class="hex-label">Jouer<small>Lance une partie rapide</small></div></div>
+    <div class="hex-btn-container" onclick="openLobbyScreen()"><div class="hex-btn"><div class="hex-icon">🔒</div></div><div class="hex-label">Partie privée<small>Entre amis, avec un code</small></div></div>
+    <div class="hex-btn-container" onclick="openLeagueView('home')"><div class="hex-btn"><div class="hex-icon">🏆</div></div><div class="hex-label">Ligues<small>Divisions, défis, classements</small></div></div>
+    <div class="hex-btn-container" onclick="window.openPhoenixWallet()"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Pièces &amp; Boutique<small>Solde, missions, objets</small></div></div>
+    <div class="hex-btn-container" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">⚔️</div></div><div class="hex-label">Jouer vs Bots<small>Entraîne-toi seul</small></div></div>
+    <div class="hex-btn-container" onclick="openLeagueView('stats')"><div class="hex-btn"><div class="hex-icon">📊</div></div><div class="hex-label">Trophées<small>Succès et résultats</small></div></div>
   </div>
   <div class="bottom-bar">
     <button class="icon-btn" onclick="toggleSound()">🔊</button>
@@ -2497,6 +2515,33 @@ const css = `
 .lgx-board span{display:block;width:100%;aspect-ratio:1;border-radius:9px;background:50% 42%/cover no-repeat #0a1a3a}
 .lgx-board b{font-size:.78em}.lgx-board i{font-style:normal;font-size:.66em;color:var(--gold-2);min-height:1em}
 .lgx-board.on{border-color:var(--gold);box-shadow:0 0 16px rgba(230,195,92,.6);background:rgba(230,195,92,.12)}
+/* ---- Menus plus clairs et aérés ---- */
+.lg-main{gap:18px;padding:6px 14px 16px}
+.lg-card{padding:18px;border-radius:22px}.lg-card h3{font-size:1.02em;letter-spacing:1.5px;margin-bottom:8px}.lg-card p{line-height:1.5}
+.lg-nav{margin:0 12px calc(12px + var(--safe-bottom));border-radius:22px;background:rgba(4,14,40,.92);backdrop-filter:blur(10px)}
+.lg-nav button{padding:11px 2px 9px;font-size:.66em;letter-spacing:.3px}.lg-nav button b{font-size:1.9em;margin-bottom:2px}
+.lg-nav button.on{background:linear-gradient(180deg,rgba(0,229,255,.2),transparent);box-shadow:inset 0 -3px 0 var(--cyan)}
+.lgx-wal{text-align:center;padding:24px 18px}.lgx-wal small{color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.75em}
+.lgx-wal .amt{font-size:2.6em;font-weight:900;color:var(--gold-2);text-shadow:0 0 22px rgba(230,195,92,.7);margin:6px 0;font-variant-numeric:tabular-nums}.lgx-wal p{margin:0;font-size:.85em}
+.lgx-lk{display:flex;align-items:center;gap:14px;margin-bottom:12px}.lgx-lk .ic{font-size:2em;width:52px;height:52px;flex:none;display:flex;align-items:center;justify-content:center;border-radius:16px;background:rgba(0,229,255,.12);border:1px solid rgba(0,229,255,.3)}
+.lgx-lk h3{margin:0 0 3px}.lgx-lk p{margin:0;font-size:.85em}.lgx-lk>div{flex:1;min-width:0}
+.lgx-locked{opacity:.85;border-style:dashed}.lgx-pend{flex:none;padding:5px 10px;border-radius:20px;background:rgba(255,179,71,.15);border:1px solid #ffb347;color:#ffb347;font-size:.72em;white-space:nowrap}
+.lgx-ms{display:flex;flex-direction:column;gap:12px}.lgx-m{display:flex;flex-direction:column;gap:9px;padding:14px;border-radius:15px;background:rgba(0,0,0,.28);border:1px solid rgba(0,229,255,.14)}
+.lgx-hist summary{cursor:pointer;font-weight:800;color:var(--gold);list-style:none}.lgx-hist summary::-webkit-details-marker{display:none}
+/* ---- Animation de pièces de fin de partie ---- */
+.cn-ov{position:absolute;inset:0;z-index:340;overflow:hidden;background:radial-gradient(circle at 50% 42%,rgba(40,30,4,.82),rgba(2,8,24,.9));animation:lgF .3s;cursor:pointer}
+.cn-ov.lose{background:radial-gradient(circle at 50% 42%,rgba(20,26,50,.85),rgba(2,6,18,.93))}
+.cn-ov.out{opacity:0;transition:opacity .35s}
+.cn-box{position:absolute;left:50%;top:42%;transform:translate(-50%,-50%);text-align:center;width:86%;animation:cnPop .7s cubic-bezier(.2,1.4,.4,1)}
+.cn-t{font-size:clamp(28px,9vw,44px);font-weight:900;letter-spacing:3px;text-transform:uppercase;background:linear-gradient(90deg,#b8860b,#fff1b8,#b8860b);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 14px rgba(230,195,92,.7))}
+.cn-ov.lose .cn-t{background:linear-gradient(90deg,#6c7aa0,#cfd8f0,#6c7aa0);-webkit-background-clip:text;background-clip:text;filter:none}
+.cn-n{font-size:clamp(36px,12vw,60px);font-weight:900;color:#ffe27a;text-shadow:0 0 24px #ffb300;margin:10px 0;font-variant-numeric:tabular-nums}
+.cn-s{color:#cfe2ff;font-size:clamp(13px,3.8vw,17px)}.cn-h{margin-top:22px;color:#7f9cc7;font-size:12px;letter-spacing:2px;text-transform:uppercase}
+.cn{position:absolute;top:-60px;left:var(--x);width:var(--s);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff9c9,#ffd54a 48%,#b8860b 85%);border:2px solid #fff1b8;box-shadow:0 0 12px rgba(255,200,60,.85),inset 0 -3px 5px rgba(120,70,0,.5);animation:cnFall var(--d) cubic-bezier(.35,.1,.7,1) var(--dl) forwards;opacity:0}
+.cn::after{content:'';position:absolute;inset:24%;border-radius:50%;border:2px solid rgba(160,100,0,.55)}
+.cn-ov.lose .cn{filter:grayscale(.85) brightness(.7);box-shadow:none}
+@keyframes cnFall{0%{opacity:1;transform:translate3d(0,0,0) rotateY(0)}100%{opacity:1;transform:translate3d(var(--dx),115vh,0) rotateY(1080deg)}}
+@keyframes cnPop{from{transform:translate(-50%,-50%) scale(.4);opacity:0}to{transform:translate(-50%,-50%) scale(1);opacity:1}}
 `;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 const root = document.createElement('div'); root.className = 'lg'; root.innerHTML = '<canvas></canvas><div class="lg-top"></div><div class="lg-main"></div><div class="lg-nav"></div>';
@@ -2590,6 +2635,7 @@ async function walletDaily() {
 }
 async function walletRefresh(){const s=await F().getDoc(walletRef());if(s.exists()){const d=s.data();playerProfile.gold=walletData(d).coins;playerProfile.wallet=walletData(d);saveProfile();updateCurrencyUI();}}
 async function walletPromo(){
+  return toast('⏳ Code promo en attente : bientôt disponible.');
   const input=$('coin-promo-code'),code=(input?.value||'').trim().toUpperCase();
   if(!code)return toast('Saisis un code promo.','error');
   if(code!==PROMO_CODE)return toast('Code promo invalide.','error');
@@ -2601,6 +2647,7 @@ async function walletPromo(){
   await walletRefresh();if(granted)toast('🎉 +1 000 pièces : code promo validé !','success');render();
 }
 async function walletBuyPack(){
+  return toast('⏳ Achat de pièces en attente : bientôt disponible.');
   // Démo sans paiement réel : aucun débit bancaire n'est effectué.
   if(!await dlg('Pack de pièces','Ajouter 1 000 pièces de démonstration ? Aucun paiement réel ne sera effectué.',[{t:'Annuler',v:0},{t:'Ajouter',v:1,c:'g'}]))return;
   await walletCommit(COIN_PACK,'Pack boutique (simulation)');toast('+1 000 pièces ajoutées (simulation).','success');render();
@@ -2608,16 +2655,15 @@ async function walletBuyPack(){
 const COIN_MISSIONS=[{k:'played',goal:3,label:'Jouer 3 parties'},{k:'won',goal:1,label:'Gagner 1 partie'},{k:'free',goal:1,label:'Jouer 1 partie gratuite'}];
 function walletView(){
   const w=playerProfile.wallet||{},m0=w.missions||{date:dayKey(),played:0,won:0,free:0,claimed:[]},m=m0.date===dayKey()?m0:{date:dayKey(),played:0,won:0,free:0,claimed:[]},claimed=m.claimed||[];
-  const ledger=(w.ledger||[]).slice(0,18);
-  return `<div class="lg-card gold"><h3>🪙 Ton portefeuille</h3><p>Ton solde est synchronisé avec ton compte Firebase. Il reste disponible après déconnexion et reconnexion.</p>
-    <div class="lg-wallet-grid"><div class="lg-wallet-stat"><small>Solde disponible</small><b>🪙 ${coinFmt(w.coins ?? playerProfile.gold)}</b></div><div class="lg-wallet-stat"><small>Compte</small><b style="font-size:1em">${esc(playerProfile.pseudo)}</b></div></div>
-    <div class="lg-wallet-note">Chaque opération est enregistrée dans ton historique et mise à jour sur le serveur.</div></div>
-    <div class="lg-card"><h3>🎁 Récompense quotidienne</h3><p>Récupère ${DAILY_COINS} pièces une fois par jour.</p><button class="lg-b g" data-a="coinDaily" ${(w.loginDate===dayKey())?'disabled':''}>${w.loginDate===dayKey()?'Déjà récupérée aujourd’hui':'+100 pièces · Récupérer'}</button></div>
-    <div class="lg-card"><h3>🎯 Missions</h3><p>Complète les objectifs pour gagner 100 pièces par mission.</p>${COIN_MISSIONS.map((x,i)=>{const n=Math.min(m[x.k]||0,x.goal),done=n>=x.goal,got=claimed.includes(i);return `<div class="lg-mission"><div class="lg-row lg-sp"><b>${x.label}</b><b style="color:var(--gold)">+100 🪙</b></div><div class="track"><i style="width:${n/x.goal*100}%"></i></div><div class="lg-row lg-sp"><small>${n}/${x.goal}</small><button class="lg-b s ${done&&!got?'g':''}" data-a="coinClaim" data-v="${i}" ${!done||got?'disabled':''}>${got?'Récupérée':'Récupérer'}</button></div></div>`}).join('')}</div>
-    <div class="lg-card"><h3>🛍️ Boutique de pièces</h3><div class="lg-wallet-stat"><small>Pack de démonstration</small><b>1 000 pièces · 1,00 € (simulation)</b></div><p class="lg-wallet-note">Prototype : l’ajout est simulé, aucun paiement réel n’est encaissé.</p><button class="lg-b g" data-a="coinBuy">Ajouter 1 000 pièces</button></div>
-    <div class="lg-card"><h3>🎟️ Code promo</h3><p>Entre ton code et valide-le. Un seul code de bienvenue par compte.</p><div class="lg-wallet-field"><label for="coin-promo-code">Code promotionnel</label><input id="coin-promo-code" maxlength="40" autocomplete="off" autocapitalize="characters" placeholder="Ex. WELCOME1000" ${w.promoUsed?'disabled':''}></div><button class="lg-b" data-a="coinPromo" ${w.promoUsed?'disabled':''}>Valider le code</button>${w.promoUsed?'<div class="lg-wallet-note">Un code promo a déjà été utilisé sur ce compte.</div>':''}</div>
-    <div class="lg-card"><h3>🎮 Mise des parties</h3><p>Choisis la mise de tes prochaines parties en ligne et salons privés. Les parties contre les bots restent gratuites.</p><div class="lg-wallet-field"><label for="coin-stake">Mise par partie</label><select id="coin-stake">${[0,100,200,500,1000].map(n=>`<option value="${n}" ${selectedCoinStake===n?'selected':''}>${n?coinFmt(n)+' pièces':'Gratuit'}</option>`).join('')}</select></div><div class="lg-wallet-note">Victoire : mise restituée et gain équivalent (bilan net + mise). Défaite : perte de la mise. Vérification du solde avant validation du résultat.</div></div>
-    <div class="lg-card"><h3>📜 Historique des opérations</h3>${ledger.length?`<div class="lg-wallet-history">${ledger.map(e=>`<div class="lg-wallet-entry"><div>${esc(e.label||'Opération')}<small>${new Date(e.t||Date.now()).toLocaleString('fr-FR')}</small></div><b class="${e.delta>=0?'plus':'minus'}">${e.delta>0?'+':''}${coinFmt(e.delta)} 🪙</b></div>`).join('')}</div>`:'<p>Aucune opération pour le moment.</p>'}</div>`;
+  const ledger=(w.ledger||[]).slice(0,18), bal=w.coins ?? playerProfile.gold, daily=(w.loginDate===dayKey());
+  const pending=(ic,t,sub)=>`<div class="lg-card lgx-locked"><div class="lgx-lk"><span class="ic">${ic}</span><div><h3>${t}</h3><p>${sub}</p></div><b class="lgx-pend">⏳ En attente</b></div><button class="lg-b" disabled>Bientôt disponible</button></div>`;
+  return `<div class="lg-card gold lgx-wal"><small>Solde disponible</small><div class="amt">🪙 ${coinFmt(bal)}</div><p>Synchronisé avec ton compte, même après déconnexion.</p></div>
+  <div class="lg-card"><div class="lgx-lk"><span class="ic">🎁</span><div><h3>Cadeau du jour</h3><p>+${DAILY_COINS} pièces, une fois par jour</p></div></div><button class="lg-b g" data-a="coinDaily" ${daily?'disabled':''}>${daily?'Déjà récupéré aujourd’hui':'Récupérer +100 🪙'}</button></div>
+  <div class="lg-card"><h3>🎮 Mise des parties</h3><p>Pour tes parties en ligne. Les parties contre les bots restent gratuites.</p><div class="lgx-sk">${[0,100,200,500,1000].map(n=>`<button type="button" class="${selectedCoinStake===n?'on':''}" data-a="cs" data-v="${n}">${n?coinFmt(n):'Gratuit'}</button>`).join('')}</div><div class="lg-wallet-note">Victoire : tu reçois 2× ta mise. Défaite : la mise est perdue.</div></div>
+  <div class="lg-card"><h3>🎯 Missions du jour</h3><div class="lgx-ms">${COIN_MISSIONS.map((x,i)=>{const n=Math.min(m[x.k]||0,x.goal),done=n>=x.goal,got=claimed.includes(i);return `<div class="lgx-m"><div class="lg-row lg-sp"><b>${x.label}</b><b style="color:var(--gold);flex:none">+100 🪙</b></div><div class="lgx-bar"><i style="width:${n/x.goal*100}%"></i></div><div class="lg-row lg-sp"><small style="color:#9fc3ea">${n} / ${x.goal}</small><button class="lg-b s ${done&&!got?'g':''}" style="flex:none" data-a="coinClaim" data-v="${i}" ${!done||got?'disabled':''}>${got?'Récupérée ✔':'Récupérer'}</button></div></div>`}).join('')}</div></div>
+  ${pending('🛍️','Boutique de pièces','Pack de 1 000 pièces')}
+  ${pending('🎟️','Code promo','Un code de bienvenue par compte')}
+  <details class="lg-card lgx-hist"><summary>📜 Historique des opérations (${ledger.length})</summary>${ledger.length?`<div class="lg-wallet-history">${ledger.map(e=>`<div class="lg-wallet-entry"><div>${esc(e.label||'Opération')}<small>${new Date(e.t||Date.now()).toLocaleString('fr-FR')}</small></div><b class="${e.delta>=0?'plus':'minus'}">${e.delta>0?'+':''}${coinFmt(e.delta)} 🪙</b></div>`).join('')}</div>`:'<p style="margin-top:10px">Aucune opération pour le moment.</p>'}</details>`;
 }
 async function walletClaim(i){
   const mission=COIN_MISSIONS[i];if(!mission)return;
@@ -2662,6 +2708,25 @@ async function walletMissionProgress(win,free){
 // Exposer les fonctions de portefeuille pour le script principal
 window.walletReserveMatch = walletReserveMatch;
 window.walletRecordMatch = walletRecordMatch;
+
+/* ---------- ANIMATION DE PIÈCES (fin de partie, tous modes) ---------- */
+function coinShow(win, stake) {
+  return new Promise(res => {
+    const o = document.createElement('div'); o.className = 'cn-ov ' + (win ? 'win' : 'lose'); const gain = win ? stake * 2 : 0;
+    const title = win ? '🏆 Victoire !' : 'Défaite';
+    const sub = win ? (stake ? 'Gain de la partie' : 'Partie gratuite · bravo !') : (stake ? 'Mise perdue · ' + coinFmt(stake) + ' 🪙' : 'Partie gratuite · la revanche t’attend');
+    o.innerHTML = `<div class="cn-box"><div class="cn-t">${title}</div>${win && stake ? '<div class="cn-n">+<span>0</span> 🪙</div>' : win ? '<div class="cn-n">🪙 🪙 🪙</div>' : ''}<div class="cn-s">${sub}</div><div class="cn-h">Touche pour continuer</div></div>`;
+    const N = win ? 70 : 14;
+    for (let i = 0; i < N; i++) { const c = document.createElement('i'); c.className = 'cn'; const sz = 18 + Math.random() * 20;
+      c.style.cssText = `--x:${(Math.random() * 100).toFixed(1)}%;--s:${sz.toFixed(0)}px;--dx:${(Math.random() * 80 - 40).toFixed(0)}px;--d:${(1.8 + Math.random() * 1.8).toFixed(2)}s;--dl:${(Math.random() * (win ? 1.6 : .8)).toFixed(2)}s`; o.appendChild(c); }
+    ($('app') || document.body).appendChild(o);
+    if (win) [880, 1100, 1320, 1760].forEach((f, i) => setTimeout(() => { try { beep && beep(f, .12, 'triangle'); } catch (e) {} }, 150 + i * 140));
+    else try { beep && beep(220, .3, 'triangle'); } catch (e) {}
+    const num = o.querySelector('.cn-n span'); if (num) { const t0 = performance.now(), dur = 1500; (function tk(t) { const k = Math.min(1, (t - t0) / dur); num.textContent = coinFmt(Math.round(gain * (1 - Math.pow(1 - k, 3)))); if (k < 1) requestAnimationFrame(tk); })(t0); }
+    let closed = false; const close = () => { if (closed) return; closed = true; o.classList.add('out'); setTimeout(() => { o.remove(); res(); }, 350); };
+    o.addEventListener('click', close); setTimeout(close, win ? 4200 : 2600);
+  });
+}
 
 /* ---------- XP ---------- */
 function settle(win, pions) {
@@ -2791,7 +2856,7 @@ const NAVS = [['home','🏆','Ligue'],['stats','📊','Stats'],['coins','🪙','
 function render() {
   const d = divOf(L.xp), u = me();
   TOP.innerHTML = `<div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)}"></div><div><b>${esc(playerProfile.pseudo)}</b><small>Div. ${d.l} · ${esc(d.n)}</small></div><div class="lg-cur">🪙 ${(playerProfile.gold || 0).toLocaleString('fr-FR')}<br>💎 ${(playerProfile.gems || 0).toLocaleString('fr-FR')}</div><button class="lg-x" data-a="close">✕</button>`;
-  NAV.innerHTML = NAVS.map(n => `<button class="${T === n[0] || ((T === 'room' || T === 'leagues') && n[0] === 'home') ? 'on' : ''}" data-a="tab" data-v="${n[0]}"><b>${n[1]}</b>${n[2]}<span class="lg-rank-dot" data-a="rank" title="Ouvrir les classements" aria-label="Ouvrir les classements">🏅</span>${n[0] === 'inbox' ? '<i class="lg-bd" style="display:none"></i>' : ''}</button>`).join('');
+  NAV.innerHTML = NAVS.map(n => `<button class="${T === n[0] || ((T === 'room' || T === 'leagues') && n[0] === 'home') ? 'on' : ''}" data-a="tab" data-v="${n[0]}"><b>${n[1]}</b>${n[2]}${n[0] === 'inbox' ? '<i class="lg-bd" style="display:none"></i>' : ''}</button>`).join('');
   MAIN.innerHTML = (V[T] || V.home)(d); badge();
   requestAnimationFrame(() => { const g = MAIN.querySelector('[data-w]'); if (g) g.style.width = g.dataset.w + '%'; });
 }
@@ -2899,7 +2964,7 @@ function hero(d) {
   return `<div class="lg-card gold lg-hero"><div class="lg-emb"><b>${d.l}</b></div><div style="flex:1;min-width:0"><div style="color:var(--gold);font-weight:900;font-size:1.2em">${esc(d.n)}</div><small style="color:#9fc3ea">Division ${d.l} · gains ×${d.m}</small><div style="margin:6px 0">${gauge(d)}</div><small style="color:#9fc3ea">${nx ? `Encore <b style="color:#fff">${(d.b - L.xp).toLocaleString('fr-FR')} XP</b> pour devenir « ${esc(nx.n)} »` : '👑 Rang maximum atteint !'}</small></div></div>
   <div class="lg-path">${DV.map(x => `<span class="${x.l === d.l ? 'cur' : x.l > d.l ? 'dn' : ''}">${x.l}</span>`).join('')}</div>
   <div class="lg-st" style="grid-template-columns:repeat(3,1fr)"><div><b>🔥 ${L.ws}</b>Série ×${sm()}</div><div><b>${L.best}</b>Record série</div><div><b>${a.p ? Math.round(a.w / a.p * 100) : 0}%</b>Victoires</div></div>
-  <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<button class="lg-b g" style="margin-top:8px" data-a="divs">🏆 Voir toutes les ligues</button></div>`;
+  <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<div class="lg-row" style="margin-top:10px"><button class="lg-b g" data-a="divs">🏆 Les Ligues</button><button class="lg-b" data-a="rank">🏅 Classements</button></div></div>`;
 }
 function dailyGift() {
   const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return; L.dd = L.dl === y ? (L.dd || 0) + 1 : 1; L.dl = dayKey();
@@ -2914,7 +2979,7 @@ function statsV() {
   return tab + `<div class="lg-card gold"><h3>Mes statistiques</h3><div class="lg-st"><div><b>${a.p}</b>Parties jouées</div><div><b>${pc(a)}%</b>de victoires</div><div><b>${a.w}</b>Victoires</div><div><b>${a.l}</b>Défaites</div><div><b>${L.ate || 0}</b>💥 Pions mangés</div><div><b>${L.eaten || 0}</b>💀 Mes pions mangés</div></div></div>` + row('Multijoueur', s.mm, '🌐') + row('Salon privé', s.priv, '🔒') + row('Contre les bots', s.bots, '🤖');
 }
 function shopV() {
-  return `<div class="lg-card gold"><h3>🛒 Boutique</h3><p style="margin:0">Tu as 🪙 <b>${(playerProfile.gold || 0).toLocaleString('fr-FR')}</b> et 💎 <b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>. Gagne-en avec les défis et le cadeau du jour !</p></div>` + ITEMS.map(x => `<div class="lg-card"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('') + '<div class="lg-card" style="text-align:center;opacity:.7"><div style="font-size:34px">🔒</div><p style="margin:0">De nouveaux articles arrivent bientôt…</p></div>';
+  return `<div class="lg-card gold"><h3>🛒 Boutique</h3><p style="margin:0">Tu as 🪙 <b>${(playerProfile.gold || 0).toLocaleString('fr-FR')}</b> et 💎 <b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>. Gagne-en avec les défis et le cadeau du jour !</p></div>` + ITEMS.map(x => `<div class="lg-card"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('') + '<div class="lg-card lgx-locked"><div class="lgx-lk"><span class="ic">🪙</span><div><h3>Pack de pièces</h3><p>Achat de pièces</p></div><b class="lgx-pend">⏳ En attente</b></div><button class="lg-b" disabled>Bientôt disponible</button></div>' + '<div class="lg-card" style="text-align:center;opacity:.7"><div style="font-size:34px">🔒</div><p style="margin:0">De nouveaux articles arrivent bientôt…</p></div>';
 }
 async function buy(id) {
   const x = ITEMS.find(i => i.id === id), c = x.cur, ic = c === 'gems' ? '💎' : '🪙'; if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
@@ -2964,6 +3029,7 @@ const A = {
   close: () => closeLG(), rank: () => { T = 'rankings'; render(); }, tab: e => { T = e.dataset.v === 'home' && R ? 'room' : e.dataset.v; if (T === 'inbox') { S.rd = Date.now(); F().setDoc(sref(me().uid), {rd:S.rd}, {merge:true}).catch(() => {}); } render(); },
   mm: matchmake, cr: () => create('online', false), jn: () => join(($('lgc') || {}).value || ''), solo: solo, coop: () => create('solo', false),
   divs: () => { const t = LEAGUE_TABS.find(t => t.divs.includes(divOf(L.xp).l)); if (t) activeLeagueTab = t.id; T = 'leagues'; render(); MAIN.scrollTop = 0; },
+  cs: e => { const v = +e.dataset.v; selectedCoinStake = Number.isFinite(v) ? v : 100; window.selectedCoinStake = selectedCoinStake; toast(selectedCoinStake ? 'Mise réglée à ' + coinFmt(selectedCoinStake) + ' pièces.' : 'Parties gratuites : aucune pièce en jeu.'); render(); },
   bd: e => { const i = +e.dataset.v; selectBoard(i); toast('Plateau ' + (i + 1) + ' défini par défaut', 'success'); render(); },
   stk: async e => { const n = +e.dataset.v; if (!R || !R.d || R.d.host !== me().uid || R.d.kind !== 'priv') return;
     if (n > balNow()) return err('Solde insuffisant', `Il te faut ${fx(n)} pièces pour fixer cette mise. Ton solde : ${fx(balNow())}.`);
@@ -3014,6 +3080,7 @@ setInterval(async () => {
   const isFree = !LGMODE || KIND === 'bots';
   try { await walletRecordMatch(win, isFree, currentMatchId || ('match-'+(currentRoomCode || 'solo')+'-'+Date.now())); }
   catch(e) { showToast(e.message||'Erreur de portefeuille','error'); }
+  try { await coinShow(win, isFree ? 0 : Number(currentMatchStake) || 0); } catch (e) {}
   if (LGMODE) finish(win, pions); else { save(); toast(win ? '🏆 Victoire enregistrée dans tes stats' : 'Partie enregistrée dans tes stats', 'success'); }
 }, 500);
 
