@@ -8,7 +8,7 @@
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+import { getFirestore, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove, runTransaction } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey:"AIzaSyA3WomJQ_MIWiewqjS1D6i5P8QJEL8tGW4", authDomain:"jackaro-l-eveil-du-phenix.firebaseapp.com",
   databaseURL:"https://jackaro-l-eveil-du-phenix-default-rtdb.firebaseio.com", projectId:"jackaro-l-eveil-du-phenix",
@@ -18,7 +18,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-window.FB = { auth, db, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
+window.FB = { auth, db, doc, setDoc, getDoc, updateDoc, onSnapshot, arrayUnion, arrayRemove, runTransaction, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut };
 </script>
 <style>
 @property --ang { syntax: '<angle>'; inherits: false; initial-value: 0deg; }
@@ -535,7 +535,7 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 
 function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 let toastTimer = null;
-function showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'show' + (type ? ' ' + type : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3200); }
+function showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'show' + (type ? ' ' + type : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3000); }
 function authErrorMsg(err) {
   const map = { 'auth/email-already-in-use': "Cet email est déjà utilisé.", 'auth/invalid-email': "Adresse email invalide.", 'auth/weak-password': "Mot de passe trop court (6 caractères minimum).", 'auth/invalid-credential': "Email ou mot de passe incorrect.", 'auth/user-not-found': "Aucun compte avec cet email.", 'auth/wrong-password': "Mot de passe incorrect.", 'auth/too-many-requests': "Trop d'essais, réessaie dans un moment.", 'auth/network-request-failed': "Problème de connexion internet.", 'permission-denied': "Accès refusé par Firestore.", 'unavailable': "Serveur injoignable." };
   return (err && map[err.code]) || (err && err.message) || "Une erreur est survenue.";
@@ -557,7 +557,10 @@ window.registerUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile = { ...playerProfile, pseudo, avatarFile:regAvatar, email, gold:1000, gems:45, inventory:[], coinLedger:[{id:'signup-'+res.user.uid, t:Date.now(), label:'Bonus de première inscription', delta:1000, balance:1000}], purchaseHistory:[], promoUsed:false };
+    saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile);
+    watchPlayerProfile(res.user.uid); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI();
+    showToast('🔥 Bienvenue ! 1 000 pièces offertes.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.loginUser = async function() {
@@ -565,7 +568,8 @@ window.loginUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = docSnap.data(); saveProfile(); } document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = { ...playerProfile, ...docSnap.data() }; } else { await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile, {merge:true}); }
+    playerProfile.gold = Number.isFinite(playerProfile.gold) ? playerProfile.gold : 0; playerProfile.coinLedger = Array.isArray(playerProfile.coinLedger) ? playerProfile.coinLedger : []; playerProfile.purchaseHistory = Array.isArray(playerProfile.purchaseHistory) ? playerProfile.purchaseHistory : []; playerProfile.promoUsed = !!playerProfile.promoUsed; saveProfile(); watchPlayerProfile(res.user.uid); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.openLobbyScreen = function() { roomStarted = false; lastRoomData = null; currentRoomCode = null; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('lobby-screen').classList.add('active'); document.getElementById('lobby-menu-choice').style.display = 'flex'; document.getElementById('lobby-room-view').style.display = 'none'; };
@@ -731,7 +735,21 @@ function prevRulePage() { if (currentRulePage > 0) { currentRulePage--; renderRu
 function nextRulePage() { if (currentRulePage < RULES_PAGES.length - 1) { currentRulePage++; renderRulePage(); } }
 
 /* ================= PROFIL ================= */
-let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1250, gems: 45, inventory: [] };
+let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, inventory: [], coinLedger: [], purchaseHistory: [], promoUsed: false };
+let profileUnsub = null;
+function watchPlayerProfile(uid) {
+  if (profileUnsub) { profileUnsub(); profileUnsub = null; }
+  if (!window.FB || !uid) return;
+  profileUnsub = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'users', uid), snap => {
+    if (!snap.exists()) return;
+    const data = snap.data();
+    ['gold','gems','coinLedger','purchaseHistory','promoUsed','inventory'].forEach(k => {
+      if (data[k] !== undefined) playerProfile[k] = data[k];
+    });
+    saveProfile(); updateCurrencyUI();
+    if (window.refreshPhoenixWallet) window.refreshPhoenixWallet();
+  }, e => console.warn('Synchronisation du portefeuille impossible', e));
+}
 if(localStorage.getItem('phoenix_profile')) { playerProfile = JSON.parse(localStorage.getItem('phoenix_profile')); }
 const AVATAR_FILES = ['az','ay','ax','aw','av','au','at','as','ar','aq','ap','ao','an','am','al','ak','aj','ai','ah','ag','af','ae','ad','ac'];
 function saveProfile() { localStorage.setItem('phoenix_profile', JSON.stringify(playerProfile)); }
@@ -2287,8 +2305,8 @@ const DV = [[10,'Débutant',0,1500,1],[9,'Apprenti',1500,3000,1.2],[8,'Adepte',3
 const BOTS = {10:'Débutant',9:'Novice',8:'Rusé',7:'Stratège',6:'Redoutable',5:'Expert',4:'Implacable',3:'Maître des flammes',2:'Phénix Noir',1:'Phénix Ultime Imbattable'};
 const divOf = x => DV.find(d => x >= d.a && x < d.b) || DV[9];
 const diffOf = l => l >= 8 ? 'easy' : l >= 4 ? 'medium' : 'expert';
-const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8}];
-const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20}];
+const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5,coins:100},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5,coins:100},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8,coins:100}];
+const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25,coins:300},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15,coins:250},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20,coins:250}];
 let L = {xp:0,ws:0,ls:0,best:0,dp:{},wp:{},hi:0,st:{},ate:0,eaten:0,bx:0,sh:0,dl:'',dd:0,t:0,tr:{}}, S = {friends:[],inbox:[],rd:0}, FS = {}, FL = {};
 let T = 'home', R = null, LGMODE = null, done = false, open = false, busy = false, ST = 'stats', KIND = null, gc = {ate:0, eaten:0, prev:null}, wasG = false, FD = {};
 
@@ -2333,7 +2351,8 @@ const css = `
 .lg-up .em{font-size:110px;animation:lgP 1.4s infinite alternate;position:relative}.lg-up .em:before{content:'';position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(var(--cyan),var(--gold),var(--cyan));-webkit-mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);animation:lgR 4s linear infinite}
 .lg-up h1{font-size:2.4em;color:var(--gold);letter-spacing:5px;text-shadow:0 0 25px var(--gold);margin:14px 0}.lg-up p{font-size:1.3em;color:var(--cyan);margin-bottom:22px}
 .lg-eb{position:absolute;bottom:-10px;width:8px;height:8px;border-radius:50%;animation:lgE 3s ease-out forwards}
-.lg-mic{position:absolute;left:50%;bottom:-3.4cqw;transform:translateX(-50%);width:7cqw;height:7cqw;min-width:24px;min-height:24px;border-radius:50%;border:1.5px solid var(--cyan);background:rgba(4,16,48,.92);color:#fff;font-size:3.4cqw;display:flex;align-items:center;justify-content:center;z-index:30;cursor:pointer;padding:0}
+.wallet-balance{font-size:clamp(30px,8vw,46px);font-weight:900;letter-spacing:-1px;color:var(--gold-2);text-shadow:0 0 18px rgba(230,195,92,.45);margin:8px 0}.wallet-balance small{font-size:.34em;letter-spacing:1px;color:#b9d2f3}.wallet-sub{color:#b9d2f3;line-height:1.55;margin-bottom:12px}.lg-chip{font-size:.72em;border:1px solid #00ffa8;color:#00ffa8;padding:5px 9px;border-radius:30px;white-space:nowrap}.lg-item-wrap{padding:12px 0;border-top:1px solid rgba(0,229,255,.16)}.coin-ledger{display:flex;flex-direction:column;gap:0}.coin-line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid rgba(0,229,255,.14)}.coin-line:last-child{border:0}.coin-line b{display:block;font-size:.9em}.coin-line small{display:block;color:#9fc3ea;margin-top:3px}.coin-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}.coin-plus{color:#00ffa8}.coin-minus{color:#ff8a80}
+ .lg-mic{position:absolute;right:-8px;top:-8px;transform:none;width:34px;height:34px;min-width:34px;min-height:34px;border-radius:50%;border:2px solid var(--cyan);background:rgba(4,16,48,.96);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;z-index:80;cursor:pointer;padding:0;box-shadow:0 0 12px rgba(0,229,255,.45)}
 .lg-mic.mu{border-color:#ff5252;background:rgba(80,10,16,.92)}.lg-mic.talk{border-color:#00ffa8;box-shadow:0 0 12px #00ffa8;animation:lgV .18s infinite alternate}
 .lg-nav button{font-size:.62em}.lg-nav button b{font-size:2em}.lg-hero{display:flex;gap:12px;align-items:center}
 .lg-emb{width:84px;height:84px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(230,195,92,.35),rgba(4,16,48,.9) 70%);border:3px solid var(--gold);animation:lgP2 2.2s infinite alternate}.lg-emb b{font-size:2.6em;color:var(--gold-2);text-shadow:0 0 14px var(--gold)}
@@ -2368,7 +2387,27 @@ function weekKey() { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); 
 function roll() { if (L.dp.day !== dayKey()) L.dp = {day:dayKey(), cl:[]}; if (L.wp.week !== weekKey()) L.wp = {week:weekKey(), cl:[]}; }
 function bump(k, v) { roll(); L.dp[k] = (L.dp[k] || 0) + (v || 1); L.wp[k] = k === 'streak' ? Math.max(L.wp[k] || 0, v) : (L.wp[k] || 0) + (v || 1); }
 function save() { checkTr(); L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} try { const a = A0(); F().setDoc(sref(me().uid), {lg:{xp:L.xp, ws:L.ws, best:L.best, w:a.w, p:a.p}}, {merge:true}).catch(() => {}); } catch (e) {} }
-function pushProfile() { saveProfile(); updateCurrencyUI(); try { F().updateDoc(uref(), {gold:playerProfile.gold, gems:playerProfile.gems}).catch(() => {}); } catch (e) {} }
+function pushProfile() { saveProfile(); updateCurrencyUI(); try { F().updateDoc(uref(), {gems:playerProfile.gems}).catch(() => {}); } catch (e) {} }
+async function changeCoins(delta, label) {
+  const u = me(); if (!u) throw new Error('Connexion requise');
+  if (!Number.isSafeInteger(delta) || delta === 0) throw new Error('Montant invalide');
+  const ref = uref();
+  const result = await F().runTransaction(F().db, async tx => {
+    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+    const data = snap.data(), balance = Number.isFinite(data.gold) ? data.gold : 0;
+    if (delta < 0 && balance < -delta) throw new Error('Solde insuffisant');
+    const next = balance + delta;
+    const ledger = Array.isArray(data.coinLedger) ? data.coinLedger.slice(0, 99) : [];
+    const history = Array.isArray(data.purchaseHistory) ? data.purchaseHistory.slice(0, 49) : [];
+    const now = Date.now(); ledger.unshift({id:mk(), t:now, label:String(label).slice(0,100), delta, balance:next});
+    if (String(label).startsWith('Achat boutique')) history.unshift({id:mk(), t:now, label:String(label).slice(0,100), amount:-delta, currency:'pièces'});
+    tx.update(ref, {gold:next, coinLedger:ledger, purchaseHistory:history});
+    return {balance:next, ledger, history};
+  });
+  playerProfile.gold = result.balance; playerProfile.coinLedger = result.ledger; playerProfile.purchaseHistory = result.history;
+  saveProfile(); updateCurrencyUI(); if (window.refreshPhoenixWallet) window.refreshPhoenixWallet();
+  return result.balance;
+}
 const A0 = () => (L.st && L.st.all) || {p:0, w:0, l:0};
 async function load() {
   const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) L = Object.assign(L, l); } catch (e) {}
@@ -2385,9 +2424,26 @@ function settle(win, pions) {
   bump('play'); r.d1 = divOf(L.xp); save(); return r;
 }
 function record(win, kind) { const s = L.st = L.st || {}; ['all', kind].forEach(k => { const o = s[k] = s[k] || {p:0, w:0, l:0}; o.p++; o[win ? 'w' : 'l']++; }); L.ate = (L.ate || 0) + gc.ate; L.eaten = (L.eaten || 0) + gc.eaten; }
+async function settleMatchCoins(win) {
+  const ref = uref();
+  return F().runTransaction(F().db, async tx => {
+    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+    const data = snap.data(), balance = Number(data.gold) || 0;
+    const streak = win ? (Number(data.coinStreak) || 0) + 1 : 0;
+    const bonus = win && streak >= 3 ? 100 : 0, reward = (win ? 100 : 20) + bonus, next = balance + reward;
+    const ledger = Array.isArray(data.coinLedger) ? data.coinLedger.slice(0,99) : [];
+    ledger.unshift({id:mk(),t:Date.now(),label:win ? 'Récompense de victoire' + (bonus ? ' · bonus de série' : '') : 'Récompense de participation',delta:reward,balance:next});
+    tx.update(ref,{gold:next,coinLedger:ledger,coinStreak:streak});
+    return {reward,bonus,streak,balance:next,ledger};
+  }).then(r => {
+    playerProfile.gold=r.balance; playerProfile.coinLedger=r.ledger; playerProfile.coinStreak=r.streak;
+    saveProfile(); updateCurrencyUI(); if (window.refreshPhoenixWallet) window.refreshPhoenixWallet(); return r;
+  });
+}
 async function finish(win, pions) {
-  const r = settle(win, pions), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
+  const r = settle(win, pions), coins = await settleMatchCoins(win).catch(e => { toast('Solde non synchronisé : ' + (e.message || 'réessaie plus tard'), 'error'); return {reward:0,bonus:0}; }), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
   let h = win ? line('Victoire', '+200 XP') + (r.pions ? line('Bonus 4 pions', '+50 XP') : '') + line('Division ×' + r.dm, '') + line('Série ×' + r.sm, '') + (r.bx > 1 ? line('⚡ Boost XP', '×2') : '') : line('Défaite', '−100 XP') + (r.lm < 1 ? line('Protection défaites ×' + r.lm, '') : '') + (r.sh ? line('🛡️ Bouclier', 'série conservée') : '');
+  h += `<div style="font-size:1.25em;font-weight:900;color:var(--gold);margin:8px 0">🪙 +${coins.reward} pièces${coins.bonus ? ' · bonus série +100' : ''}</div>`;
   h += `<div style="font-size:2.2em;font-weight:900;color:${win ? '#00ffa8' : '#ff8a8a'};margin:10px 0">${r.g > 0 ? '+' : ''}${r.g} XP</div>`;
   const d = r.d1; h += `<div class="lg-gauge"><i style="width:${Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100)}%"></i><span>${L.xp} / ${d.b > 1e8 ? '∞' : d.b} XP</span></div>`;
   beep && beep(win ? 660 : 220, .25, 'triangle'); await dlg(win ? '🏆 Victoire !' : 'Défaite', h, [{t:'Continuer',v:1,c:'g'}], win ? 'ok' : 'err');
@@ -2546,10 +2602,15 @@ function hero(d) {
   <div class="lg-st" style="grid-template-columns:repeat(3,1fr)"><div><b>🔥 ${L.ws}</b>Série ×${sm()}</div><div><b>${L.best}</b>Record série</div><div><b>${a.p ? Math.round(a.w / a.p * 100) : 0}%</b>Victoires</div></div>
   <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<button class="lg-b s" style="margin-top:8px;width:100%" data-a="divs">📜 Divisions & barème</button></div>`;
 }
-function dailyGift() {
-  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return; L.dd = L.dl === y ? (L.dd || 0) + 1 : 1; L.dl = dayKey();
-  const day = (L.dd - 1) % 7 + 1, g = 100 * day, gm = day === 7 ? 10 : 0; playerProfile.gold = (playerProfile.gold || 0) + g; playerProfile.gems = (playerProfile.gems || 0) + gm; pushProfile(); save();
-  good('Cadeau du jour !', `Jour ${day}/7 · 🪙 +${g}${gm ? ' · 💎 +' + gm : ''}<br>Reviens demain pour la suite !`); render();
+async function dailyGift() {
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return;
+  const nextDay = L.dl === y ? (L.dd || 0) + 1 : 1, day = (nextDay - 1) % 7 + 1, g = 100 * day, gm = day === 7 ? 10 : 0;
+  try {
+    await changeCoins(g, 'Cadeau quotidien · jour ' + day);
+    L.dd = nextDay; L.dl = dayKey();
+    if (gm) { playerProfile.gems = (playerProfile.gems || 0) + gm; pushProfile(); }
+    save(); good('Cadeau du jour !', `Jour ${day}/7 · 🪙 +${g}${gm ? ' · 💎 +' + gm : ''}<br>Reviens demain pour la suite !`); render();
+  } catch(e) { err('Récompense indisponible', esc(e.message)); }
 }
 function statsV() {
   const s = L.st || {}, a = A0(), pc = o => o && o.p ? Math.round(o.w / o.p * 100) : 0, tab = `<div class="lg-row"><button class="lg-b s ${ST === 'troph' ? 'g' : ''}" data-a="st" data-v="troph">🏆 Trophées</button><button class="lg-b s ${ST === 'stats' ? 'g' : ''}" data-a="st" data-v="stats">📊 Stats</button></div>`;
@@ -2559,26 +2620,75 @@ function statsV() {
   return tab + `<div class="lg-card gold"><h3>Mes statistiques</h3><div class="lg-st"><div><b>${a.p}</b>Parties jouées</div><div><b>${pc(a)}%</b>de victoires</div><div><b>${a.w}</b>Victoires</div><div><b>${a.l}</b>Défaites</div><div><b>${L.ate || 0}</b>💥 Pions mangés</div><div><b>${L.eaten || 0}</b>💀 Mes pions mangés</div></div></div>` + row('Multijoueur', s.mm, '🌐') + row('Salon privé', s.priv, '🔒') + row('Contre les bots', s.bots, '🤖');
 }
 function shopV() {
-  return `<div class="lg-card gold"><h3>🛒 Boutique</h3><p style="margin:0">Tu as 🪙 <b>${(playerProfile.gold || 0).toLocaleString('fr-FR')}</b> et 💎 <b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>. Gagne-en avec les défis et le cadeau du jour !</p></div>` + ITEMS.map(x => `<div class="lg-card"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('') + '<div class="lg-card" style="text-align:center;opacity:.7"><div style="font-size:34px">🔒</div><p style="margin:0">De nouveaux articles arrivent bientôt…</p></div>';
+  const ledger = (playerProfile.coinLedger || []).slice(0,12), purchases = (playerProfile.purchaseHistory || []).slice(0,10);
+  return `<div class="lg-card gold wallet-card"><div class="lg-row lg-sp"><h3>🪙 Mon portefeuille</h3><span class="lg-chip">Synchronisé</span></div>
+    <div class="wallet-balance">${(playerProfile.gold || 0).toLocaleString('fr-FR')} <small>pièces</small></div>
+    <div class="wallet-sub">Ton solde est sauvegardé sur ton compte et se retrouve à chaque reconnexion.</div>
+    <div class="lg-st"><div><b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>Gemmes</div><div><b>${ledger.length}</b>Opérations récentes</div></div></div>
+    <div class="lg-card"><h3>🎁 Code promo</h3><p>Saisis ton code pour recevoir une récompense sur ce compte.</p>
+      <div class="lg-row"><input class="lg-in" id="coin-promo" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="TON CODE PROMO" style="text-align:left;letter-spacing:1px"><button class="lg-b g s" data-a="promo" style="flex:none">Valider</button></div>
+      <small style="display:block;margin-top:8px;color:#9fc3ea">${playerProfile.promoUsed ? 'Un code promotionnel a déjà été utilisé sur ce compte.' : 'Code de bienvenue disponible : WELCOME1000 · utilisable une seule fois.'}</small></div>
+    <div class="lg-card"><h3>🛍️ Articles & améliorations</h3>${ITEMS.map(x => `<div class="lg-item-wrap"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1;min-width:0"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('')}</div>
+    <div class="lg-card"><h3>📒 Historique des pièces</h3>${ledger.length ? `<div class="coin-ledger">${ledger.map(e => `<div class="coin-line"><div><b>${esc(e.label || 'Opération')}</b><small>${new Date(e.t || Date.now()).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div><strong class="${e.delta >= 0 ? 'coin-plus' : 'coin-minus'}">${e.delta > 0 ? '+' : '−'}${Math.abs(e.delta).toLocaleString('fr-FR')}</strong></div>`).join('')}</div>` : '<p>Aucune opération pour le moment.</p>'}</div>
+    <div class="lg-card"><h3>🧾 Mes achats</h3>${purchases.length ? purchases.map(e => `<div class="coin-line"><div><b>${esc(e.label)}</b><small>${new Date(e.t || Date.now()).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div><strong class="coin-minus">−${Number(e.amount || 0).toLocaleString('fr-FR')} ${esc(e.currency || '')}</strong></div>`).join('') : '<p>Aucun achat enregistré pour le moment.</p>'}</div>
+    <div class="lg-card" style="text-align:center"><p style="margin:0">Les achats d’articles sont débités immédiatement et enregistrés dans ton historique. Les packs payants seront activés avec un prestataire de paiement sécurisé.</p></div>`;
+}
+async function redeemCoinPromo() {
+  const input = $('coin-promo'), code = (input && input.value || '').trim().toUpperCase();
+  if (!code) return toast('Saisis un code promo', 'error');
+  if (code !== 'WELCOME1000') return toast('Code promo invalide', 'error');
+  try {
+    const ref = uref();
+    const balance = await F().runTransaction(F().db, async tx => {
+      const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+      const data = snap.data(); if (data.promoUsed) throw new Error('Ce code a déjà été utilisé sur ce compte');
+      const next = (Number(data.gold) || 0) + 1000, ledger = (Array.isArray(data.coinLedger) ? data.coinLedger : []).slice(0,99);
+      ledger.unshift({id:mk(),t:Date.now(),label:'Code promo WELCOME1000',delta:1000,balance:next});
+      tx.update(ref,{gold:next,coinLedger:ledger,promoUsed:true}); return {gold:next,coinLedger:ledger};
+    });
+    playerProfile.gold=balance.gold; playerProfile.coinLedger=balance.coinLedger; playerProfile.promoUsed=true;
+    saveProfile(); updateCurrencyUI(); good('Code validé !','🪙 +1 000 pièces ajoutées à ton portefeuille.'); render();
+  } catch(e) { toast(e.message || 'Code promo indisponible','error'); }
 }
 async function buy(id) {
-  const x = ITEMS.find(i => i.id === id), c = x.cur, ic = c === 'gems' ? '💎' : '🪙'; if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
+  const x = ITEMS.find(i => i.id === id); if (!x) return;
+  const c = x.cur, ic = c === 'gems' ? '💎' : '🪙';
+  if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
   if (!await dlg(x.n, `Acheter pour ${ic} ${x.p} ?`, [{t:'Annuler',v:0},{t:'Acheter',v:1,c:'g'}])) return;
-  playerProfile[c] -= x.p; if (id === 'bx') L.bx = (L.bx || 0) + 3; else L.sh = (L.sh || 0) + 1; pushProfile(); save(); good('Achat réussi !', `${x.i} ${esc(x.n)} ajouté à ton inventaire.`); render();
+  try {
+    if (c === 'gold') await changeCoins(-x.p, 'Achat boutique · ' + x.n);
+    else {
+      const result = await F().runTransaction(F().db, async tx => {
+        const ref = uref(), snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+        const data = snap.data(), gems = Number(data.gems) || 0; if (gems < x.p) throw new Error('Gemmes insuffisantes');
+        const purchase = {id:mk(), t:Date.now(), label:'Achat boutique · ' + x.n, amount:x.p, currency:'gemmes'};
+        const history = [purchase].concat(Array.isArray(data.purchaseHistory) ? data.purchaseHistory : []).slice(0,50);
+        tx.update(ref,{gems:gems-x.p,purchaseHistory:history}); return {gems:gems-x.p,history};
+      });
+      playerProfile.gems=result.gems; playerProfile.purchaseHistory=result.history; saveProfile(); updateCurrencyUI();
+    }
+    if (id === 'bx') L.bx = (L.bx || 0) + 3; else if (id === 'sh') L.sh = (L.sh || 0) + 1;
+    save(); good('Achat réussi !', `${x.i} ${esc(x.n)} ajouté à ton inventaire.`); render();
+  } catch(e) { err('Achat impossible', esc(e.message)); }
 }
+window.refreshPhoenixWallet = function(){ if (open && T === 'shop') render(); };
 function rank() {
   const list = [{pseudo:playerProfile.pseudo, av:playerProfile.avatarFile, xp:L.xp, ws:L.ws, me:1}].concat(S.friends.map(f => { const g = FD[f.uid] || {}, l = g.lg || {}; return {pseudo:g.pseudo || f.pseudo, av:g.av || f.av, xp:l.xp || 0, ws:l.ws || 0}; })).sort((a, b) => b.xp - a.xp);
   return `<div class="lg-card gold"><h3>🏅 Classement entre amis</h3>${list.map((p, i) => `<div class="lg-li" style="${p.me ? 'border:1px solid var(--gold)' : ''}"><div style="font-size:22px;width:30px;text-align:center;flex:none">${['🥇','🥈','🥉'][i] || i + 1}</div><div class="lg-av ${sq()}" style="${av(p.av)};width:38px;height:38px"></div><div class="t"><b>${esc(p.pseudo)}${p.me ? ' (toi)' : ''}</b><small>Div ${divOf(p.xp).l} · ${esc(divOf(p.xp).n)} · 🔥 ${p.ws}</small></div><b style="color:var(--gold);flex:none">${p.xp.toLocaleString('fr-FR')}</b></div>`).join('')}</div>`;
 }
 function chal() {
   roll(); const row = (c, b, id) => { const p = Math.min(prog(b, c.k), c.n), ok = (b.cl || []).includes(id), full = p >= c.n;
-    return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
+    return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 🪙${c.coins || 0} · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
   return '<b style="color:var(--cyan)">Quotidiens</b><br>' + DAILY.map((c, i) => row(c, L.dp, 'd' + i)).join('') + '<b style="color:var(--cyan)">Hebdomadaires</b><br>' + WEEKLY.map((c, i) => row(c, L.wp, 'w' + i)).join('');
 }
-function claim(id) {
+async function claim(id) {
   const c = (id[0] === 'd' ? DAILY : WEEKLY)[+id.slice(1)], b = id[0] === 'd' ? L.dp : L.wp; if (!c || prog(b, c.k) < c.n || (b.cl || []).includes(id)) return;
-  (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; pushProfile(); save(); sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP et ${c.g} gemmes !`});
-  good('Défi réussi !', `+${c.xp} XP · 💎 +${c.g}`); render();
+  try {
+    await changeCoins(c.coins || 0, 'Récompense défi · ' + c.t);
+    (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; pushProfile(); save();
+    sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP, ${c.coins || 0} pièces et ${c.g} gemmes !`});
+    good('Défi réussi !', `+${c.xp} XP · 🪙 +${c.coins || 0} · 💎 +${c.g}`); render();
+  } catch(e) { err('Récompense indisponible', esc(e.message)); }
 }
 
 /* ---------- ACTIONS ---------- */
@@ -2594,10 +2704,10 @@ const A = {
   nm: async () => { const v = ($('lgn').value || '').trim(); if (v.length < 3) return err('Pseudo trop court', 'Ton pseudo doit contenir au moins 3 caractères.'); if (v === playerProfile.pseudo) return;
     playerProfile.pseudo = v; saveProfile(); applyProfileUI(); try { await F().updateDoc(uref(), {pseudo:v}); } catch (e) {} F().setDoc(sref(me().uid), {pseudo:v}, {merge:true}).catch(() => {}); toast('Pseudo enregistré', 'success'); render(); },
   cpu: () => { navigator.clipboard ? navigator.clipboard.writeText(me().uid).then(() => toast('Code ami copié !', 'success')) : toast('Copie impossible', 'error'); },
-  out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { await F().signOut(F().auth); location.reload(); } },
+  out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { if (profileUnsub) { profileUnsub(); profileUnsub = null; } await F().signOut(F().auth); location.reload(); } },
   af: async () => { const id = ($('lgf').value || '').trim(); if (id.length < 10) return err('Code invalide', 'Colle le code ami complet du joueur (visible dans son Profil).'); if (id === me().uid) return err('Oups', 'Tu ne peux pas t’ajouter toi-même.');
     const s = await F().getDoc(sref(id)).catch(() => null); addFriend({uid:id, pseudo:(s && s.exists() && s.data().pseudo) || 'ce joueur'}); },
-  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v), dg: dailyGift, st: e => { ST = e.dataset.v; render(); }, buy: e => buy(e.dataset.v)
+  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v), dg: dailyGift, promo: redeemCoinPromo, st: e => { ST = e.dataset.v; render(); }, buy: e => buy(e.dataset.v)
 };
 root.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (t && A[t.dataset.a]) A[t.dataset.a](t); });
 function openLG() { if (!me()) return toast('Connecte-toi d’abord !', 'error'); open = true; root.classList.add('on'); T = R ? 'room' : 'home'; initSocial(); render(); anim(); }
@@ -2633,11 +2743,26 @@ setInterval(() => {
 const V2 = {on:false, p:{}, mu:{}, stream:null, off:null, code:null};
 const vdoc = () => F().doc(F().db, 'voice', V2.code);
 async function voiceStart() {
-  if (V2.on) return; V2.on = true; V2.code = currentRoomCode; const u = me(), ids = (roomUids || []).filter(Boolean); if (ids.length < 2) { V2.on = false; return; }
-  try { V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me'); } catch (e) { toast('Micro refusé : tu peux écouter mais pas parler', 'error'); }
+  if (V2.on) return; V2.code = currentRoomCode; const u = me(), ids = (roomUids || []).filter(Boolean); if (!u || ids.length < 2) return;
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Le chat vocal nécessite un navigateur compatible et une connexion HTTPS.', 'error'); return; }
+  V2.on = true;
+  try { V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me'); } catch (e) { V2.stream = null; V2.track = null; toast('Autorise le micro dans ton navigateur pour parler. Le bouton 🎤 reste disponible.', 'error'); }
   const clear = {}; ids.forEach(o => { clear['m_' + u.uid + '_' + o] = ''; }); await F().setDoc(vdoc(), clear, {merge:true}).catch(() => {});
   V2.off = F().onSnapshot(vdoc(), s => { const d = s.data() || {}; ids.filter(o => o !== u.uid).forEach(o => sig(o, d['m_' + o + '_' + u.uid])); }, () => {});
   ids.filter(o => o > u.uid).forEach(async o => { const x = peer(o); await x.pc.setLocalDescription(await x.pc.createOffer()); x.out.o = x.pc.localDescription.sdp; push(o, x); });
+}
+async function requestVoiceMic() {
+  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Le micro exige HTTPS et un navigateur compatible.', 'error'); return false; }
+  try {
+    V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}});
+    V2.track = V2.stream.getAudioTracks()[0]; V2.track.enabled = true;
+    V2.mu[me().uid] = false; watch(V2.stream, 'me');
+    Object.values(V2.p).forEach(x => {
+      const sender = x.pc.getSenders().find(t => t.track && t.track.kind === 'audio') || x.pc.getSenders().find(t => !t.track);
+      if (sender) sender.replaceTrack(V2.track).catch(() => {});
+    });
+    mics(); toast('Micro activé', 'success'); return true;
+  } catch(e) { toast('Autorise l’accès au micro dans les réglages du navigateur.', 'error'); return false; }
 }
 function peer(o) {
   if (V2.p[o]) return V2.p[o]; const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}), x = {pc, out:{}, seen:0}; V2.p[o] = x;
@@ -2656,11 +2781,24 @@ const LV = {}; let ac;
 function watch(ms, key) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); const an = ac.createAnalyser(); an.fftSize = 256; ac.createMediaStreamSource(ms).connect(an); LV[key] = an; } catch (e) {} }
 function voiceStop() { if (!V2.on) return; V2.on = false; if (V2.off) V2.off(); Object.values(V2.p).forEach(x => { try { x.pc.close(); } catch (e) {} }); V2.p = {}; if (V2.stream) V2.stream.getTracks().forEach(t => t.stop()); V2.stream = V2.track = null; Object.keys(LV).forEach(k => delete LV[k]); document.querySelectorAll('.lg-mic').forEach(b => b.remove()); }
 function mics() {
-  const names = (lastRoomData && lastRoomData.players) || []; document.querySelectorAll('.player-container').forEach(c => {
-    const n = c.querySelector('.game-pseudo'); if (!n) return; const pl = names.find(p => p.pseudo === n.textContent); if (!pl) return; let b = c.querySelector('.lg-mic');
-    if (!b) { b = document.createElement('button'); b.className = 'lg-mic'; b.onclick = e => { e.stopPropagation(); const mine = pl.uid === me().uid;
-        if (mine) { if (!V2.track) return toast('Micro indisponible', 'error'); V2.track.enabled = !V2.track.enabled; V2.mu[pl.uid] = !V2.track.enabled; } else { V2.mu[pl.uid] = !V2.mu[pl.uid]; const x = V2.p[pl.uid]; if (x && x.a) x.a.muted = V2.mu[pl.uid]; } }; c.appendChild(b); }
-    b.dataset.u = pl.uid; b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤'; b.classList.toggle('mu', !!V2.mu[pl.uid]);
+  const names = (lastRoomData && lastRoomData.players) || [], self = me(); if (!self) return;
+  document.querySelectorAll('.player-container').forEach(c => {
+    const n = c.querySelector('.game-pseudo'); if (!n) return;
+    const pseudo = (n.textContent || '').trim();
+    const pl = names.find(p => p && String(p.pseudo || '').trim() === pseudo); if (!pl || !pl.uid) return;
+    const avatar = c.querySelector('.in-game-avatar') || c; let b = avatar.querySelector('.lg-mic');
+    if (!b) { b = document.createElement('button'); b.type='button'; b.className='lg-mic';
+      b.onclick = e => { e.stopPropagation(); e.preventDefault(); const mine = pl.uid === self.uid;
+        if (mine) { if (!V2.track) { requestVoiceMic(); return; } V2.track.enabled = !V2.track.enabled; V2.mu[pl.uid] = !V2.track.enabled; }
+        else { V2.mu[pl.uid] = !V2.mu[pl.uid]; const x = V2.p[pl.uid]; if (x && x.a) x.a.muted = V2.mu[pl.uid]; }
+        b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤'; b.classList.toggle('mu', !!V2.mu[pl.uid]);
+        b.setAttribute('aria-label', mine ? (V2.mu[pl.uid] ? 'Activer mon micro' : 'Couper mon micro') : (V2.mu[pl.uid] ? 'Réactiver ce joueur' : 'Couper ce joueur'));
+      }; avatar.appendChild(b);
+    }
+    b.dataset.u = pl.uid; b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤';
+    b.title = pl.uid === self.uid ? 'Activer / couper ton micro' : 'Activer / couper le son de ce joueur';
+    b.setAttribute('aria-label', pl.uid === self.uid ? 'Activer / couper ton micro' : 'Activer / couper le son de ce joueur');
+    b.classList.toggle('mu', !!V2.mu[pl.uid]);
   });
 }
 setInterval(() => { const g = $('game-screen') && $('game-screen').classList.contains('active'), live = g && currentRoomCode && roomUids && !state.gameOver;
