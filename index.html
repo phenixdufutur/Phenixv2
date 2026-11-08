@@ -86,8 +86,8 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 .auth-box h2 { text-align: center; font-size: clamp(18px, 5.4cqw, 28px); margin-bottom: 1cqw; letter-spacing: 3px; text-transform: uppercase; background: linear-gradient(90deg, var(--cyan), var(--gold-2), var(--cyan)); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 8px rgba(0,229,255,.5)); }
 .input-group { display: flex; flex-direction: column; gap: 1cqw; }
 .input-group label { font-size: clamp(10px, 3cqw, 14px); color: #9fc3ea; letter-spacing: 1px; text-transform: uppercase; }
-.input-group input { padding: 2.5cqw; border-radius: 2cqw; border: 1px solid #4a6fa5; background: rgba(0,0,0,0.5); color: #fff; font-size: 16px; outline: none; transition: border-color .2s, box-shadow .2s; user-select: text; width: 100%; }
-.input-group input:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,229,255,.55); }
+.input-group input, .input-group select { padding: 2.5cqw; border-radius: 2cqw; border: 1px solid #4a6fa5; background: rgba(0,0,0,0.5); color: #fff; font-size: 16px; outline: none; transition: border-color .2s, box-shadow .2s; user-select: text; width: 100%; }
+.input-group input:focus, .input-group select:focus { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,229,255,.55); }
 .auth-tabs { display: flex; border: 1px solid rgba(0,229,255,.4); border-radius: 3cqw; overflow: hidden; background: rgba(0,0,0,.35); }
 .auth-tab { flex: 1; padding: 2.6cqw 1cqw; background: none; border: none; color: #9fc3ea; cursor: pointer; font-weight: bold; text-transform: uppercase; letter-spacing: 1px; font-size: clamp(11px, 3.2cqw, 15px); transition: all .2s; }
 .auth-tab.active { background: linear-gradient(180deg, rgba(24,70,140,.95), rgba(4,16,48,.98)); color: var(--gold-2); text-shadow: 0 0 8px rgba(230,195,92,.7); box-shadow: inset 0 -2px 0 var(--gold); }
@@ -295,6 +295,12 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 #bottom-banner { position: absolute; bottom: 0; left: 0; right: 0; height: calc(13.5vh + var(--safe-bottom)); background: linear-gradient(rgba(6,22,60,0.9), rgba(4,12,36,0.98)), url('p2.jpg') center / cover no-repeat; border-top: 1px solid rgba(0,229,255,.5); box-shadow: 0 -6px 30px rgba(0, 229, 255, 0.4); z-index: 35; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; padding: 1.5cqw 2cqw; padding-bottom: calc(max(2cqh, var(--safe-bottom) + 10px) + var(--sc-size) + 6px); }
 #bottom-banner::before { content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--cyan), var(--gold-2), var(--cyan), transparent); background-size: 200% 100%; animation: bannerFlow 4s linear infinite; }
 @keyframes bannerFlow { to { background-position: 200% 0; } }
+
+/* Actions regroupées au centre, sous la pile de défausse, sans couvrir les cases de sélection. */
+#bottom-banner{top:0;bottom:0;height:auto;background:none;border:0;box-shadow:none;padding:0;pointer-events:none;overflow:visible}
+#bottom-banner::before{display:none}
+#actions{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:min(76%,420px);max-width:76%;min-height:0;flex:0 0 auto;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;pointer-events:auto;padding:5px 8px;border-radius:14px;background:rgba(3,12,34,.58);border:1px solid rgba(0,229,255,.28);backdrop-filter:blur(5px);z-index:42}
+#actions .btn{min-width:0;padding:7px 11px;font-size:clamp(10px,2.6cqw,14px);letter-spacing:.3px;border-radius:10px}
 #actions { position: relative; display: flex; justify-content: center; align-items: center; align-content: center; gap: 2cqw; flex-wrap: wrap; z-index: 40; min-height: 0; width: 100%; flex: 1 1 auto; }
 #banner-texts { display: none !important; }
 .btn { position: relative; overflow: hidden; padding: 1.5cqw 4cqw; background: linear-gradient(180deg, rgba(24,70,140,.95) 0%, rgba(4,16,48,.98) 100%); color: var(--cyan); border: 1.5px solid var(--cyan); border-radius: 2.5cqw; font-size: 3.2cqw; font-weight: bold; cursor: pointer; box-shadow: 0 0 12px rgba(0, 229, 255, 0.4), inset 0 1px 0 rgba(255,255,255,.18), inset 0 0 8px rgba(0, 229, 255, 0.15); text-transform: uppercase; letter-spacing: 1px; font-family: 'Segoe UI', sans-serif; transition: all 0.2s; text-shadow: 0 0 8px rgba(0, 229, 255, 0.7); min-width: 22cqw; }
@@ -350,6 +356,22 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 
 .card.face-fallback::before, .discard-card.face-fallback::before { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 8cqw; font-weight: 800; color: #1a1a2e; background: linear-gradient(160deg, #f6f0dd, #d9cfae); z-index: 0; }
 .discard-card { background-color: #0c1a3d !important; }
+
+/* Position finale du dock d’actions : sous la défausse, au centre du plateau. */
+#bottom-banner{top:0!important;bottom:0!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;pointer-events:none!important;overflow:visible!important}
+#bottom-banner::before{display:none!important}
+#actions{position:absolute!important;left:50%!important;top:57%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:min(76%,420px)!important;max-width:76%!important;min-height:0!important;flex:0 0 auto!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;pointer-events:auto!important;padding:5px 8px!important;border-radius:14px!important;background:rgba(3,12,34,.58)!important;border:1px solid rgba(0,229,255,.28)!important;backdrop-filter:blur(5px);z-index:42!important}
+#actions .btn{min-width:0!important;padding:7px 11px!important;font-size:clamp(10px,2.6cqw,14px)!important;letter-spacing:.3px!important;border-radius:10px!important}
+/* ===== Révision interface de jeu : dock d'actions sous le plateau, bande bleue, bouton vocal ===== */
+#actions{top:68.6%!important;width:min(40%,280px)!important;max-width:40%!important;padding:4px 6px!important;gap:5px!important}
+#actions .btn{padding:6px 9px!important;font-size:clamp(10px,2.3cqw,13px)!important}
+#actions:empty{display:none!important}
+#bottom-strip{position:absolute;left:0;right:0;bottom:0;height:max(calc(var(--sc-size) + 3.4cqh),var(--strip-min,9%));z-index:44;pointer-events:none;background:linear-gradient(180deg,#0a2a63 0%,#05163b 45%,#02091f 100%);border-top:1.5px solid rgba(0,229,255,.55);box-shadow:0 -4px 18px rgba(0,229,255,.28),inset 0 1px 0 rgba(255,255,255,.1)}
+#bottom-strip::before{content:'';position:absolute;top:-2px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--cyan),var(--gold-2),var(--cyan),transparent);background-size:200% 100%;animation:bannerFlow 4s linear infinite}
+#settings-buttons{left:0!important;right:0!important;bottom:0!important;height:max(calc(var(--sc-size) + 3.4cqh),var(--strip-min,9%));align-items:center;padding:0 max(3cqw,12px) var(--safe-bottom);gap:3cqw!important}
+#btn-voice{margin-left:auto;border-color:var(--gold)!important}
+#btn-voice.on{border-color:#00ffa8!important;box-shadow:0 0 12px #00ffa8!important}
+#btn-voice.mu{border-color:#ff5252!important;background:rgba(80,10,16,.92)!important}
 </style>
 </head>
 <body>
@@ -426,10 +448,21 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
         <label class="switch-row"><span>🤖 Compléter avec des Bots</span><span class="switch"><input type="checkbox" id="check-bots" checked onchange="renderRoomSlots()"><i></i></span></label>
         <div class="input-group" id="room-bot-difficulty-wrap">
           <label for="room-bot-difficulty">Difficulté des bots</label>
-          <select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()" style="width:100%;padding:2.5cqw;border-radius:2cqw;border:1px solid #4a6fa5;background:rgba(0,0,0,.5);color:#fff;font-size:16px;">
+          <select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()">
             <option value="easy">Nul</option>
             <option value="medium" selected>Moyen</option>
             <option value="expert">Expert</option>
+          </select>
+        </div>
+        <!-- AJOUT : Choix de la mise pour la partie privée -->
+        <div class="input-group" id="room-stake-wrap">
+          <label for="room-stake">Mise de la partie</label>
+          <select id="room-stake" onchange="saveRoomStake()">
+            <option value="0">Gratuit</option>
+            <option value="100" selected>100 pièces</option>
+            <option value="200">200 pièces</option>
+            <option value="500">500 pièces</option>
+            <option value="1000">1000 pièces</option>
           </select>
         </div>
         <div class="bp-title">Plateau</div>
@@ -478,15 +511,15 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
   <div class="menu-grid">
     <div class="hex-btn-container primary" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">🌐</div></div><div class="hex-label">Jouer</div></div>
     <div class="hex-btn-container" onclick="openLobbyScreen()"><div class="hex-btn"><div class="hex-icon">🔒</div></div><div class="hex-label">Partie<br>privée</div></div>
-    <div class="hex-btn-container" onclick="alert('Bientôt disponible')"><div class="hex-btn"><div class="hex-icon">🏆</div></div><div class="hex-label">Ligues</div></div>
-    <div class="hex-btn-container" onclick="alert('Bientôt disponible')"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Boutique</div></div>
+    <div class="hex-btn-container" onclick="openLeagueView('home')"><div class="hex-btn"><div class="hex-icon">🏆</div></div><div class="hex-label">Ligues</div></div>
+    <div class="hex-btn-container" onclick="window.openPhoenixWallet()"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Pièces &amp;<br>Boutique</div></div>
     <div class="hex-btn-container" onclick="openBotDifficulty()"><div class="hex-btn"><div class="hex-icon">⚔️</div></div><div class="hex-label">Jouer vs<br>Bots</div></div>
-    <div class="hex-btn-container" onclick="alert('Bientôt disponible')"><div class="hex-btn"><div class="hex-icon">📊</div></div><div class="hex-label">Trophées<br>Stats</div></div>
+    <div class="hex-btn-container" onclick="openLeagueView('stats')"><div class="hex-btn"><div class="hex-icon">📊</div></div><div class="hex-label">Trophées<br>Stats</div></div>
   </div>
   <div class="bottom-bar">
     <button class="icon-btn" onclick="toggleSound()">🔊</button>
     <button class="icon-btn" onclick="alert('Paramètres')">⚙️</button>
-    <button class="icon-btn" onclick="alert('Messages')">💬</button>
+    <button class="icon-btn" onclick="openLeagueView('inbox')">💬</button>
   </div>
 </div>
 
@@ -502,10 +535,12 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
     <div class="player-container pos-p2"><div id="avatar-game-p2" class="in-game-avatar"></div><div id="name-game-p2" class="game-pseudo">Rouge</div><div class="turn-timer" id="timer-p2">20</div></div>
     <div class="player-container pos-p3"><div id="avatar-game-p3" class="in-game-avatar"></div><div id="name-game-p3" class="game-pseudo">Vert</div><div class="turn-timer" id="timer-p3">20</div></div>
     <div class="player-container pos-p0"><div id="avatar-game-p0" class="in-game-avatar"></div><div id="name-game-p0" class="game-pseudo">Vous</div><div class="turn-timer" id="timer-p0">20</div></div>
+    <div id="bottom-strip"></div>
     <div id="settings-buttons">
       <button id="btn-mute" onclick="toggleSound()">🔊</button>
       <button id="btn-anims" onclick="toggleAnimations()">✨</button>
       <button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button>
+      <button id="btn-voice" type="button" onclick="lgVoiceToggle()" aria-label="Micro : activer / couper" title="Chat vocal : micro">🎙️</button>
     </div>
     <div id="hand"></div>
     <div id="force-banner"><b>⚠️ Abandonnez une carte</b><span>Un 10 a été joué avant vous : choisissez une carte à défausser</span></div>
@@ -557,10 +592,7 @@ window.registerUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile = { ...playerProfile, pseudo, avatarFile:regAvatar, email, gold:1000, gems:45, inventory:[], coinLedger:[{id:'signup-'+res.user.uid, t:Date.now(), label:'Bonus de première inscription', delta:1000, balance:1000}], purchaseHistory:[], promoUsed:false };
-    saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile);
-    watchPlayerProfile(res.user.uid); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI();
-    showToast('🔥 Bienvenue ! 1 000 pièces offertes.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; playerProfile.gold = 1000; playerProfile.wallet = {coins:1000, initialized:true, promoUsed:false, loginDate:'', missions:{date:'',played:0,won:0,claimed:[]}, ledger:[{id:'welcome-'+res.user.uid,t:Date.now(),label:'Bonus de bienvenue',delta:1000,balance:1000}]}; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); showToast('🎁 Bienvenue ! 1 000 pièces ajoutées à ton compte.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.loginUser = async function() {
@@ -568,8 +600,7 @@ window.loginUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = { ...playerProfile, ...docSnap.data() }; } else { await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile, {merge:true}); }
-    playerProfile.gold = Number.isFinite(playerProfile.gold) ? playerProfile.gold : 0; playerProfile.coinLedger = Array.isArray(playerProfile.coinLedger) ? playerProfile.coinLedger : []; playerProfile.purchaseHistory = Array.isArray(playerProfile.purchaseHistory) ? playerProfile.purchaseHistory : []; playerProfile.promoUsed = !!playerProfile.promoUsed; saveProfile(); watchPlayerProfile(res.user.uid); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = docSnap.data(); } await window.PhoenixWallet.initForUser(res.user.uid); const fresh = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(fresh.exists()) playerProfile = fresh.data(); saveProfile(); applySavedBoard(); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.openLobbyScreen = function() { roomStarted = false; lastRoomData = null; currentRoomCode = null; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('lobby-screen').classList.add('active'); document.getElementById('lobby-menu-choice').style.display = 'flex'; document.getElementById('lobby-room-view').style.display = 'none'; };
@@ -579,7 +610,7 @@ window.createPrivateRoom = async function() {
   const user = window.FB && window.FB.auth.currentUser; if(!user) { showToast("Connecte-toi d'abord !", 'error'); return; }
   roomStarted = false;
   try { let code = null; for (let i = 0; i < 6 && !code; i++) { const c = Math.floor(1000 + Math.random() * 9000).toString(); const ex = await window.FB.getDoc(window.FB.doc(window.FB.db, 'rooms', c)); if (!ex.exists() || ex.data().status !== 'waiting') code = c; } if (!code) { showToast("Impossible de créer un salon", 'error'); return; }
-    const roomData = { host: user.uid, code: code, players: [{ uid: user.uid, pseudo: playerProfile.pseudo, avatarFile: playerProfile.avatarFile, ready: true }], fillBots: true, botDifficulty: 'medium', status: 'waiting', gameState: null };
+    const roomData = { host: user.uid, code: code, stake: 100, players: [{ uid: user.uid, pseudo: playerProfile.pseudo, avatarFile: playerProfile.avatarFile, ready: true }], fillBots: true, botDifficulty: 'medium', status: 'waiting', gameState: null };
     await window.FB.setDoc(window.FB.doc(window.FB.db, 'rooms', code), roomData); currentRoomCode = code; lastRoomData = roomData; showRoomView(code, true); renderRoomSlots(); listenToRoom(code);
   } catch(err) { currentRoomCode = null; showToast(authErrorMsg(err), 'error'); }
 };
@@ -604,6 +635,11 @@ function showRoomView(code, isHost) {
   if (diff) diff.value = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
   const wrap = document.getElementById('room-bot-difficulty-wrap');
   if (wrap) wrap.style.display = isHost ? 'flex' : 'none';
+  // AJOUT : gestion de la mise
+  const stakeWrap = document.getElementById('room-stake-wrap');
+  if (stakeWrap) stakeWrap.style.display = isHost ? 'flex' : 'none';
+  const stake = document.getElementById('room-stake');
+  if (stake) stake.value = String((lastRoomData && lastRoomData.stake !== undefined) ? lastRoomData.stake : 100);
 }
 window.copyRoomCode = function() { const code = currentRoomCode; if (!code) return; const done = () => showToast("Code copié !", 'success'); if (navigator.clipboard && navigator.clipboard.writeText) { navigator.clipboard.writeText(code).then(done).catch(() => showToast("Code : " + code)); } else showToast("Code : " + code); };
 function renderRoomSlots() {
@@ -626,7 +662,7 @@ function seatList(players) {
   rest.forEach(p => { const i = r.findIndex(x => !x); if (i >= 0) r[i] = p; });
   return r;
 }
-function launchFromRoom() {
+async function launchFromRoom() {
   if (roomStarted) return;
   roomStarted = true;
   state.botDifficulty = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
@@ -638,6 +674,10 @@ function launchFromRoom() {
   roomUids = sl.map(p => p ? p.uid : null);
   if (roomListener) { roomListener(); roomListener = null; }
   currentRoomCode = lastRoomData.code;
+  currentMatchStake = (lastRoomData.kind === 'bots' || lastRoomData.lg === 'solo') ? 0 : Number(lastRoomData.stake !== undefined ? lastRoomData.stake : 100);
+  currentMatchId = 'match-'+currentRoomCode+'-'+String(lastRoomData.startedAt || lastRoomData.updatedAt || lastRoomData.code);
+  try { if(currentMatchStake) await window.walletReserveMatch(currentMatchStake,currentMatchId); }
+  catch(e) { roomStarted=false; showToast(e.message||'Impossible de réserver la mise.','error'); backToMainMenuFromLobby(); return; }
   startGame(true);
 }
 function listenToRoom(code) {
@@ -651,6 +691,8 @@ function listenToRoom(code) {
     lastRoomData = data;
     const diff = document.getElementById('room-bot-difficulty');
     if (diff && document.activeElement !== diff) diff.value = data.botDifficulty || 'medium';
+    const stakeEl = document.getElementById('room-stake');
+    if (stakeEl && document.activeElement !== stakeEl) stakeEl.value = String(data.stake !== undefined ? data.stake : 100);
     renderRoomSlots();
   }, (err) => { showToast(authErrorMsg(err), 'error'); });
 }
@@ -667,6 +709,18 @@ window.saveRoomBotDifficulty = async function() {
     showToast('Difficulté des bots enregistrée', 'success');
   } catch (err) { showToast(authErrorMsg(err), 'error'); }
 };
+window.saveRoomStake = async function() {
+  if (!currentRoomCode || !lastRoomData) return;
+  const user = window.FB && window.FB.auth.currentUser;
+  if (!user || lastRoomData.host !== user.uid) return;
+  const stake = parseInt(document.getElementById('room-stake').value, 10);
+  try {
+    const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
+    await window.FB.updateDoc(roomRef, { stake: stake });
+    lastRoomData = { ...lastRoomData, stake: stake };
+    showToast('Mise enregistrée', 'success');
+  } catch (err) { showToast(authErrorMsg(err), 'error'); }
+};
 window.toggleReadyState = async function() { if(!currentRoomCode) return; try { const user = window.FB.auth.currentUser; const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode); const docSnap = await window.FB.getDoc(roomRef); if (!docSnap.exists()) return; const players = docSnap.data().players.map(p => (p.uid === user.uid ? { ...p, ready: !p.ready } : p)); await window.FB.updateDoc(roomRef, { players }); } catch(err) { showToast(authErrorMsg(err), 'error'); } };
 window.startMultiplayerGame = async function() {
   if (!currentRoomCode || !lastRoomData) return;
@@ -679,8 +733,10 @@ window.startMultiplayerGame = async function() {
   try {
     const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
     const botDifficulty = document.getElementById('room-bot-difficulty').value || 'medium';
-    await window.FB.updateDoc(roomRef, { status: 'playing', fillBots: bots, botDifficulty });
-    lastRoomData = { ...lastRoomData, status: 'playing', fillBots: bots, botDifficulty };
+    const stakeEl = document.getElementById('room-stake');
+    const stake = stakeEl ? parseInt(stakeEl.value, 10) : 100;
+    await window.FB.updateDoc(roomRef, { status: 'playing', fillBots: bots, botDifficulty, stake });
+    lastRoomData = { ...lastRoomData, status: 'playing', fillBots: bots, botDifficulty, stake };
     launchFromRoom();
   } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
@@ -735,21 +791,7 @@ function prevRulePage() { if (currentRulePage > 0) { currentRulePage--; renderRu
 function nextRulePage() { if (currentRulePage < RULES_PAGES.length - 1) { currentRulePage++; renderRulePage(); } }
 
 /* ================= PROFIL ================= */
-let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, inventory: [], coinLedger: [], purchaseHistory: [], promoUsed: false };
-let profileUnsub = null;
-function watchPlayerProfile(uid) {
-  if (profileUnsub) { profileUnsub(); profileUnsub = null; }
-  if (!window.FB || !uid) return;
-  profileUnsub = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'users', uid), snap => {
-    if (!snap.exists()) return;
-    const data = snap.data();
-    ['gold','gems','coinLedger','purchaseHistory','promoUsed','inventory'].forEach(k => {
-      if (data[k] !== undefined) playerProfile[k] = data[k];
-    });
-    saveProfile(); updateCurrencyUI();
-    if (window.refreshPhoenixWallet) window.refreshPhoenixWallet();
-  }, e => console.warn('Synchronisation du portefeuille impossible', e));
-}
+let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, inventory: [] };
 if(localStorage.getItem('phoenix_profile')) { playerProfile = JSON.parse(localStorage.getItem('phoenix_profile')); }
 const AVATAR_FILES = ['az','ay','ax','aw','av','au','at','as','ar','aq','ap','ao','an','am','al','ak','aj','ai','ah','ag','af','ae','ad','ac'];
 function saveProfile() { localStorage.setItem('phoenix_profile', JSON.stringify(playerProfile)); }
@@ -2003,7 +2045,7 @@ const BOARD_CALIB = [
   { w: 1, h: 1, l: 0, t: 0 },                                    // Plateau 1 (inerface.jpg)
   { w: 0.9885, h: 0.9899, l: 0.0059, t: 0 },                     // Plateau 2 (inerface1.jpg)
   { w: 0.9766, h: 0.9791, l: 0.01166, t: -0.00035 },             // Plateau 3 (inerface2.jpg)
-  { w: 0.9246, h: 0.9315, l: 0.03759, t: -0.0008 },              // Plateau 4 (inerface3.jpg)
+  { w: 0.9348, h: 0.9384, l: 0.0327, t: 0.0031 },                // Plateau 4 (inerface3.jpg) - recalé sur les trous du tracé (écart moyen < 2 px)
   { w: 0.9343, h: 0.9397, l: 0.0327, t: -0.0002 },               // Plateau 5 (inerface4.jpg)
   { w: 0.9124, h: 0.9203, l: 0.04384, t: -0.0001 }               // Plateau 6 (inerface5.jpg)
 ];
@@ -2013,6 +2055,7 @@ function applyBoard() {
   st.setProperty('--bg-size', `${(c.w * 100).toFixed(3)}% ${(c.h * 100).toFixed(3)}%`);
   const px = c.w < 1 ? c.l / (1 - c.w) * 100 : 0, py = c.h < 1 ? c.t / (1 - c.h) * 100 : 0;
   st.setProperty('--bg-pos', `${px.toFixed(3)}% ${py.toFixed(3)}%`);
+  st.setProperty('--strip-min', `${Math.max(5, (1 - (c.t + c.h * 0.944)) * 100).toFixed(2)}%`);
 }
 /* Outil de réglage (uniquement avec ?calib=1 dans l'adresse) */
 if (/[?&]calib=1/.test(location.search)) {
@@ -2042,7 +2085,16 @@ function buildBoardPickers() {
     });
   });
 }
-function selectBoard(i) { boardChoice = i; try { localStorage.setItem('phoenix_board', String(i)); } catch (e) {} applyBoard(); buildBoardPickers(); }
+function selectBoard(i) {
+  boardChoice = i; try { localStorage.setItem('phoenix_board', String(i)); } catch (e) {}
+  /* Le plateau choisi devient le plateau par défaut du joueur (profil local + compte) */
+  try { playerProfile.boardChoice = i; saveProfile(); const u = window.FB && window.FB.auth.currentUser; if (u) window.FB.updateDoc(window.FB.doc(window.FB.db, 'users', u.uid), { boardChoice: i }).catch(() => {}); } catch (e) {}
+  applyBoard(); buildBoardPickers();
+}
+function applySavedBoard() {
+  const v = playerProfile && playerProfile.boardChoice;
+  if (Number.isInteger(v) && v >= 0 && v < BOARD_FILES.length && v !== boardChoice) { boardChoice = v; try { localStorage.setItem('phoenix_board', String(v)); } catch (e) {} applyBoard(); buildBoardPickers(); }
+}
 applyBoard(); buildBoardPickers();
 
 function startGame(isMulti = false) {
@@ -2294,6 +2346,14 @@ function backToMenu() {
     document.getElementById('main-menu').classList.add('active');
   }
 }
+
+// Exposer la fonction pour l'ouvrir depuis le menu principal
+window.openLeagueView = function(tab) {
+  if (typeof openLG === 'function') {
+    openLG();
+    if (tab) { T = tab; render(); }
+  }
+};
 </script>
 <script>
 /* MENU LIGUE */
@@ -2305,10 +2365,11 @@ const DV = [[10,'Débutant',0,1500,1],[9,'Apprenti',1500,3000,1.2],[8,'Adepte',3
 const BOTS = {10:'Débutant',9:'Novice',8:'Rusé',7:'Stratège',6:'Redoutable',5:'Expert',4:'Implacable',3:'Maître des flammes',2:'Phénix Noir',1:'Phénix Ultime Imbattable'};
 const divOf = x => DV.find(d => x >= d.a && x < d.b) || DV[9];
 const diffOf = l => l >= 8 ? 'easy' : l >= 4 ? 'medium' : 'expert';
-const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5,coins:100},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5,coins:100},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8,coins:100}];
-const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25,coins:300},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15,coins:250},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20,coins:250}];
+const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8}];
+const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20}];
 let L = {xp:0,ws:0,ls:0,best:0,dp:{},wp:{},hi:0,st:{},ate:0,eaten:0,bx:0,sh:0,dl:'',dd:0,t:0,tr:{}}, S = {friends:[],inbox:[],rd:0}, FS = {}, FL = {};
 let T = 'home', R = null, LGMODE = null, done = false, open = false, busy = false, ST = 'stats', KIND = null, gc = {ate:0, eaten:0, prev:null}, wasG = false, FD = {};
+let activeLeagueTab = 'initiation'; // Onglet actif pour le menu des Ligues
 
 /* ---------- STYLE ---------- */
 const css = `
@@ -2351,9 +2412,37 @@ const css = `
 .lg-up .em{font-size:110px;animation:lgP 1.4s infinite alternate;position:relative}.lg-up .em:before{content:'';position:absolute;inset:-30px;border-radius:50%;background:conic-gradient(var(--cyan),var(--gold),var(--cyan));-webkit-mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);mask:radial-gradient(circle,transparent 55%,#000 57%,#000 62%,transparent 64%);animation:lgR 4s linear infinite}
 .lg-up h1{font-size:2.4em;color:var(--gold);letter-spacing:5px;text-shadow:0 0 25px var(--gold);margin:14px 0}.lg-up p{font-size:1.3em;color:var(--cyan);margin-bottom:22px}
 .lg-eb{position:absolute;bottom:-10px;width:8px;height:8px;border-radius:50%;animation:lgE 3s ease-out forwards}
-.wallet-balance{font-size:clamp(30px,8vw,46px);font-weight:900;letter-spacing:-1px;color:var(--gold-2);text-shadow:0 0 18px rgba(230,195,92,.45);margin:8px 0}.wallet-balance small{font-size:.34em;letter-spacing:1px;color:#b9d2f3}.wallet-sub{color:#b9d2f3;line-height:1.55;margin-bottom:12px}.lg-chip{font-size:.72em;border:1px solid #00ffa8;color:#00ffa8;padding:5px 9px;border-radius:30px;white-space:nowrap}.lg-item-wrap{padding:12px 0;border-top:1px solid rgba(0,229,255,.16)}.coin-ledger{display:flex;flex-direction:column;gap:0}.coin-line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 2px;border-bottom:1px solid rgba(0,229,255,.14)}.coin-line:last-child{border:0}.coin-line b{display:block;font-size:.9em}.coin-line small{display:block;color:#9fc3ea;margin-top:3px}.coin-line strong{white-space:nowrap;font-variant-numeric:tabular-nums}.coin-plus{color:#00ffa8}.coin-minus{color:#ff8a80}
- .lg-mic{position:absolute;right:-8px;top:-8px;transform:none;width:34px;height:34px;min-width:34px;min-height:34px;border-radius:50%;border:2px solid var(--cyan);background:rgba(4,16,48,.96);color:#fff;font-size:17px;display:flex;align-items:center;justify-content:center;z-index:80;cursor:pointer;padding:0;box-shadow:0 0 12px rgba(0,229,255,.45)}
+.lg-mic{position:absolute;left:50%;bottom:-3.4cqw;transform:translateX(-50%);width:7cqw;height:7cqw;min-width:24px;min-height:24px;border-radius:50%;border:1.5px solid var(--cyan);background:rgba(4,16,48,.92);color:#fff;font-size:3.4cqw;display:flex;align-items:center;justify-content:center;z-index:30;cursor:pointer;padding:0}
 .lg-mic.mu{border-color:#ff5252;background:rgba(80,10,16,.92)}.lg-mic.talk{border-color:#00ffa8;box-shadow:0 0 12px #00ffa8;animation:lgV .18s infinite alternate}
+
+/* ---------- PORTEFEUILLE PHÉNIX ---------- */
+.lg-wallet-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.lg-wallet-stat{padding:14px;border-radius:14px;background:rgba(0,0,0,.34);border:1px solid rgba(0,229,255,.22);min-width:0}
+.lg-wallet-stat small{display:block;color:#9fc3ea;font-size:.82em;margin-bottom:5px}
+.lg-wallet-stat b{font-size:1.3em;color:var(--gold-2);font-variant-numeric:tabular-nums}
+.lg-wallet-field{display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.lg-wallet-field label{color:#b9d2f3;font-weight:700;font-size:.88em}
+.lg-wallet-field input,.lg-wallet-field select{width:100%;min-height:46px;padding:12px;border-radius:12px;border:1px solid #4a6fa5;background:rgba(0,0,0,.48);color:#fff;font-size:16px}
+.lg-wallet-history{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.lg-wallet-entry{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:12px;background:rgba(0,0,0,.28);border:1px solid rgba(0,229,255,.14)}
+.lg-wallet-entry small{display:block;color:#9fc3ea;margin-top:3px}
+.lg-wallet-entry b{white-space:nowrap;font-variant-numeric:tabular-nums}
+.lg-wallet-entry .plus{color:#00ffa8}.lg-wallet-entry .minus{color:#ff8a80}
+.lg-wallet-note{color:#9fc3ea;font-size:.82em;line-height:1.5;margin-top:8px}
+.lg-mission{padding:13px;border:1px solid rgba(0,229,255,.2);border-radius:13px;background:rgba(0,0,0,.24);margin-top:9px}
+.lg-mission .track{height:8px;background:rgba(255,255,255,.12);border-radius:20px;overflow:hidden;margin:9px 0}
+.lg-mission .track i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));border-radius:20px}
+@media(max-width:380px){.lg-wallet-grid{grid-template-columns:1fr}.lg-nav button{font-size:.58em}}
+/* Micro clairement visible sous chaque avatar pendant une partie */
+.player-container{overflow:visible}
+.player-container .lg-mic{position:absolute;left:50%;bottom:-34px;transform:translateX(-50%);width:32px;height:32px;min-width:32px;min-height:32px;font-size:16px;border-radius:50%;background:rgba(4,16,48,.96);border:2px solid var(--cyan);box-shadow:0 2px 10px rgba(0,0,0,.65);z-index:80}
+.player-container .lg-mic.mu{border-color:#ff5252}
+.player-container .lg-mic.talk{border-color:#00ffa8;box-shadow:0 0 14px #00ffa8}
+
+
+.lg-nav button{position:relative;padding-right:19px!important}
+.lg-rank-dot{position:absolute;right:3px;top:3px;width:15px;height:15px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(255,213,74,.18);border:1px solid rgba(255,213,74,.8);font-size:9px;line-height:1;z-index:4;cursor:pointer;box-shadow:0 0 5px rgba(255,213,74,.35)}
+.lg-rank-dot:active{transform:scale(.88)}
 .lg-nav button{font-size:.62em}.lg-nav button b{font-size:2em}.lg-hero{display:flex;gap:12px;align-items:center}
 .lg-emb{width:84px;height:84px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(230,195,92,.35),rgba(4,16,48,.9) 70%);border:3px solid var(--gold);animation:lgP2 2.2s infinite alternate}.lg-emb b{font-size:2.6em;color:var(--gold-2);text-shadow:0 0 14px var(--gold)}
 .lg-path{display:flex;gap:5px;padding:4px 2px}.lg-path span{flex:1;text-align:center;padding:6px 0;border-radius:8px;background:rgba(0,0,0,.45);border:1px solid #234;color:#567;font-weight:800;font-size:.85em}.lg-path .dn{color:#001;background:linear-gradient(180deg,var(--cyan),#0a8);border-color:var(--cyan)}.lg-path .cur{color:#000;background:linear-gradient(180deg,var(--gold-2),var(--gold));border-color:var(--gold);box-shadow:0 0 14px var(--gold);transform:scale(1.2)}
@@ -2361,7 +2450,54 @@ const css = `
 .lg-it{display:flex;gap:12px;align-items:center}.lg-it .ic{font-size:40px;width:70px;height:70px;border-radius:16px;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(0,229,255,.3),rgba(4,16,48,.9));border:1.5px solid var(--cyan);flex:none;box-shadow:0 0 14px rgba(0,229,255,.4)}
 @keyframes lgP2{from{box-shadow:0 0 14px var(--gold),inset 0 0 12px rgba(0,229,255,.4)}to{box-shadow:0 0 34px var(--gold),inset 0 0 22px rgba(0,229,255,.7)}}
 @keyframes lgF{from{opacity:0}to{opacity:1}}@keyframes lgP{from{transform:scale(.9);filter:drop-shadow(0 0 20px var(--cyan))}to{transform:scale(1.1);filter:drop-shadow(0 0 50px var(--gold))}}
-@keyframes lgR{to{transform:rotate(360deg)}}@keyframes lgE{to{transform:translate(var(--dx),-110vh);opacity:0}}@keyframes lgV{from{transform:translateX(-50%) translateX(-1.5px) scale(1)}to{transform:translateX(-50%) translateX(1.5px) scale(1.12)}}`;
+@keyframes lgR{to{transform:rotate(360deg)}}@keyframes lgE{to{transform:translate(var(--dx),-110vh);opacity:0}}@keyframes lgV{from{transform:translateX(-50%) translateX(-1.5px) scale(1)}to{transform:translateX(-50%) translateX(1.5px) scale(1.12)}}
+.lg-tabs { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 10px; background: rgba(0,0,0,0.3); padding: 4px; border-radius: 12px; }
+.lg-tabs .lg-b { flex: 1; min-width: 100px; border-radius: 8px; padding: 8px; font-size: 0.8em; }
+/* ---- Les Ligues (version aérée) ---- */
+.lgx-hero{display:flex;gap:18px;align-items:center;padding:20px 18px}
+.lgx-emb{width:78px;height:78px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle,rgba(255,255,255,.14),rgba(4,16,48,.94) 70%);border:3px solid var(--ac,var(--gold));box-shadow:0 0 24px var(--ac,var(--gold)),inset 0 0 14px rgba(0,0,0,.6)}
+.lgx-emb b{font-size:2.1em;font-weight:900;color:#fff;text-shadow:0 0 14px var(--ac,var(--gold))}
+.lgx-hinfo small{display:block;color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.72em}
+.lgx-hinfo h2{font-size:1.55em;color:var(--gold-2);text-shadow:0 0 14px rgba(230,195,92,.6);margin:3px 0 4px}
+.lgx-hinfo span{color:#cfe2ff;font-size:.9em}
+.lgx-tabs{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;padding:7px;border-radius:22px;background:rgba(0,0,0,.4);border:1px solid rgba(0,229,255,.22)}
+.lgx-tab{display:flex;flex-direction:column;align-items:center;gap:4px;padding:13px 2px 10px;border:1.5px solid transparent;border-radius:16px;background:none;color:#9fc3ea;cursor:pointer;min-width:0;transition:.2s;font-family:inherit}
+.lgx-tab .ic{font-size:1.9em;line-height:1}.lgx-tab .tx{font-size:.7em;font-weight:800;white-space:nowrap}.lgx-tab small{font-size:.62em;opacity:.85;white-space:nowrap}
+.lgx-tab.on{color:#fff;border-color:var(--ac);background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(4,16,48,.55));box-shadow:0 0 18px -2px var(--ac)}
+.lgx-intro{text-align:center;padding:6px 8px 0}.lgx-intro h3{font-size:1.25em;text-transform:uppercase;letter-spacing:2px;margin-bottom:4px}.lgx-intro p{color:#9fc3ea;margin:0}
+.lgx-list{display:flex;flex-direction:column;gap:20px;padding-top:6px}
+.lgx-div{position:relative;display:flex;flex-direction:column;gap:16px;padding:22px 18px 18px;border-radius:22px;border:1.5px solid rgba(0,229,255,.25);background:linear-gradient(160deg,rgba(10,35,85,.82),rgba(4,16,48,.94))}
+.lgx-div.cur{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold),0 0 28px rgba(230,195,92,.45);background:linear-gradient(160deg,rgba(70,50,8,.55),rgba(4,16,48,.95))}
+.lgx-div.past{opacity:.8}
+.lgx-flag{position:absolute;top:-12px;left:18px;padding:4px 12px;border-radius:20px;background:linear-gradient(180deg,#fff1b8,#b8860b);color:#2a1c02;font-size:.7em;font-weight:900;letter-spacing:1px;box-shadow:0 0 12px rgba(230,195,92,.7)}
+.lgx-top{display:flex;align-items:center;gap:14px}
+.lgx-rk{width:56px;height:56px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5em;font-weight:900;color:#fff;border:2.5px solid var(--ac);background:radial-gradient(circle,rgba(255,255,255,.12),rgba(4,16,48,.92) 70%);box-shadow:0 0 14px -2px var(--ac)}
+.lgx-nm{flex:1;min-width:0}.lgx-nm b{display:block;font-size:1.2em;color:#fff}.lgx-nm small{color:#9fc3ea}
+.lgx-mul{padding:8px 13px;border-radius:13px;background:rgba(0,0,0,.45);border:1.5px solid var(--ac);color:var(--ac);font-weight:900;font-size:1.15em;white-space:nowrap}
+.lgx-range{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:rgba(0,0,0,.3)}
+.lgx-range span{color:#9fc3ea;font-size:.85em}.lgx-range b{color:var(--gold-2);font-variant-numeric:tabular-nums}
+.lgx-chips{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.lgx-chip{padding:11px 12px;border-radius:14px;background:rgba(0,0,0,.28);border:1px solid rgba(0,229,255,.14);min-width:0}
+.lgx-chip small{display:block;color:#9fc3ea;font-size:.78em;margin-bottom:3px}.lgx-chip b{display:block;font-size:.95em;overflow:hidden;text-overflow:ellipsis}
+.lgx-bar{height:14px;border-radius:10px;background:rgba(0,0,0,.55);border:1px solid rgba(0,229,255,.5);overflow:hidden}
+.lgx-bar i{display:block;height:100%;background:linear-gradient(90deg,var(--cyan),var(--gold));box-shadow:0 0 10px var(--cyan)}
+.lgx-pr{display:flex;justify-content:space-between;font-size:.85em;color:#cfe2ff;margin-top:-6px}.lgx-pr b{color:var(--gold-2)}
+.lgx-note{font-size:.85em;color:#9fc3ea;line-height:1.45}.lgx-note b{color:#fff}.lgx-note.ok{color:#00ffa8;font-weight:700}
+.lgx-rules{display:flex;flex-direction:column;gap:12px}
+.lgx-rule{display:flex;gap:14px;align-items:flex-start;padding:13px 14px;border-radius:15px;background:rgba(0,0,0,.28);border:1px solid rgba(0,229,255,.14)}
+.lgx-rule .ic{font-size:1.5em;line-height:1.2}.lgx-rule b{display:block;color:#fff;margin-bottom:3px}.lgx-rule small{color:#9fc3ea;line-height:1.45;font-size:.85em}
+.lgx-rule.hl{border-color:var(--gold);background:rgba(230,195,92,.12)}
+/* ---- Mise du salon & choix du plateau ---- */
+.lgx-sk{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin:4px 0 12px}
+.lgx-sk button{padding:12px 2px;border-radius:13px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.45);color:#fff;font-weight:800;font-size:.8em;cursor:pointer;font-family:inherit}
+.lgx-sk button.on{border-color:var(--gold);background:linear-gradient(180deg,rgba(230,195,92,.38),rgba(40,28,4,.85));color:var(--gold-2);box-shadow:0 0 12px rgba(230,195,92,.5)}
+.lgx-sk button:disabled{cursor:default;opacity:.55}.lgx-sk button.on:disabled{opacity:1}
+.lgx-boards{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.lgx-board{display:flex;flex-direction:column;align-items:center;gap:5px;padding:6px;border:2px solid rgba(255,255,255,.18);border-radius:14px;background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-family:inherit;min-width:0}
+.lgx-board span{display:block;width:100%;aspect-ratio:1;border-radius:9px;background:50% 42%/cover no-repeat #0a1a3a}
+.lgx-board b{font-size:.78em}.lgx-board i{font-style:normal;font-size:.66em;color:var(--gold-2);min-height:1em}
+.lgx-board.on{border-color:var(--gold);box-shadow:0 0 16px rgba(230,195,92,.6);background:rgba(230,195,92,.12)}
+`;
 const st = document.createElement('style'); st.textContent = css; document.head.appendChild(st);
 const root = document.createElement('div'); root.className = 'lg'; root.innerHTML = '<canvas></canvas><div class="lg-top"></div><div class="lg-main"></div><div class="lg-nav"></div>';
 ($('app') || document.body).appendChild(root);
@@ -2383,31 +2519,13 @@ const err = (t, m) => dlg(t, m, [{t:'Compris',v:1}], 'err'), good = (t, m) => dl
 const uref = () => F().doc(F().db, 'users', me().uid), sref = id => F().doc(F().db, 'social', id), mk = () => Math.random().toString(36).slice(2, 9);
 const prog = (b, k) => Math.min(b[k] || 0, 9999);
 function dayKey() { return new Date().toISOString().slice(0, 10); }
+function monthKey() { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0'); }
+function ensureMonthly() { if (!L.monthly || L.monthly.month !== monthKey()) L.monthly = {month:monthKey(), xp:0, wins:0, games:0, pawns:0}; return L.monthly; }
 function weekKey() { const d = new Date(), j = new Date(d.getFullYear(), 0, 1); return d.getFullYear() + 'W' + Math.ceil(((d - j) / 864e5 + j.getDay() + 1) / 7); }
 function roll() { if (L.dp.day !== dayKey()) L.dp = {day:dayKey(), cl:[]}; if (L.wp.week !== weekKey()) L.wp = {week:weekKey(), cl:[]}; }
 function bump(k, v) { roll(); L.dp[k] = (L.dp[k] || 0) + (v || 1); L.wp[k] = k === 'streak' ? Math.max(L.wp[k] || 0, v) : (L.wp[k] || 0) + (v || 1); }
-function save() { checkTr(); L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} try { const a = A0(); F().setDoc(sref(me().uid), {lg:{xp:L.xp, ws:L.ws, best:L.best, w:a.w, p:a.p}}, {merge:true}).catch(() => {}); } catch (e) {} }
-function pushProfile() { saveProfile(); updateCurrencyUI(); try { F().updateDoc(uref(), {gems:playerProfile.gems}).catch(() => {}); } catch (e) {} }
-async function changeCoins(delta, label) {
-  const u = me(); if (!u) throw new Error('Connexion requise');
-  if (!Number.isSafeInteger(delta) || delta === 0) throw new Error('Montant invalide');
-  const ref = uref();
-  const result = await F().runTransaction(F().db, async tx => {
-    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
-    const data = snap.data(), balance = Number.isFinite(data.gold) ? data.gold : 0;
-    if (delta < 0 && balance < -delta) throw new Error('Solde insuffisant');
-    const next = balance + delta;
-    const ledger = Array.isArray(data.coinLedger) ? data.coinLedger.slice(0, 99) : [];
-    const history = Array.isArray(data.purchaseHistory) ? data.purchaseHistory.slice(0, 49) : [];
-    const now = Date.now(); ledger.unshift({id:mk(), t:now, label:String(label).slice(0,100), delta, balance:next});
-    if (String(label).startsWith('Achat boutique')) history.unshift({id:mk(), t:now, label:String(label).slice(0,100), amount:-delta, currency:'pièces'});
-    tx.update(ref, {gold:next, coinLedger:ledger, purchaseHistory:history});
-    return {balance:next, ledger, history};
-  });
-  playerProfile.gold = result.balance; playerProfile.coinLedger = result.ledger; playerProfile.purchaseHistory = result.history;
-  saveProfile(); updateCurrencyUI(); if (window.refreshPhoenixWallet) window.refreshPhoenixWallet();
-  return result.balance;
-}
+function save() { checkTr(); L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(L)); } catch (e) {} try { F().updateDoc(uref(), {league: L}).catch(() => {}); } catch (e) {} try { const a = A0(), m = L.monthly || {month:monthKey(), xp:0, wins:0, games:0, pawns:0}; F().setDoc(sref(me().uid), {pseudo:playerProfile.pseudo, av:playerProfile.avatarFile, lg:{xp:L.xp, ws:L.ws, best:L.best, w:a.w, p:a.p}, monthly:m}, {merge:true}).catch(() => {}); } catch (e) {} }
+function pushProfile() { saveProfile(); updateCurrencyUI(); try { F().updateDoc(uref(), {gold:playerProfile.gold, gems:playerProfile.gems}).catch(() => {}); } catch (e) {} }
 const A0 = () => (L.st && L.st.all) || {p:0, w:0, l:0};
 async function load() {
   const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) L = Object.assign(L, l); } catch (e) {}
@@ -2415,35 +2533,148 @@ async function load() {
   roll(); if (!L.hi) { L.hi = 1; sendInbox(u.uid, {type:'info', name:'Phoenix Jackaroo', text:'🔥 Bienvenue dans la Ligue ! Gagne des parties, relève les défis et grimpe jusqu’au Phénix Légendaire.'}); save(); }
 }
 
+
+/* ---------- PORTEFEUILLE / PIÈCES : solde Firebase faisant foi ---------- */
+const COIN_PACK = 1000, DAILY_COINS = 100, PROMO_CODE = 'WELCOME1000';
+let selectedCoinStake = 100, currentMatchStake = 0, currentMatchId = null;
+window.selectedCoinStake = selectedCoinStake; // Rendre accessible au script principal
+const walletRef = () => uref();
+const coinFmt = n => Number(n || 0).toLocaleString('fr-FR');
+function walletData(d) {
+  const w = d.wallet || {};
+  return Object.assign({coins:Number(d.gold || 0), initialized:false, promoUsed:false, loginDate:'',
+    missions:{date:dayKey(),played:0,won:0,free:0,claimed:[]}, ledger:[]}, w);
+}
+async function walletCommit(delta, label, extra={}) {
+  const u = me(); if (!u) throw new Error('Connexion requise');
+  const ref = walletRef(); let result;
+  await F().runTransaction(F().db, async tx => {
+    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil joueur introuvable');
+    const data = snap.data(), w = walletData(data), amount = Number(delta);
+    if (!Number.isSafeInteger(amount)) throw new Error('Montant invalide');
+    if (w.coins + amount < 0) throw new Error('Solde insuffisant');
+    w.coins += amount;
+    w.ledger = Array.isArray(w.ledger) ? w.ledger : [];
+    w.ledger.unshift({id:extra.id || mk(),t:Date.now(),label,delta:amount,balance:w.coins});
+    w.ledger = w.ledger.slice(0,100);
+    tx.update(ref, {gold:w.coins, wallet:w});
+    result = w;
+  });
+  playerProfile.gold = result.coins; playerProfile.wallet = result; saveProfile(); updateCurrencyUI();
+  return result;
+}
+async function walletInit(uid) {
+  const ref = F().doc(F().db,'users',uid);
+  await F().runTransaction(F().db, async tx => {
+    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+    const d=snap.data();
+    if (d.wallet && d.wallet.initialized) return;
+    // Migration : conserve le solde existant des anciens comptes, sans offrir une seconde fois les 1 000 pièces.
+    const coins = Number.isSafeInteger(d.gold) ? Math.max(0,d.gold) : 1000;
+    const w = {coins,initialized:true,promoUsed:false,loginDate:'',missions:{date:dayKey(),played:0,won:0,free:0,claimed:[]},
+      ledger:[{id:'migration-'+uid,t:Date.now(),label:'Initialisation du portefeuille',delta:0,balance:coins}]};
+    tx.update(ref,{gold:coins,wallet:w});
+  });
+  const snap=await F().getDoc(ref); if(snap.exists()){playerProfile.gold=walletData(snap.data()).coins;playerProfile.wallet=walletData(snap.data());saveProfile();updateCurrencyUI();}
+}
+window.PhoenixWallet = {initForUser:walletInit};
+window.openPhoenixWallet = () => { try { openLG(); T='coins'; render(); } catch(e) { showToast('Portefeuille indisponible : '+e.message,'error'); } };
+async function walletDaily() {
+  const ref=walletRef(), today=dayKey(); let granted=false;
+  await F().runTransaction(F().db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');
+    const d=snap.data(),w=walletData(d);if(w.loginDate===today)return;
+    w.loginDate=today;w.coins+=DAILY_COINS;w.ledger.unshift({id:'daily-'+today,t:Date.now(),label:'Cadeau quotidien',delta:DAILY_COINS,balance:w.coins});w.ledger=w.ledger.slice(0,100);
+    tx.update(ref,{gold:w.coins,wallet:w});granted=true;});
+  await walletRefresh(); if(granted)toast('🎁 +100 pièces : cadeau quotidien !','success');else toast('Ton cadeau quotidien a déjà été récupéré.');
+  render();
+}
+async function walletRefresh(){const s=await F().getDoc(walletRef());if(s.exists()){const d=s.data();playerProfile.gold=walletData(d).coins;playerProfile.wallet=walletData(d);saveProfile();updateCurrencyUI();}}
+async function walletPromo(){
+  const input=$('coin-promo-code'),code=(input?.value||'').trim().toUpperCase();
+  if(!code)return toast('Saisis un code promo.','error');
+  if(code!==PROMO_CODE)return toast('Code promo invalide.','error');
+  let granted=false;
+  await F().runTransaction(F().db,async tx=>{const ref=walletRef(),snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');
+    const d=snap.data(),w=walletData(d);if(w.promoUsed)throw new Error('Ce compte a déjà utilisé un code promo.');
+    w.promoUsed=true;w.coins+=COIN_PACK;w.ledger.unshift({id:'promo-'+PROMO_CODE,t:Date.now(),label:'Code promo '+PROMO_CODE,delta:COIN_PACK,balance:w.coins});w.ledger=w.ledger.slice(0,100);
+    tx.update(ref,{gold:w.coins,wallet:w});granted=true;});
+  await walletRefresh();if(granted)toast('🎉 +1 000 pièces : code promo validé !','success');render();
+}
+async function walletBuyPack(){
+  // Démo sans paiement réel : aucun débit bancaire n'est effectué.
+  if(!await dlg('Pack de pièces','Ajouter 1 000 pièces de démonstration ? Aucun paiement réel ne sera effectué.',[{t:'Annuler',v:0},{t:'Ajouter',v:1,c:'g'}]))return;
+  await walletCommit(COIN_PACK,'Pack boutique (simulation)');toast('+1 000 pièces ajoutées (simulation).','success');render();
+}
+const COIN_MISSIONS=[{k:'played',goal:3,label:'Jouer 3 parties'},{k:'won',goal:1,label:'Gagner 1 partie'},{k:'free',goal:1,label:'Jouer 1 partie gratuite'}];
+function walletView(){
+  const w=playerProfile.wallet||{},m0=w.missions||{date:dayKey(),played:0,won:0,free:0,claimed:[]},m=m0.date===dayKey()?m0:{date:dayKey(),played:0,won:0,free:0,claimed:[]},claimed=m.claimed||[];
+  const ledger=(w.ledger||[]).slice(0,18);
+  return `<div class="lg-card gold"><h3>🪙 Ton portefeuille</h3><p>Ton solde est synchronisé avec ton compte Firebase. Il reste disponible après déconnexion et reconnexion.</p>
+    <div class="lg-wallet-grid"><div class="lg-wallet-stat"><small>Solde disponible</small><b>🪙 ${coinFmt(w.coins ?? playerProfile.gold)}</b></div><div class="lg-wallet-stat"><small>Compte</small><b style="font-size:1em">${esc(playerProfile.pseudo)}</b></div></div>
+    <div class="lg-wallet-note">Chaque opération est enregistrée dans ton historique et mise à jour sur le serveur.</div></div>
+    <div class="lg-card"><h3>🎁 Récompense quotidienne</h3><p>Récupère ${DAILY_COINS} pièces une fois par jour.</p><button class="lg-b g" data-a="coinDaily" ${(w.loginDate===dayKey())?'disabled':''}>${w.loginDate===dayKey()?'Déjà récupérée aujourd’hui':'+100 pièces · Récupérer'}</button></div>
+    <div class="lg-card"><h3>🎯 Missions</h3><p>Complète les objectifs pour gagner 100 pièces par mission.</p>${COIN_MISSIONS.map((x,i)=>{const n=Math.min(m[x.k]||0,x.goal),done=n>=x.goal,got=claimed.includes(i);return `<div class="lg-mission"><div class="lg-row lg-sp"><b>${x.label}</b><b style="color:var(--gold)">+100 🪙</b></div><div class="track"><i style="width:${n/x.goal*100}%"></i></div><div class="lg-row lg-sp"><small>${n}/${x.goal}</small><button class="lg-b s ${done&&!got?'g':''}" data-a="coinClaim" data-v="${i}" ${!done||got?'disabled':''}>${got?'Récupérée':'Récupérer'}</button></div></div>`}).join('')}</div>
+    <div class="lg-card"><h3>🛍️ Boutique de pièces</h3><div class="lg-wallet-stat"><small>Pack de démonstration</small><b>1 000 pièces · 1,00 € (simulation)</b></div><p class="lg-wallet-note">Prototype : l’ajout est simulé, aucun paiement réel n’est encaissé.</p><button class="lg-b g" data-a="coinBuy">Ajouter 1 000 pièces</button></div>
+    <div class="lg-card"><h3>🎟️ Code promo</h3><p>Entre ton code et valide-le. Un seul code de bienvenue par compte.</p><div class="lg-wallet-field"><label for="coin-promo-code">Code promotionnel</label><input id="coin-promo-code" maxlength="40" autocomplete="off" autocapitalize="characters" placeholder="Ex. WELCOME1000" ${w.promoUsed?'disabled':''}></div><button class="lg-b" data-a="coinPromo" ${w.promoUsed?'disabled':''}>Valider le code</button>${w.promoUsed?'<div class="lg-wallet-note">Un code promo a déjà été utilisé sur ce compte.</div>':''}</div>
+    <div class="lg-card"><h3>🎮 Mise des parties</h3><p>Choisis la mise de tes prochaines parties en ligne et salons privés. Les parties contre les bots restent gratuites.</p><div class="lg-wallet-field"><label for="coin-stake">Mise par partie</label><select id="coin-stake">${[0,100,200,500,1000].map(n=>`<option value="${n}" ${selectedCoinStake===n?'selected':''}>${n?coinFmt(n)+' pièces':'Gratuit'}</option>`).join('')}</select></div><div class="lg-wallet-note">Victoire : mise restituée et gain équivalent (bilan net + mise). Défaite : perte de la mise. Vérification du solde avant validation du résultat.</div></div>
+    <div class="lg-card"><h3>📜 Historique des opérations</h3>${ledger.length?`<div class="lg-wallet-history">${ledger.map(e=>`<div class="lg-wallet-entry"><div>${esc(e.label||'Opération')}<small>${new Date(e.t||Date.now()).toLocaleString('fr-FR')}</small></div><b class="${e.delta>=0?'plus':'minus'}">${e.delta>0?'+':''}${coinFmt(e.delta)} 🪙</b></div>`).join('')}</div>`:'<p>Aucune opération pour le moment.</p>'}</div>`;
+}
+async function walletClaim(i){
+  const mission=COIN_MISSIONS[i];if(!mission)return;
+  let ok=false;
+  await F().runTransaction(F().db,async tx=>{const ref=walletRef(),snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');
+    const d=snap.data(),w=walletData(d),m=w.missions||{date:dayKey(),played:0,won:0,free:0,claimed:[]};
+    if(m.date!==dayKey())Object.assign(m,{date:dayKey(),played:0,won:0,free:0,claimed:[]});
+    m.claimed=m.claimed||[];if((m[mission.k]||0)<mission.goal||m.claimed.includes(i))return;
+    m.claimed.push(i);w.missions=m;w.coins+=100;w.ledger.unshift({id:'mission-'+dayKey()+'-'+i,t:Date.now(),label:'Mission : '+mission.label,delta:100,balance:w.coins});w.ledger=w.ledger.slice(0,100);tx.update(ref,{gold:w.coins,wallet:w});ok=true;});
+  await walletRefresh();toast(ok?'+100 pièces : mission accomplie.':'Mission non terminée ou déjà récupérée.',ok?'success':'error');render();
+}
+async function walletReserveMatch(stake, id){
+  if(!stake)return;
+  const ref=walletRef();let reserved=false;
+  await F().runTransaction(F().db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');
+    const d=snap.data(),w=walletData(d);if((w.ledger||[]).some(e=>e.id===id))return;
+    if(w.coins<stake)throw new Error('Solde insuffisant : il faut '+coinFmt(stake)+' pièces pour lancer cette partie.');
+    w.coins-=stake;w.ledger.unshift({id,t:Date.now(),label:'Mise réservée pour la partie',delta:-stake,balance:w.coins});w.ledger=w.ledger.slice(0,100);
+    tx.update(ref,{gold:w.coins,wallet:w});reserved=true;});
+  await walletRefresh();if(reserved)toast('Mise de '+coinFmt(stake)+' pièces réservée.'); 
+}
+async function walletRecordMatch(win, free=false, id='match-'+Date.now()){
+  const stake=free?0:currentMatchStake;
+  const ref=walletRef();let ok=false;
+  await F().runTransaction(F().db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');
+    const d=snap.data(),w=walletData(d),settleId=id+'-settled';if((w.ledger||[]).some(e=>e.id===settleId))return;
+    const delta=win?stake*2:0;w.coins+=delta;
+    w.ledger.unshift({id:settleId,t:Date.now(),label:free?'Partie gratuite':win?'Victoire · versement de 2× la mise':'Défaite · mise perdue',delta,balance:w.coins});
+    w.ledger=w.ledger.slice(0,100);
+    const m=w.missions||{date:dayKey(),played:0,won:0,free:0,claimed:[]};if(m.date!==dayKey())Object.assign(m,{date:dayKey(),played:0,won:0,free:0,claimed:[]});
+    m.played=(m.played||0)+1;if(win)m.won=(m.won||0)+1;if(free)m.free=(m.free||0)+1;w.missions=m;
+    tx.update(ref,{gold:w.coins,wallet:w});ok=true;});
+  await walletRefresh();if(ok&&stake)toast(win?'🏆 Gain de '+coinFmt(stake*2)+' pièces crédité.':'La mise a été perdue.',win?'success':'error');
+}
+async function walletMissionProgress(win,free){
+  const ref=walletRef();await F().runTransaction(F().db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())return;
+    const d=snap.data(),w=walletData(d),m=w.missions||{date:dayKey(),played:0,won:0,free:0,claimed:[]};if(m.date!==dayKey())Object.assign(m,{date:dayKey(),played:0,won:0,free:0,claimed:[]});
+    m.played=(m.played||0)+1;if(win)m.won=(m.won||0)+1;if(free)m.free=(m.free||0)+1;w.missions=m;tx.update(ref,{wallet:w});});
+  await walletRefresh();
+}
+
+// Exposer les fonctions de portefeuille pour le script principal
+window.walletReserveMatch = walletReserveMatch;
+window.walletRecordMatch = walletRecordMatch;
+
 /* ---------- XP ---------- */
 function settle(win, pions) {
   const d = divOf(L.xp), r = {win, d0:d, x0:L.xp}; roll();
   if (win) { L.ws++; L.ls = 0; L.best = Math.max(L.best, L.ws); const sm = L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1, base = 200 + (pions ? 50 : 0), bx = L.bx > 0 ? 2 : 1; if (bx > 1) L.bx--;
     r.g = Math.round(base * d.m * sm * bx); Object.assign(r, {base, sm, dm:d.m, pions, bx}); L.xp += r.g; bump('win'); bump('streak', L.ws);
   } else { if (L.sh > 0 && L.ws > 0) { L.sh--; r.sh = 1; } else L.ws = 0; L.ls++; const lm = L.ls >= 3 ? .7 : L.ls === 2 ? .85 : 1; r.lm = lm; r.g = -Math.round(100 * lm); L.xp = Math.max(d.a, L.xp + r.g); }
-  bump('play'); r.d1 = divOf(L.xp); save(); return r;
+  bump('play'); r.d1 = divOf(L.xp); ensureMonthly().xp += Math.max(0, r.g || 0); save(); return r;
 }
-function record(win, kind) { const s = L.st = L.st || {}; ['all', kind].forEach(k => { const o = s[k] = s[k] || {p:0, w:0, l:0}; o.p++; o[win ? 'w' : 'l']++; }); L.ate = (L.ate || 0) + gc.ate; L.eaten = (L.eaten || 0) + gc.eaten; }
-async function settleMatchCoins(win) {
-  const ref = uref();
-  return F().runTransaction(F().db, async tx => {
-    const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
-    const data = snap.data(), balance = Number(data.gold) || 0;
-    const streak = win ? (Number(data.coinStreak) || 0) + 1 : 0;
-    const bonus = win && streak >= 3 ? 100 : 0, reward = (win ? 100 : 20) + bonus, next = balance + reward;
-    const ledger = Array.isArray(data.coinLedger) ? data.coinLedger.slice(0,99) : [];
-    ledger.unshift({id:mk(),t:Date.now(),label:win ? 'Récompense de victoire' + (bonus ? ' · bonus de série' : '') : 'Récompense de participation',delta:reward,balance:next});
-    tx.update(ref,{gold:next,coinLedger:ledger,coinStreak:streak});
-    return {reward,bonus,streak,balance:next,ledger};
-  }).then(r => {
-    playerProfile.gold=r.balance; playerProfile.coinLedger=r.ledger; playerProfile.coinStreak=r.streak;
-    saveProfile(); updateCurrencyUI(); if (window.refreshPhoenixWallet) window.refreshPhoenixWallet(); return r;
-  });
-}
+function record(win, kind) { const s = L.st = L.st || {}; ['all', kind].forEach(k => { const o = s[k] = s[k] || {p:0, w:0, l:0}; o.p++; o[win ? 'w' : 'l']++; }); L.ate = (L.ate || 0) + gc.ate; L.eaten = (L.eaten || 0) + gc.eaten; const m = ensureMonthly(); m.games++; if (win) m.wins++; m.pawns += gc.ate || 0; }
 async function finish(win, pions) {
-  const r = settle(win, pions), coins = await settleMatchCoins(win).catch(e => { toast('Solde non synchronisé : ' + (e.message || 'réessaie plus tard'), 'error'); return {reward:0,bonus:0}; }), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
+  const r = settle(win, pions), line = (a, b) => `<div class="lg-row lg-sp" style="margin:3px 0"><span style="color:#9fc3ea">${a}</span><b style="text-align:right">${b}</b></div>`;
   let h = win ? line('Victoire', '+200 XP') + (r.pions ? line('Bonus 4 pions', '+50 XP') : '') + line('Division ×' + r.dm, '') + line('Série ×' + r.sm, '') + (r.bx > 1 ? line('⚡ Boost XP', '×2') : '') : line('Défaite', '−100 XP') + (r.lm < 1 ? line('Protection défaites ×' + r.lm, '') : '') + (r.sh ? line('🛡️ Bouclier', 'série conservée') : '');
-  h += `<div style="font-size:1.25em;font-weight:900;color:var(--gold);margin:8px 0">🪙 +${coins.reward} pièces${coins.bonus ? ' · bonus série +100' : ''}</div>`;
   h += `<div style="font-size:2.2em;font-weight:900;color:${win ? '#00ffa8' : '#ff8a8a'};margin:10px 0">${r.g > 0 ? '+' : ''}${r.g} XP</div>`;
   const d = r.d1; h += `<div class="lg-gauge"><i style="width:${Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100)}%"></i><span>${L.xp} / ${d.b > 1e8 ? '∞' : d.b} XP</span></div>`;
   beep && beep(win ? 660 : 220, .25, 'triangle'); await dlg(win ? '🏆 Victoire !' : 'Défaite', h, [{t:'Continuer',v:1,c:'g'}], win ? 'ok' : 'err');
@@ -2508,7 +2739,7 @@ const myP = (ready, seat) => ({uid:me().uid, pseudo:playerProfile.pseudo, avatar
 async function create(mode, isPub) {
   if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); if (busy) return; busy = true;
   try { let code = null; for (let i = 0; i < 6 && !code; i++) { const c = String(1000 + Math.floor(Math.random() * 9000)), s = await F().getDoc(room(c)); if (!s.exists() || s.data().status !== 'waiting') code = c; }
-    if (!code) throw 0; const d = {host:me().uid, code, players:[myP(true, 0)], fillBots:true, botDifficulty:diffOf(divOf(L.xp).l), status:'waiting', gameState:null, lg:mode, kind:isPub ? 'mm' : mode === 'solo' ? 'bots' : 'priv'};
+    if (!code) throw 0; const d = {host:me().uid, code, players:[myP(true, 0)], fillBots:true, botDifficulty:diffOf(divOf(L.xp).l), status:'waiting', gameState:null, lg:mode, kind:isPub ? 'mm' : mode === 'solo' ? 'bots' : 'priv', stake:isPub ? selectedCoinStake : 0};
     await F().setDoc(room(code), d); if (isPub) F().setDoc(pub(), {r:{[code]:{code, host:me().uid, ts:Date.now()}}}, {merge:true}).catch(() => {});
     roomStarted = false; currentRoomCode = code; enter(code, mode === 'solo' ? 'Salon Co-op' : isPub ? 'Recherche de joueurs…' : 'Salon privé');
   } catch (e) { currentRoomCode = null; err('Création impossible', 'Le salon n’a pas pu être créé. Réessaie dans un instant.'); }
@@ -2517,7 +2748,7 @@ async function create(mode, isPub) {
 async function join(code, quiet) {
   if (!me()) return err('Connexion requise', 'Connecte-toi d’abord pour jouer.'); if (!/^\d{4}$/.test(code)) return err('Code invalide', 'Entre le code à 4 chiffres du salon.');
   try { const s = await F().getDoc(room(code)); if (!s.exists()) { quiet || err('Salon introuvable', 'Aucun salon ne correspond à ce code.'); return false; }
-    const d = s.data(); if (d.status !== 'waiting') { quiet || err('Salon indisponible', 'Ce salon est fermé ou la partie a déjà commencé.'); return false; }
+    const d = s.data(); if (Number.isInteger(d.stake) && d.stake > 0) selectedCoinStake=d.stake; if (d.status !== 'waiting') { quiet || err('Salon indisponible', 'Ce salon est fermé ou la partie a déjà commencé.'); return false; }
     if (!d.players.some(p => p.uid === me().uid)) { const sl = seatList(d.players), s = (d.lg === 'solo' ? [2,1,3,0] : [0,1,2,3]).find(i => !sl[i]); if (s === undefined) { quiet || err('Salon complet', 'Les 4 places sont déjà prises.'); return false; } await F().updateDoc(room(code), {players:F().arrayUnion(myP(false, s))}); }
     roomStarted = false; currentRoomCode = code; enter(code, 'Salon ' + code); return true;
   } catch (e) { quiet || err('Connexion impossible', 'Impossible de rejoindre ce salon.'); return false; }
@@ -2546,38 +2777,106 @@ async function moveSeat(i) {
     await F().updateDoc(room(R.code), {players:d.players.map(p => p.uid === me().uid ? {...p, seat:i, ready:p.uid === d.host ? true : false} : p)}); toast('Tu es au siège ' + (i + 1), 'success');
   } catch (e) { err('Changement impossible', 'Le siège n’a pas pu être changé.'); }
 }
-async function ready() { try { const d = (await F().getDoc(room(R.code))).data(); await F().updateDoc(room(R.code), {players:d.players.map(p => p.uid === me().uid ? {...p, ready:!p.ready} : p)}); } catch (e) { err('Erreur', 'Statut non mis à jour.'); } }
+async function ready() { try { const d = (await F().getDoc(room(R.code))).data(), mp = d.players.find(p => p.uid === me().uid), sk = launchStake(d); if (mp && !mp.ready && sk > balNow()) return err('Solde insuffisant', `La mise est de ${coinFmt(sk)} pièces, ton solde est de ${coinFmt(balNow())}. Demande à l’hôte de choisir une mise plus basse ou « Gratuit ».`); await F().updateDoc(room(R.code), {players:d.players.map(p => p.uid === me().uid ? {...p, ready:!p.ready} : p)}); } catch (e) { err('Erreur', 'Statut non mis à jour.'); } }
 async function launch() {
   const d = R.d, pl = d.players; if (d.host !== me().uid) return err('Hôte uniquement', 'Seul l’hôte peut lancer la partie.'); if (!seatList(pl)[0]) return err('Siège 1 vide', 'Un joueur doit occuper le siège 1 : c’est lui qui gère la partie. Rassieds-toi ou demande à un joueur de le prendre.');
   if (pl.length < 2 && !R.bots) return err('Joueurs manquants', 'Active les Bots ou attends un autre joueur.'); if (pl.some(p => p.uid !== me().uid && !p.ready)) return err('Joueurs pas prêts', 'Tous les joueurs doivent être prêts.');
-  try { F().setDoc(pub(), {r:{[R.code]:null}}, {merge:true}).catch(() => {}); await F().updateDoc(room(R.code), {status:'playing', fillBots:R.bots, botDifficulty:diffOf(divOf(L.xp).l)}); } catch (e) { err('Lancement impossible', 'La partie n’a pas pu démarrer.'); }
+  const sk = launchStake(d); if (sk > balNow()) return err('Solde insuffisant', `La mise est de ${coinFmt(sk)} pièces mais ton solde est de ${coinFmt(balNow())}. Choisis une mise plus basse ou « Gratuit ».`);
+  try { F().setDoc(pub(), {r:{[R.code]:null}}, {merge:true}).catch(() => {}); await F().updateDoc(room(R.code), {status:'playing', fillBots:R.bots, botDifficulty:diffOf(divOf(L.xp).l), startedAt:Date.now(), stake:sk}); } catch (e) { err('Lancement impossible', 'La partie n’a pas pu démarrer.'); }
 }
-function solo() { LGMODE = 'solo'; KIND = 'bots'; done = false; state.botDifficulty = diffOf(divOf(L.xp).l); currentRoomCode = null; roomStarted = false; closeLG(); startGame(false); }
+function solo() { currentMatchStake=0; currentMatchId='match-solo-'+Date.now(); LGMODE = 'solo'; KIND = 'bots'; done = false; state.botDifficulty = diffOf(divOf(L.xp).l); currentRoomCode = null; roomStarted = false; closeLG(); startGame(false); }
 
 /* ---------- VUES ---------- */
-const NAVS = [['home','🏆','Ligue'],['stats','📊','Stats'],['shop','🛒','Shop'],['friends','👥','Amis'],['inbox','✉️','Msg'],['profile','👤','Profil']];
+const NAVS = [['home','🏆','Ligue'],['stats','📊','Stats'],['coins','🪙','Pièces'],['friends','👥','Amis'],['inbox','✉️','Msg'],['profile','👤','Profil']];
 function render() {
   const d = divOf(L.xp), u = me();
   TOP.innerHTML = `<div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)}"></div><div><b>${esc(playerProfile.pseudo)}</b><small>Div. ${d.l} · ${esc(d.n)}</small></div><div class="lg-cur">🪙 ${(playerProfile.gold || 0).toLocaleString('fr-FR')}<br>💎 ${(playerProfile.gems || 0).toLocaleString('fr-FR')}</div><button class="lg-x" data-a="close">✕</button>`;
-  NAV.innerHTML = NAVS.map(n => `<button class="${T === n[0] || (T === 'room' && n[0] === 'home') ? 'on' : ''}" data-a="tab" data-v="${n[0]}"><b>${n[1]}</b>${n[2]}${n[0] === 'inbox' ? '<i class="lg-bd" style="display:none"></i>' : ''}</button>`).join('');
+  NAV.innerHTML = NAVS.map(n => `<button class="${T === n[0] || ((T === 'room' || T === 'leagues') && n[0] === 'home') ? 'on' : ''}" data-a="tab" data-v="${n[0]}"><b>${n[1]}</b>${n[2]}<span class="lg-rank-dot" data-a="rank" title="Ouvrir les classements" aria-label="Ouvrir les classements">🏅</span>${n[0] === 'inbox' ? '<i class="lg-bd" style="display:none"></i>' : ''}</button>`).join('');
   MAIN.innerHTML = (V[T] || V.home)(d); badge();
   requestAnimationFrame(() => { const g = MAIN.querySelector('[data-w]'); if (g) g.style.width = g.dataset.w + '%'; });
 }
 const gauge = d => { const p = Math.min(100, (L.xp - d.a) / (d.b - d.a) * 100); return `<div class="lg-gauge"><i data-w="${p.toFixed(1)}"></i><span>${L.xp.toLocaleString('fr-FR')} / ${d.b > 1e8 ? '∞' : d.b.toLocaleString('fr-FR')} XP · ${Math.floor(p)}%</span></div>`; };
 const sm = () => L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1;
+const LEAGUE_TABS = [
+  {id:'initiation', ic:'🌱', label:'Initiation', sub:'Les premiers pas dans l’arène', divs:[10,9,8], ac:'#43d17a'},
+  {id:'competition', ic:'⚔️', label:'Compétition', sub:'Là où le jeu devient sérieux', divs:[7,6,5], ac:'#ffb347'},
+  {id:'maitres', ic:'🛡️', label:'Maîtres', sub:'L’élite des stratèges', divs:[4,3], ac:'#5aa9ff'},
+  {id:'phenix', ic:'🔥', label:'Phénix', sub:'Le sommet de la légende', divs:[2,1], ac:'#ff6a3d'}
+];
+const fx = n => Number(n || 0).toLocaleString('fr-FR');
+const mulTxt = m => '×' + String(m).replace('.', ',');
+const levelName = l => diffOf(l) === 'easy' ? 'Nul' : diffOf(l) === 'medium' ? 'Moyen' : 'Expert';
+const balNow = () => Number((playerProfile.wallet && playerProfile.wallet.coins) ?? playerProfile.gold ?? 0);
+const launchStake = d => (d.kind === 'bots' || d.lg === 'solo') ? 0 : (Number.isFinite(Number(d.stake)) ? Number(d.stake) : 0);
+function stakeCardHTML(d, host) {
+  if (d.kind === 'bots' || d.lg === 'solo') return '';
+  const st = launchStake(d), edit = host && d.kind === 'priv', bal = balNow();
+  return `<div class="lg-card"><h3>🪙 Mise de la partie</h3><div class="lgx-sk">${[0,100,200,500,1000].map(n => `<button type="button" class="${st === n ? 'on' : ''}" ${edit ? `data-a="stk" data-v="${n}"` : 'disabled'}>${n ? fx(n) : 'Gratuit'}</button>`).join('')}</div>
+    <p style="margin:0;font-size:.85em">${st ? `Chaque joueur mise <b style="color:var(--gold)">${fx(st)} 🪙</b>. Ton solde : 🪙 ${fx(bal)}${bal < st ? ' <b style="color:#ff8a80">(insuffisant)</b>' : ''}.` : 'Partie gratuite : aucune pièce en jeu.'}${edit ? '' : '<br><small style="color:#9fc3ea">Seul l’hôte choisit la mise.</small>'}</p></div>`;
+}
+function boardCardHTML() {
+  return `<div class="lg-card"><h3>🎨 Mon plateau</h3><p>Le plateau choisi sera ton plateau par défaut dans toutes tes parties, tant que tu ne le changes pas.</p>
+    <div class="lgx-boards">${BOARD_FILES.map((f, i) => `<button type="button" class="lgx-board ${boardChoice === i ? 'on' : ''}" data-a="bd" data-v="${i}"><span style="background-image:url('${f}')"></span><b>Plateau ${i + 1}</b>${boardChoice === i ? '<i>✔ Par défaut</i>' : '<i>&nbsp;</i>'}</button>`).join('')}</div></div>`;
+}
 const V = {
   home: d => `${hero(d)}
   <div class="lg-card"><h3>🌐 Ligue en ligne</h3><p>Affronte des joueurs en temps réel, gagne de l’XP et franchis les divisions.</p><button class="lg-b" data-a="mm">Chercher une partie</button><div class="lg-row" style="margin-top:8px"><button class="lg-b s" data-a="cr">Créer un salon</button><input class="lg-in" id="lgc" placeholder="Code" maxlength="4" inputmode="numeric" oninput="this.value=this.value.replace(/\\D/g,'')"><button class="lg-b s g" data-a="jn">Rejoindre</button></div></div>
   <div class="lg-card gold"><h3>⚔️ Solo vs Bots</h3><p>Adversaire actuel : <b style="color:var(--gold)">${BOTS[d.l]}</b> (niveau ${diffOf(d.l) === 'easy' ? 'Nul' : diffOf(d.l) === 'medium' ? 'Moyen' : 'Expert'}). Joue seul ou invite un ami.</p><div class="lg-row"><button class="lg-b g" data-a="solo">Jouer solo</button><button class="lg-b" data-a="coop">🤝 Co-op</button></div></div>
   <div class="lg-card"><h3>🎯 Défis</h3>${chal()}</div>`,
-  stats: () => statsV(), shop: () => shopV(),
+  stats: () => statsV(), shop: () => shopV(), coins: () => walletView(), rankings: () => rankingsV(),
+  leagues: () => {
+    const d = divOf(L.xp), tab = LEAGUE_TABS.find(t => t.id === activeLeagueTab) || LEAGUE_TABS[0], curTab = LEAGUE_TABS.find(t => t.divs.includes(d.l)) || LEAGUE_TABS[0];
+    const nx = DV.find(x => x.l === d.l - 1), pct = d.b > 1e8 ? 100 : Math.min(100, Math.max(0, (L.xp - d.a) / (d.b - d.a) * 100));
+    const hero = `<div class="lg-card gold lgx-hero" style="--ac:${curTab.ac}">
+        <div class="lgx-emb"><b>${d.l}</b></div>
+        <div class="lgx-hinfo"><small>Ta division</small><h2>${esc(d.n)}</h2><span>${curTab.ic} ${curTab.label} · gains ${mulTxt(d.m)}</span></div>
+      </div>`;
+    const tabs = `<div class="lgx-tabs" role="tablist">${LEAGUE_TABS.map(t => `<button type="button" role="tab" aria-selected="${t.id === tab.id}" class="lgx-tab ${t.id === tab.id ? 'on' : ''}" style="--ac:${t.ac}" data-a="lt" data-v="${t.id}"><span class="ic">${t.ic}</span><span class="tx">${t.label}</span><small>${t.divs.length} div.${t.id === curTab.id ? ' · 📍' : ''}</small></button>`).join('')}</div>`;
+    const cards = tab.divs.map(l => {
+      const x = DV.find(v => v.l === l), cur = x.l === d.l, past = x.l > d.l, lock = x.l < d.l, last = x.b > 1e8;
+      const win = Math.round(200 * x.m), win4 = Math.round(250 * x.m), span = last ? null : Math.ceil((x.b - x.a) / win);
+      const status = cur
+        ? `<div class="lgx-bar"><i style="width:${pct.toFixed(1)}%"></i></div><div class="lgx-pr"><span>${fx(L.xp)} / ${last ? '∞' : fx(x.b)} XP</span><b>${last ? '👑 Rang maximum' : Math.floor(pct) + ' %'}</b></div>${nx ? `<div class="lgx-note">Encore <b>${fx(x.b - L.xp)} XP</b> pour devenir « ${esc(nx.n)} ».</div>` : ''}`
+        : past ? '<div class="lgx-note ok">✅ Division franchie</div>'
+        : `<div class="lgx-note lk">🔒 Encore <b>${fx(x.a - L.xp)} XP</b> pour débloquer cette division.</div>`;
+      return `<div class="lgx-div ${cur ? 'cur' : past ? 'past' : 'lock'}" style="--ac:${tab.ac}">
+        ${cur ? '<span class="lgx-flag">📍 TA DIVISION</span>' : ''}
+        <div class="lgx-top"><div class="lgx-rk">${x.l}</div><div class="lgx-nm"><b>${esc(x.n)}</b><small>Division ${x.l}</small></div><div class="lgx-mul" title="Multiplicateur d’XP">${mulTxt(x.m)}</div></div>
+        <div class="lgx-range"><span>Seuil d’XP</span><b>${x.a ? fx(x.a) : '0'} → ${last ? '∞' : fx(x.b)} XP</b></div>
+        <div class="lgx-chips">
+          <div class="lgx-chip"><small>🏆 Victoire</small><b>+${fx(win)} XP</b></div>
+          <div class="lgx-chip"><small>⭐ Avec 4 pions</small><b>+${fx(win4)} XP</b></div>
+          <div class="lgx-chip"><small>💔 Défaite</small><b>−100 XP</b></div>
+          <div class="lgx-chip"><small>🤖 Bot</small><b>${esc(BOTS[x.l])} · ${levelName(x.l)}</b></div>
+        </div>
+        ${span ? `<div class="lgx-note">≈ ${span} victoire${span > 1 ? 's' : ''} pour traverser cette division (hors bonus).</div>` : ''}
+        ${status}
+      </div>`;
+    }).join('');
+    const rule = (ic, t, sm, hl) => `<div class="lgx-rule ${hl ? 'hl' : ''}"><span class="ic">${ic}</span><div><b>${t}</b><small>${sm}</small></div></div>`;
+    const streak = L.ws >= 5 ? 2 : L.ws === 4 ? 1.75 : L.ws === 3 ? 1.5 : 1;
+    return `${hero}${tabs}
+      <div class="lgx-intro"><h3 style="color:${tab.ac}">${tab.ic} ${tab.label}</h3><p>${tab.sub} · ${tab.divs.length} divisions</p></div>
+      <div class="lgx-list">${cards}</div>
+      <div class="lg-card"><h3>📘 Barème & bonus</h3><div class="lgx-rules">
+        ${rule('🏆', 'Victoire : +200 XP', 'Multipliée par la division (×1 à ×3). +50 XP de base si tes 4 pions arrivent.')}
+        ${rule('💔', 'Défaite : −100 XP', 'Tu ne descends jamais sous le seuil de ta division actuelle.')}
+        ${rule('🔥', 'Série de victoires', '3 de suite ×1,5 · 4 de suite ×1,75 · 5 et plus ×2. Ta série : ' + L.ws + ' (bonus actuel ' + mulTxt(streak) + ').', streak > 1)}
+        ${rule('🛡️', 'Protection des défaites', '2e défaite de suite : −15 % · 3e et suivantes : −30 %.')}
+        ${rule('⚡', 'Boost XP ×2', 'Double l’XP de tes 3 prochaines victoires (boutique, gemmes).' + (L.bx ? ' En stock : ' + L.bx + '.' : ''), L.bx > 0)}
+        ${rule('🛡️', 'Bouclier de série', 'Ta prochaine défaite ne casse pas ta série (boutique).' + (L.sh ? ' En stock : ' + L.sh + '.' : ''), L.sh > 0)}
+      </div></div>
+      <button class="lg-b" data-a="tab" data-v="home">⬅ Retour à la Ligue</button>`;
+  },
   room: () => { const d = R && R.d; if (!d) return '<div class="lg-card">Connexion au salon…</div>'; const u = me(), host = d.host === u.uid, cl = ['#1E88E5','#FFF176','#E53935','#43A047'], meP = d.players.find(p => p.uid === u.uid), sl = seatList(d.players);
     return `<div class="lg-card gold"><p style="margin:0;text-align:center">${esc(R.title)}${d.lg === 'solo' ? ' · Co-op' : ''}</p><div class="lg-code">${d.code}</div><div class="lg-row"><button class="lg-b s" data-a="cp">📋 Copier</button><button class="lg-b s g" data-a="inv">📨 Inviter un ami</button></div></div>
+    ${stakeCardHTML(d, host)}
     <div class="lg-card"><div class="lg-slots">${[0,1,2,3].map(i => { const p = sl[i]; return p ? `<div class="lg-sl" style="--sc:${cl[i]}" data-a="pc" data-v="${i}"><div class="lg-av ${sq()}" style="${av(p.avatarFile)}"></div><b>${p.uid === d.host ? '👑 ' : ''}${esc(p.pseudo)}</b><br><small>${p.ready ? '✅ Prêt' : '⏳ En attente'} · Éq. ${i % 2 ? 'B' : 'A'}</small></div>` : `<div class="lg-sl" style="--sc:${cl[i]};opacity:.85" data-a="seat" data-v="${i}"><div class="lg-av" style="display:flex;align-items:center;justify-content:center;font-size:24px">${R.bots ? '🤖' : '＋'}</div><b>${R.bots ? 'Bot' : 'Place libre'}</b><br><small>Éq. ${i % 2 ? 'B' : 'A'} · 🪑 S’asseoir</small></div>`; }).join('')}</div><p style="margin:10px 0 0;font-size:.8em">Touche un siège libre pour t’y asseoir. Sièges 1 & 3 = Équipe A, sièges 2 & 4 = Équipe B. Le siège 1 doit être occupé par un joueur.</p>
     ${host ? `<label class="lg-row lg-sp" style="margin-top:10px"><span>🤖 Compléter avec des Bots</span><input type="checkbox" data-a="bots" ${R.bots ? 'checked' : ''} style="flex:none;width:22px;height:22px"></label>` : ''}</div>
     ${host ? '<button class="lg-b g" data-a="go">▶ Lancer la partie</button>' : `<button class="lg-b ${meP && meP.ready ? '' : 'g'}" data-a="rdy">${meP && meP.ready ? 'Annuler « Prêt »' : 'Je suis prêt !'}</button>`}<button class="lg-b r" data-a="lv">Quitter le salon</button>`; },
   profile: d => `<div class="lg-card gold" style="text-align:center"><div class="lg-av ${sq()}" style="${av(playerProfile.avatarFile)};width:96px;height:96px;margin:0 auto 10px;cursor:pointer" data-a="avs"></div><button class="lg-b s" data-a="avs">🖼️ Changer d’avatar</button>
     <div class="lg-row" style="margin-top:12px"><input class="lg-in" id="lgn" maxlength="16" value="${esc(playerProfile.pseudo)}"><button class="lg-b s g" data-a="nm" style="flex:none">Enregistrer</button></div></div>
+  ${boardCardHTML()}
   <div class="lg-card"><h3>Division ${d.l} · ${esc(d.n)}</h3>${gauge(d)}<div class="lg-st" style="margin-top:10px"><div><b>${A0().p}</b>Parties</div><div><b>${A0().w}</b>Victoires</div><div><b>${A0().l}</b>Défaites</div><div><b>${A0().p ? Math.round(A0().w / A0().p * 100) : 0}%</b>Victoires</div><div><b>${L.ws}</b>Série en cours</div><div><b>${L.best}</b>Meilleure série</div></div></div>
   <div class="lg-card"><h3>Mon code ami</h3><p style="word-break:break-all;font-size:.8em">${me() ? me().uid : ''}</p><button class="lg-b s" data-a="cpu">📋 Copier mon code</button></div>
   <button class="lg-b r" data-a="out">Se déconnecter</button>`,
@@ -2600,17 +2899,12 @@ function hero(d) {
   return `<div class="lg-card gold lg-hero"><div class="lg-emb"><b>${d.l}</b></div><div style="flex:1;min-width:0"><div style="color:var(--gold);font-weight:900;font-size:1.2em">${esc(d.n)}</div><small style="color:#9fc3ea">Division ${d.l} · gains ×${d.m}</small><div style="margin:6px 0">${gauge(d)}</div><small style="color:#9fc3ea">${nx ? `Encore <b style="color:#fff">${(d.b - L.xp).toLocaleString('fr-FR')} XP</b> pour devenir « ${esc(nx.n)} »` : '👑 Rang maximum atteint !'}</small></div></div>
   <div class="lg-path">${DV.map(x => `<span class="${x.l === d.l ? 'cur' : x.l > d.l ? 'dn' : ''}">${x.l}</span>`).join('')}</div>
   <div class="lg-st" style="grid-template-columns:repeat(3,1fr)"><div><b>🔥 ${L.ws}</b>Série ×${sm()}</div><div><b>${L.best}</b>Record série</div><div><b>${a.p ? Math.round(a.w / a.p * 100) : 0}%</b>Victoires</div></div>
-  <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<button class="lg-b s" style="margin-top:8px;width:100%" data-a="divs">📜 Divisions & barème</button></div>`;
+  <div class="lg-card"><div class="lg-row lg-sp"><span>🎯 Défis du jour : <b style="color:var(--gold)">${n3}/${DAILY.length}</b></span><span style="text-align:right">${L.bx ? '⚡×2 (' + L.bx + ') ' : ''}${L.sh ? '🛡️ ' + L.sh : ''}</span></div>${ok ? `<button class="lg-b s" style="margin-top:8px;width:100%" disabled>🎁 Cadeau récupéré · jour ${(L.dd - 1) % 7 + 1}/7</button>` : '<button class="lg-b g" style="margin-top:8px" data-a="dg">🎁 Récupérer le cadeau du jour</button>'}<button class="lg-b g" style="margin-top:8px" data-a="divs">🏆 Voir toutes les ligues</button></div>`;
 }
-async function dailyGift() {
-  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return;
-  const nextDay = L.dl === y ? (L.dd || 0) + 1 : 1, day = (nextDay - 1) % 7 + 1, g = 100 * day, gm = day === 7 ? 10 : 0;
-  try {
-    await changeCoins(g, 'Cadeau quotidien · jour ' + day);
-    L.dd = nextDay; L.dl = dayKey();
-    if (gm) { playerProfile.gems = (playerProfile.gems || 0) + gm; pushProfile(); }
-    save(); good('Cadeau du jour !', `Jour ${day}/7 · 🪙 +${g}${gm ? ' · 💎 +' + gm : ''}<br>Reviens demain pour la suite !`); render();
-  } catch(e) { err('Récompense indisponible', esc(e.message)); }
+function dailyGift() {
+  const y = new Date(Date.now() - 864e5).toISOString().slice(0, 10); if (L.dl === dayKey()) return; L.dd = L.dl === y ? (L.dd || 0) + 1 : 1; L.dl = dayKey();
+  const day = (L.dd - 1) % 7 + 1, g = 100 * day, gm = day === 7 ? 10 : 0; playerProfile.gold = (playerProfile.gold || 0) + g; playerProfile.gems = (playerProfile.gems || 0) + gm; pushProfile(); save();
+  good('Cadeau du jour !', `Jour ${day}/7 · 🪙 +${g}${gm ? ' · 💎 +' + gm : ''}<br>Reviens demain pour la suite !`); render();
 }
 function statsV() {
   const s = L.st || {}, a = A0(), pc = o => o && o.p ? Math.round(o.w / o.p * 100) : 0, tab = `<div class="lg-row"><button class="lg-b s ${ST === 'troph' ? 'g' : ''}" data-a="st" data-v="troph">🏆 Trophées</button><button class="lg-b s ${ST === 'stats' ? 'g' : ''}" data-a="st" data-v="stats">📊 Stats</button></div>`;
@@ -2620,82 +2914,62 @@ function statsV() {
   return tab + `<div class="lg-card gold"><h3>Mes statistiques</h3><div class="lg-st"><div><b>${a.p}</b>Parties jouées</div><div><b>${pc(a)}%</b>de victoires</div><div><b>${a.w}</b>Victoires</div><div><b>${a.l}</b>Défaites</div><div><b>${L.ate || 0}</b>💥 Pions mangés</div><div><b>${L.eaten || 0}</b>💀 Mes pions mangés</div></div></div>` + row('Multijoueur', s.mm, '🌐') + row('Salon privé', s.priv, '🔒') + row('Contre les bots', s.bots, '🤖');
 }
 function shopV() {
-  const ledger = (playerProfile.coinLedger || []).slice(0,12), purchases = (playerProfile.purchaseHistory || []).slice(0,10);
-  return `<div class="lg-card gold wallet-card"><div class="lg-row lg-sp"><h3>🪙 Mon portefeuille</h3><span class="lg-chip">Synchronisé</span></div>
-    <div class="wallet-balance">${(playerProfile.gold || 0).toLocaleString('fr-FR')} <small>pièces</small></div>
-    <div class="wallet-sub">Ton solde est sauvegardé sur ton compte et se retrouve à chaque reconnexion.</div>
-    <div class="lg-st"><div><b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>Gemmes</div><div><b>${ledger.length}</b>Opérations récentes</div></div></div>
-    <div class="lg-card"><h3>🎁 Code promo</h3><p>Saisis ton code pour recevoir une récompense sur ce compte.</p>
-      <div class="lg-row"><input class="lg-in" id="coin-promo" maxlength="32" autocomplete="off" autocapitalize="characters" placeholder="TON CODE PROMO" style="text-align:left;letter-spacing:1px"><button class="lg-b g s" data-a="promo" style="flex:none">Valider</button></div>
-      <small style="display:block;margin-top:8px;color:#9fc3ea">${playerProfile.promoUsed ? 'Un code promotionnel a déjà été utilisé sur ce compte.' : 'Code de bienvenue disponible : WELCOME1000 · utilisable une seule fois.'}</small></div>
-    <div class="lg-card"><h3>🛍️ Articles & améliorations</h3>${ITEMS.map(x => `<div class="lg-item-wrap"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1;min-width:0"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('')}</div>
-    <div class="lg-card"><h3>📒 Historique des pièces</h3>${ledger.length ? `<div class="coin-ledger">${ledger.map(e => `<div class="coin-line"><div><b>${esc(e.label || 'Opération')}</b><small>${new Date(e.t || Date.now()).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div><strong class="${e.delta >= 0 ? 'coin-plus' : 'coin-minus'}">${e.delta > 0 ? '+' : '−'}${Math.abs(e.delta).toLocaleString('fr-FR')}</strong></div>`).join('')}</div>` : '<p>Aucune opération pour le moment.</p>'}</div>
-    <div class="lg-card"><h3>🧾 Mes achats</h3>${purchases.length ? purchases.map(e => `<div class="coin-line"><div><b>${esc(e.label)}</b><small>${new Date(e.t || Date.now()).toLocaleString('fr-FR',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'})}</small></div><strong class="coin-minus">−${Number(e.amount || 0).toLocaleString('fr-FR')} ${esc(e.currency || '')}</strong></div>`).join('') : '<p>Aucun achat enregistré pour le moment.</p>'}</div>
-    <div class="lg-card" style="text-align:center"><p style="margin:0">Les achats d’articles sont débités immédiatement et enregistrés dans ton historique. Les packs payants seront activés avec un prestataire de paiement sécurisé.</p></div>`;
-}
-async function redeemCoinPromo() {
-  const input = $('coin-promo'), code = (input && input.value || '').trim().toUpperCase();
-  if (!code) return toast('Saisis un code promo', 'error');
-  if (code !== 'WELCOME1000') return toast('Code promo invalide', 'error');
-  try {
-    const ref = uref();
-    const balance = await F().runTransaction(F().db, async tx => {
-      const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
-      const data = snap.data(); if (data.promoUsed) throw new Error('Ce code a déjà été utilisé sur ce compte');
-      const next = (Number(data.gold) || 0) + 1000, ledger = (Array.isArray(data.coinLedger) ? data.coinLedger : []).slice(0,99);
-      ledger.unshift({id:mk(),t:Date.now(),label:'Code promo WELCOME1000',delta:1000,balance:next});
-      tx.update(ref,{gold:next,coinLedger:ledger,promoUsed:true}); return {gold:next,coinLedger:ledger};
-    });
-    playerProfile.gold=balance.gold; playerProfile.coinLedger=balance.coinLedger; playerProfile.promoUsed=true;
-    saveProfile(); updateCurrencyUI(); good('Code validé !','🪙 +1 000 pièces ajoutées à ton portefeuille.'); render();
-  } catch(e) { toast(e.message || 'Code promo indisponible','error'); }
+  return `<div class="lg-card gold"><h3>🛒 Boutique</h3><p style="margin:0">Tu as 🪙 <b>${(playerProfile.gold || 0).toLocaleString('fr-FR')}</b> et 💎 <b>${(playerProfile.gems || 0).toLocaleString('fr-FR')}</b>. Gagne-en avec les défis et le cadeau du jour !</p></div>` + ITEMS.map(x => `<div class="lg-card"><div class="lg-it"><div class="ic">${x.i}</div><div style="flex:1"><b style="color:var(--gold)">${x.n}</b><p style="margin:4px 0 8px">${x.d}</p><small style="color:#9fc3ea">En stock : ${x.have()}</small></div></div><button class="lg-b ${x.cur === 'gems' ? '' : 'g'}" style="margin-top:10px" data-a="buy" data-v="${x.id}">Acheter · ${x.cur === 'gems' ? '💎' : '🪙'} ${x.p}</button></div>`).join('') + '<div class="lg-card" style="text-align:center;opacity:.7"><div style="font-size:34px">🔒</div><p style="margin:0">De nouveaux articles arrivent bientôt…</p></div>';
 }
 async function buy(id) {
-  const x = ITEMS.find(i => i.id === id); if (!x) return;
-  const c = x.cur, ic = c === 'gems' ? '💎' : '🪙';
-  if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
+  const x = ITEMS.find(i => i.id === id), c = x.cur, ic = c === 'gems' ? '💎' : '🪙'; if ((playerProfile[c] || 0) < x.p) return err('Fonds insuffisants', `Il te manque ${x.p - (playerProfile[c] || 0)} ${ic} pour cet article.`);
   if (!await dlg(x.n, `Acheter pour ${ic} ${x.p} ?`, [{t:'Annuler',v:0},{t:'Acheter',v:1,c:'g'}])) return;
-  try {
-    if (c === 'gold') await changeCoins(-x.p, 'Achat boutique · ' + x.n);
-    else {
-      const result = await F().runTransaction(F().db, async tx => {
-        const ref = uref(), snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
-        const data = snap.data(), gems = Number(data.gems) || 0; if (gems < x.p) throw new Error('Gemmes insuffisantes');
-        const purchase = {id:mk(), t:Date.now(), label:'Achat boutique · ' + x.n, amount:x.p, currency:'gemmes'};
-        const history = [purchase].concat(Array.isArray(data.purchaseHistory) ? data.purchaseHistory : []).slice(0,50);
-        tx.update(ref,{gems:gems-x.p,purchaseHistory:history}); return {gems:gems-x.p,history};
-      });
-      playerProfile.gems=result.gems; playerProfile.purchaseHistory=result.history; saveProfile(); updateCurrencyUI();
-    }
-    if (id === 'bx') L.bx = (L.bx || 0) + 3; else if (id === 'sh') L.sh = (L.sh || 0) + 1;
-    save(); good('Achat réussi !', `${x.i} ${esc(x.n)} ajouté à ton inventaire.`); render();
-  } catch(e) { err('Achat impossible', esc(e.message)); }
+  playerProfile[c] -= x.p; if (id === 'bx') L.bx = (L.bx || 0) + 3; else L.sh = (L.sh || 0) + 1; pushProfile(); save(); good('Achat réussi !', `${x.i} ${esc(x.n)} ajouté à ton inventaire.`); render();
 }
-window.refreshPhoenixWallet = function(){ if (open && T === 'shop') render(); };
+function rankingsV() {
+  const own = ensureMonthly();
+  const people = [{uid:me().uid,pseudo:playerProfile.pseudo,av:playerProfile.avatarFile,monthly:own,me:true}]
+    .concat(S.friends.map(f => {
+      const g = FD[f.uid] || {};
+      const m = g.monthly && g.monthly.month === monthKey() ? g.monthly : {month:monthKey(),xp:0,wins:0,games:0,pawns:0};
+      return {uid:f.uid,pseudo:g.pseudo || f.pseudo,av:g.av || f.av,monthly:m};
+    }));
+  const board = (title, icon, metric, value, suffix, sortFn) => {
+    const rows = people.slice().sort(sortFn).slice(0,10);
+    return `<div class="lg-card"><h3>${icon} ${title}</h3>${rows.map((p,i) => {
+      const m=p.monthly||{}, v=value(m);
+      return `<div class="lg-li" style="${p.me?'border:1px solid var(--gold)':''}"><b style="width:26px;text-align:center;flex:none">${['🥇','🥈','🥉'][i]||i+1}</b><div class="lg-av ${sq()}" style="${av(p.av)};width:36px;height:36px"></div><div class="t"><b>${esc(p.pseudo)}${p.me?' (toi)':''}</b><small>${metric==='pct'?(m.wins||0)+' victoire(s) / '+(m.games||0)+' partie(s)':metric==='pawns'?'Pions capturés':'Points de ligue ce mois'}</small></div><b style="color:var(--gold);flex:none">${coinFmt(v)}${suffix}</b></div>`;
+    }).join('') || '<p>Pas encore de résultat ce mois-ci.</p>'}</div>`;
+  };
+  const by=(fn)=> (a,b)=>fn(b.monthly||{})-fn(a.monthly||{});
+  return `<div class="lg-card gold"><h3>🏆 Classements mensuels</h3><p>Mois en cours : ${monthKey()}. Les résultats sont comparés entre toi et les amis de ta liste.</p></div>
+    ${board('Meilleurs joueurs de ligue','👑','xp',m=>m.xp||0,' XP',by(m=>m.xp||0))}
+    ${board('Meilleurs chasseurs de pions','⚔️','pawns',m=>m.pawns||0,'',by(m=>m.pawns||0))}
+    ${board('Meilleur pourcentage de victoires','🎯','pct',m=>m.games?Math.round((m.wins||0)/m.games*100):0,'%',(a,b)=>{const am=a.monthly||{},bm=b.monthly||{};return (bm.games?bm.wins/bm.games:0)-(am.games?am.wins/am.games:0);})}
+    <div class="lg-card"><small style="color:#9fc3ea">Les classements sont calculés sur les parties enregistrées pendant le mois. Ils couvrent ton compte et les amis ajoutés à ta liste.</small></div>`;
+}
+
 function rank() {
   const list = [{pseudo:playerProfile.pseudo, av:playerProfile.avatarFile, xp:L.xp, ws:L.ws, me:1}].concat(S.friends.map(f => { const g = FD[f.uid] || {}, l = g.lg || {}; return {pseudo:g.pseudo || f.pseudo, av:g.av || f.av, xp:l.xp || 0, ws:l.ws || 0}; })).sort((a, b) => b.xp - a.xp);
   return `<div class="lg-card gold"><h3>🏅 Classement entre amis</h3>${list.map((p, i) => `<div class="lg-li" style="${p.me ? 'border:1px solid var(--gold)' : ''}"><div style="font-size:22px;width:30px;text-align:center;flex:none">${['🥇','🥈','🥉'][i] || i + 1}</div><div class="lg-av ${sq()}" style="${av(p.av)};width:38px;height:38px"></div><div class="t"><b>${esc(p.pseudo)}${p.me ? ' (toi)' : ''}</b><small>Div ${divOf(p.xp).l} · ${esc(divOf(p.xp).n)} · 🔥 ${p.ws}</small></div><b style="color:var(--gold);flex:none">${p.xp.toLocaleString('fr-FR')}</b></div>`).join('')}</div>`;
 }
 function chal() {
   roll(); const row = (c, b, id) => { const p = Math.min(prog(b, c.k), c.n), ok = (b.cl || []).includes(id), full = p >= c.n;
-    return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 🪙${c.coins || 0} · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
+    return `<div class="lg-ch"><div class="lg-row lg-sp"><span>${c.t}</span><span style="flex:none;color:var(--gold)">+${c.xp} XP · 💎${c.g}</span></div><div class="lg-gauge"><i style="width:${p / c.n * 100}%"></i><span>${p}/${c.n}</span></div>${full ? `<button class="lg-b s ${ok ? '' : 'g'}" style="margin-top:6px;width:100%" data-a="cl" data-v="${id}" ${ok ? 'disabled' : ''}>${ok ? 'Récupéré ✔' : '🎁 Récupérer'}</button>` : ''}</div>`; };
   return '<b style="color:var(--cyan)">Quotidiens</b><br>' + DAILY.map((c, i) => row(c, L.dp, 'd' + i)).join('') + '<b style="color:var(--cyan)">Hebdomadaires</b><br>' + WEEKLY.map((c, i) => row(c, L.wp, 'w' + i)).join('');
 }
-async function claim(id) {
+function claim(id) {
   const c = (id[0] === 'd' ? DAILY : WEEKLY)[+id.slice(1)], b = id[0] === 'd' ? L.dp : L.wp; if (!c || prog(b, c.k) < c.n || (b.cl || []).includes(id)) return;
-  try {
-    await changeCoins(c.coins || 0, 'Récompense défi · ' + c.t);
-    (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; pushProfile(); save();
-    sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP, ${c.coins || 0} pièces et ${c.g} gemmes !`});
-    good('Défi réussi !', `+${c.xp} XP · 🪙 +${c.coins || 0} · 💎 +${c.g}`); render();
-  } catch(e) { err('Récompense indisponible', esc(e.message)); }
+  (b.cl = b.cl || []).push(id); L.xp += c.xp; playerProfile.gems = (playerProfile.gems || 0) + c.g; pushProfile(); save(); sendInbox(me().uid, {type:'info', name:'Défi réussi', text:`🎁 « ${c.t} » : +${c.xp} XP et ${c.g} gemmes !`});
+  good('Défi réussi !', `+${c.xp} XP · 💎 +${c.g}`); render();
 }
 
 /* ---------- ACTIONS ---------- */
 const A = {
-  close: () => closeLG(), tab: e => { T = e.dataset.v === 'home' && R ? 'room' : e.dataset.v; if (T === 'inbox') { S.rd = Date.now(); F().setDoc(sref(me().uid), {rd:S.rd}, {merge:true}).catch(() => {}); } render(); },
+  close: () => closeLG(), rank: () => { T = 'rankings'; render(); }, tab: e => { T = e.dataset.v === 'home' && R ? 'room' : e.dataset.v; if (T === 'inbox') { S.rd = Date.now(); F().setDoc(sref(me().uid), {rd:S.rd}, {merge:true}).catch(() => {}); } render(); },
   mm: matchmake, cr: () => create('online', false), jn: () => join(($('lgc') || {}).value || ''), solo: solo, coop: () => create('solo', false),
-  divs: () => dlg('Divisions', `<div style="text-align:left;font-size:.9em">${DV.map(d => `<div class="lg-row lg-sp" style="margin:4px 0;${d.l === divOf(L.xp).l ? 'color:var(--gold);font-weight:800' : ''}"><span>Div ${d.l} · ${esc(d.n)}</span><span style="text-align:right;flex:none">×${d.m}</span></div>`).join('')}<hr style="border-color:#234;margin:8px 0">Victoire +200 XP · 4 pions +50 XP · Défaite −100 XP<br>Série : 3 ✕1.5 · 4 ✕1.75 · 5+ ✕2<br>Défaites d’affilée : 2 ✕0.85 · 3+ ✕0.70</div>`),
+  divs: () => { const t = LEAGUE_TABS.find(t => t.divs.includes(divOf(L.xp).l)); if (t) activeLeagueTab = t.id; T = 'leagues'; render(); MAIN.scrollTop = 0; },
+  bd: e => { const i = +e.dataset.v; selectBoard(i); toast('Plateau ' + (i + 1) + ' défini par défaut', 'success'); render(); },
+  stk: async e => { const n = +e.dataset.v; if (!R || !R.d || R.d.host !== me().uid || R.d.kind !== 'priv') return;
+    if (n > balNow()) return err('Solde insuffisant', `Il te faut ${fx(n)} pièces pour fixer cette mise. Ton solde : ${fx(balNow())}.`);
+    const d = (await F().getDoc(room(R.code))).data(); await F().updateDoc(room(R.code), {stake:n, players:d.players.map(p => p.uid === d.host ? p : {...p, ready:false})});
+    toast(n ? 'Mise : ' + fx(n) + ' pièces' : 'Partie gratuite', 'success'); },
+  lt: e => { activeLeagueTab = e.dataset.v; render(); }, // Changement d'onglet dans les ligues
   cp: () => { navigator.clipboard ? navigator.clipboard.writeText(R.code).then(() => toast('Code copié !', 'success')) : toast('Code : ' + R.code); }, inv: inviteDlg,
   pc: e => { const p = seatList(R.d.players)[+e.dataset.v]; p && playerCard(p); }, seat: e => moveSeat(+e.dataset.v), bots: e => { R.bots = e.checked; render(); },
   go: launch, rdy: ready, lv: () => leave(true),
@@ -2704,13 +2978,14 @@ const A = {
   nm: async () => { const v = ($('lgn').value || '').trim(); if (v.length < 3) return err('Pseudo trop court', 'Ton pseudo doit contenir au moins 3 caractères.'); if (v === playerProfile.pseudo) return;
     playerProfile.pseudo = v; saveProfile(); applyProfileUI(); try { await F().updateDoc(uref(), {pseudo:v}); } catch (e) {} F().setDoc(sref(me().uid), {pseudo:v}, {merge:true}).catch(() => {}); toast('Pseudo enregistré', 'success'); render(); },
   cpu: () => { navigator.clipboard ? navigator.clipboard.writeText(me().uid).then(() => toast('Code ami copié !', 'success')) : toast('Copie impossible', 'error'); },
-  out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { if (profileUnsub) { profileUnsub(); profileUnsub = null; } await F().signOut(F().auth); location.reload(); } },
+  out: async () => { if (await dlg('Déconnexion', 'Veux-tu vraiment te déconnecter ?', [{t:'Annuler',v:0},{t:'Oui',v:1,c:'r'}])) { await F().signOut(F().auth); location.reload(); } },
   af: async () => { const id = ($('lgf').value || '').trim(); if (id.length < 10) return err('Code invalide', 'Colle le code ami complet du joueur (visible dans son Profil).'); if (id === me().uid) return err('Oups', 'Tu ne peux pas t’ajouter toi-même.');
     const s = await F().getDoc(sref(id)).catch(() => null); addFriend({uid:id, pseudo:(s && s.exists() && s.data().pseudo) || 'ce joueur'}); },
-  fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v), dg: dailyGift, promo: redeemCoinPromo, st: e => { ST = e.dataset.v; render(); }, buy: e => buy(e.dataset.v)
+  coinDaily: walletDaily, coinPromo: walletPromo, coinBuy: walletBuyPack, coinClaim: e => walletClaim(+e.dataset.v), fi: e => invite(S.friends[+e.dataset.v]), ok: e => acceptFr(S.inbox[+e.dataset.v]), del: e => rm(S.inbox[+e.dataset.v]), ji: async e => { const m = S.inbox[+e.dataset.v]; if (await join(m.code)) rm(m); }, cl: e => claim(e.dataset.v), dg: dailyGift, st: e => { ST = e.dataset.v; render(); }, buy: e => buy(e.dataset.v)
 };
-root.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (t && A[t.dataset.a]) A[t.dataset.a](t); });
-function openLG() { if (!me()) return toast('Connecte-toi d’abord !', 'error'); open = true; root.classList.add('on'); T = R ? 'room' : 'home'; initSocial(); render(); anim(); }
+root.addEventListener('click', e => { const t = e.target.closest('[data-a]'); if (t && A[t.dataset.a]) Promise.resolve(A[t.dataset.a](t)).catch(x=>toast(x.message||'Opération impossible','error')); });
+root.addEventListener('change',e=>{if(e.target.id==='coin-stake'){{const v=Number(e.target.value);selectedCoinStake=Number.isFinite(v)?v:100;}window.selectedCoinStake=selectedCoinStake;toast(selectedCoinStake?'Mise réglée à '+coinFmt(selectedCoinStake)+' pièces.':'Parties gratuites : aucune pièce en jeu.');}});
+function openLG() { if (!me()) return toast('Connecte-toi d’abord !', 'error'); walletRefresh().then(()=>{if(open && T==='coins')render();}).catch(()=>{}); open = true; root.classList.add('on'); T = R ? 'room' : 'home'; initSocial(); render(); anim(); }
 function closeLG() { open = false; root.classList.remove('on'); }
 
 /* ---------- PARTICULES ---------- */
@@ -2729,44 +3004,35 @@ setInterval(() => { if (me()) initSocial(); }, 1500);
 if (window.processCard) { const pc = window.processCard; window.processCard = function (p, c) { try { if (LGMODE && c && p === myPlayerIndex) { if (c.r === 'PHOENIX') bump('phoenix'); if (c.r === 'MANDALA') bump('mandala'); } } catch (e) {} return pc.apply(this, arguments); }; }
 const homeN = pid => { let n = 0; for (let p = 0; p < 4; p++) if (PLAYERS[p].team !== PLAYERS[pid].team) n += state.pawns[p].filter(x => x.state === 'HOME').length; return n; };
 if (window.handleCapture) { const hc = window.handleCapture; window.handleCapture = async function (pid) { let b = 0, hu = false; try { hu = !PLAYERS[pid].isBot; if (hu) b = homeN(pid); } catch (e) {} const r = await hc.apply(this, arguments); try { if (hu) gc.ate += Math.max(0, homeN(pid) - b); } catch (e) {} return r; }; }
-setInterval(() => {
+setInterval(async () => {
   const g = $('game-screen') && $('game-screen').classList.contains('active');
   if (g && !wasG) { done = false; gc = {ate:0, eaten:0, prev:null}; } if (!g && wasG) { LGMODE = null; KIND = null; } wasG = g; if (!g || done) return;
   const mine = state.pawns && state.pawns[myPlayerIndex]; if (mine) { const cur = mine.map(p => p.state); if (gc.prev) cur.forEach((s, i) => { if (gc.prev[i] === 'TRACK' && s === 'HOME') gc.eaten++; }); gc.prev = cur; }
   if (!state.gameOver || !$('overlay').classList.contains('show')) return; done = true;
   const t = $('ov-msg').textContent, win = /Équipe A/.test(t) === (myPlayerIndex % 2 === 0), pions = state.pawns[myPlayerIndex].every(p => p.state === 'SAFE');
   record(win, KIND || (currentRoomCode ? 'priv' : 'bots'));
+  const isFree = !LGMODE || KIND === 'bots';
+  try { await walletRecordMatch(win, isFree, currentMatchId || ('match-'+(currentRoomCode || 'solo')+'-'+Date.now())); }
+  catch(e) { showToast(e.message||'Erreur de portefeuille','error'); }
   if (LGMODE) finish(win, pions); else { save(); toast(win ? '🏆 Victoire enregistrée dans tes stats' : 'Partie enregistrée dans tes stats', 'success'); }
 }, 500);
 
 /* ---------- CHAT VOCAL (WebRTC, signalisation Firestore voice/{code}) ---------- */
-const V2 = {on:false, p:{}, mu:{}, stream:null, off:null, code:null};
+const V2 = {on:false, p:{}, mu:{}, stream:null, off:null, code:null, track:null, starting:false};
 const vdoc = () => F().doc(F().db, 'voice', V2.code);
 async function voiceStart() {
-  if (V2.on) return; V2.code = currentRoomCode; const u = me(), ids = (roomUids || []).filter(Boolean); if (!u || ids.length < 2) return;
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Le chat vocal nécessite un navigateur compatible et une connexion HTTPS.', 'error'); return; }
-  V2.on = true;
-  try { V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me'); } catch (e) { V2.stream = null; V2.track = null; toast('Autorise le micro dans ton navigateur pour parler. Le bouton 🎤 reste disponible.', 'error'); }
+  if (V2.on || V2.starting) return; V2.starting = true; V2.on = true; V2.code = currentRoomCode; const u = me(), ids = (roomUids || []).filter(Boolean); if (ids.length < 2) { V2.on = false; V2.starting=false; return; }
+  try { if(!navigator.mediaDevices?.getUserMedia) throw new Error('Microphone indisponible : utilise HTTPS ou localhost.'); V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me'); } catch (e) { toast('Micro non activé : '+(e.message||'autorise le microphone dans ton navigateur'),'error'); }
   const clear = {}; ids.forEach(o => { clear['m_' + u.uid + '_' + o] = ''; }); await F().setDoc(vdoc(), clear, {merge:true}).catch(() => {});
   V2.off = F().onSnapshot(vdoc(), s => { const d = s.data() || {}; ids.filter(o => o !== u.uid).forEach(o => sig(o, d['m_' + o + '_' + u.uid])); }, () => {});
   ids.filter(o => o > u.uid).forEach(async o => { const x = peer(o); await x.pc.setLocalDescription(await x.pc.createOffer()); x.out.o = x.pc.localDescription.sdp; push(o, x); });
-}
-async function requestVoiceMic() {
-  if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) { toast('Le micro exige HTTPS et un navigateur compatible.', 'error'); return false; }
-  try {
-    V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}});
-    V2.track = V2.stream.getAudioTracks()[0]; V2.track.enabled = true;
-    V2.mu[me().uid] = false; watch(V2.stream, 'me');
-    Object.values(V2.p).forEach(x => {
-      const sender = x.pc.getSenders().find(t => t.track && t.track.kind === 'audio') || x.pc.getSenders().find(t => !t.track);
-      if (sender) sender.replaceTrack(V2.track).catch(() => {});
-    });
-    mics(); toast('Micro activé', 'success'); return true;
-  } catch(e) { toast('Autorise l’accès au micro dans les réglages du navigateur.', 'error'); return false; }
+  V2.starting=false;
 }
 function peer(o) {
-  if (V2.p[o]) return V2.p[o]; const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'}]}), x = {pc, out:{}, seen:0}; V2.p[o] = x;
+  if (V2.p[o]) return V2.p[o]; const pc = new RTCPeerConnection({iceServers:[{urls:'stun:stun.l.google.com:19302'},{urls:['turn:openrelay.metered.ca:80','turn:openrelay.metered.ca:443','turn:openrelay.metered.ca:443?transport=tcp'],username:'openrelayproject',credential:'openrelayproject'}]}), x = {pc, out:{}, seen:0}; V2.p[o] = x;
   const tr = pc.addTransceiver('audio', {direction:'sendrecv'}); if (V2.track) tr.sender.replaceTrack(V2.track);
+  pc.onconnectionstatechange = () => { const nm = (((lastRoomData && lastRoomData.players) || []).find(q => q.uid === o) || {}).pseudo || 'un joueur';
+    if (pc.connectionState === 'connected') toast('🎙️ Vocal connecté avec ' + nm, 'success'); else if (pc.connectionState === 'failed') toast('Vocal impossible avec ' + nm + ' (réseau bloqué). Réessaie avec le bouton 🎙️.', 'error'); };
   pc.onicecandidate = e => { if (e.candidate) { x.out.c = (x.out.c || []).concat([e.candidate.toJSON()]); push(o, x); } };
   pc.ontrack = e => { const ms = e.streams[0] || new MediaStream([e.track]); x.a = new Audio(); x.a.srcObject = ms; x.a.muted = !!V2.mu[o]; x.a.play().catch(() => {}); watch(ms, o); }; return x;
 }
@@ -2779,31 +3045,45 @@ async function sig(o, raw) {
 }
 const LV = {}; let ac;
 function watch(ms, key) { try { ac = ac || new (window.AudioContext || window.webkitAudioContext)(); const an = ac.createAnalyser(); an.fftSize = 256; ac.createMediaStreamSource(ms).connect(an); LV[key] = an; } catch (e) {} }
-function voiceStop() { if (!V2.on) return; V2.on = false; if (V2.off) V2.off(); Object.values(V2.p).forEach(x => { try { x.pc.close(); } catch (e) {} }); V2.p = {}; if (V2.stream) V2.stream.getTracks().forEach(t => t.stop()); V2.stream = V2.track = null; Object.keys(LV).forEach(k => delete LV[k]); document.querySelectorAll('.lg-mic').forEach(b => b.remove()); }
+function voiceStop() { V2.starting=false; if (!V2.on) return; V2.on = false; if (V2.off) V2.off(); Object.values(V2.p).forEach(x => { try { x.pc.close(); } catch (e) {} }); V2.p = {}; if (V2.stream) V2.stream.getTracks().forEach(t => t.stop()); V2.stream = V2.track = null; Object.keys(LV).forEach(k => delete LV[k]); document.querySelectorAll('.lg-mic').forEach(b => b.remove()); }
 function mics() {
-  const names = (lastRoomData && lastRoomData.players) || [], self = me(); if (!self) return;
-  document.querySelectorAll('.player-container').forEach(c => {
-    const n = c.querySelector('.game-pseudo'); if (!n) return;
-    const pseudo = (n.textContent || '').trim();
-    const pl = names.find(p => p && String(p.pseudo || '').trim() === pseudo); if (!pl || !pl.uid) return;
-    const avatar = c.querySelector('.in-game-avatar') || c; let b = avatar.querySelector('.lg-mic');
-    if (!b) { b = document.createElement('button'); b.type='button'; b.className='lg-mic';
-      b.onclick = e => { e.stopPropagation(); e.preventDefault(); const mine = pl.uid === self.uid;
-        if (mine) { if (!V2.track) { requestVoiceMic(); return; } V2.track.enabled = !V2.track.enabled; V2.mu[pl.uid] = !V2.track.enabled; }
-        else { V2.mu[pl.uid] = !V2.mu[pl.uid]; const x = V2.p[pl.uid]; if (x && x.a) x.a.muted = V2.mu[pl.uid]; }
-        b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤'; b.classList.toggle('mu', !!V2.mu[pl.uid]);
-        b.setAttribute('aria-label', mine ? (V2.mu[pl.uid] ? 'Activer mon micro' : 'Couper mon micro') : (V2.mu[pl.uid] ? 'Réactiver ce joueur' : 'Couper ce joueur'));
-      }; avatar.appendChild(b);
-    }
-    b.dataset.u = pl.uid; b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤';
-    b.title = pl.uid === self.uid ? 'Activer / couper ton micro' : 'Activer / couper le son de ce joueur';
-    b.setAttribute('aria-label', pl.uid === self.uid ? 'Activer / couper ton micro' : 'Activer / couper le son de ce joueur');
-    b.classList.toggle('mu', !!V2.mu[pl.uid]);
+  const names = (lastRoomData && lastRoomData.players) || []; document.querySelectorAll('.player-container').forEach(c => {
+    const n = c.querySelector('.game-pseudo'); if (!n) return; const pl = names.find(p => p.pseudo === n.textContent); if (!pl) return; let b = c.querySelector('.lg-mic');
+    if (!b) { b = document.createElement('button'); b.className = 'lg-mic'; b.type='button'; b.setAttribute('aria-label',pl.uid===me().uid?'Activer ou couper mon microphone':'Couper ou réactiver le son de ce joueur'); b.title=pl.uid===me().uid?'Microphone : activer / couper':'Son du joueur : couper / réactiver'; b.onclick = e => { e.stopPropagation(); const mine = pl.uid === me().uid;
+        if (mine) { if (!V2.track) return toast('Micro indisponible', 'error'); V2.track.enabled = !V2.track.enabled; V2.mu[pl.uid] = !V2.track.enabled; } else { V2.mu[pl.uid] = !V2.mu[pl.uid]; const x = V2.p[pl.uid]; if (x && x.a) x.a.muted = V2.mu[pl.uid]; } }; c.appendChild(b); }
+    b.dataset.u = pl.uid; b.textContent = V2.mu[pl.uid] ? '🔇' : '🎤'; b.classList.toggle('mu', !!V2.mu[pl.uid]); b.setAttribute('aria-pressed',String(!!V2.mu[pl.uid]));
   });
 }
 setInterval(() => { const g = $('game-screen') && $('game-screen').classList.contains('active'), live = g && currentRoomCode && roomUids && !state.gameOver;
-  if (live && !V2.on) voiceStart(); if (!g && V2.on) voiceStop(); if (V2.on) mics(); }, 1200);
+  if (live && !V2.on) voiceStart(); if (!g && V2.on) voiceStop(); if (V2.on) mics(); updateVoiceBtn(); }, 1200);
 setInterval(() => { if (!V2.on) return; document.querySelectorAll('.lg-mic').forEach(b => { const u = b.dataset.u, an = LV[u === (me() || {}).uid ? 'me' : u]; if (!an || V2.mu[u]) return b.classList.remove('talk'); const a = new Uint8Array(an.frequencyBinCount); an.getByteFrequencyData(a); b.classList.toggle('talk', a.reduce((s, v) => s + v, 0) / a.length > 12); }); }, 150);
+
+/* Bouton micro (bande bleue) : activer / couper mon micro, relancer le vocal, réautoriser le son */
+function updateVoiceBtn() {
+  const b = $('btn-voice'); if (!b) return; const muted = !V2.track || !V2.track.enabled;
+  b.textContent = V2.on && muted ? '🔇' : '🎙️'; b.classList.toggle('on', V2.on && !muted); b.classList.toggle('mu', V2.on && muted);
+  b.title = !V2.on ? 'Chat vocal : démarrer' : muted ? 'Micro coupé : toucher pour parler' : 'Micro actif : toucher pour couper';
+}
+window.lgVoiceToggle = async function () {
+  try {
+    const ids = (roomUids || []).filter(Boolean);
+    if (!currentRoomCode || ids.length < 2) return toast('🎙️ Le vocal fonctionne dans les parties à plusieurs joueurs (salon privé ou en ligne).');
+    try { ac && ac.resume && ac.resume(); } catch (e) {}
+    Object.values(V2.p).forEach(x => { if (x.a) x.a.play().catch(() => {}); });
+    if (!V2.on) { await voiceStart(); toast('🎙️ Vocal en cours de connexion…'); return updateVoiceBtn(); }
+    if (!V2.track) {
+      try { V2.stream = await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true, noiseSuppression:true}}); V2.track = V2.stream.getAudioTracks()[0]; watch(V2.stream, 'me');
+        Object.values(V2.p).forEach(x => x.pc.getTransceivers().forEach(t => t.sender.replaceTrack(V2.track))); toast('🎙️ Micro activé', 'success'); }
+      catch (e) { toast('Micro refusé : autorise le microphone dans les réglages du navigateur.', 'error'); }
+      return updateVoiceBtn();
+    }
+    V2.track.enabled = !V2.track.enabled; V2.mu[me().uid] = !V2.track.enabled;
+    toast(V2.track.enabled ? '🎙️ Micro activé' : '🔇 Micro coupé', V2.track.enabled ? 'success' : undefined);
+  } catch (e) { toast('Vocal indisponible : ' + (e.message || e), 'error'); }
+  updateVoiceBtn();
+};
+/* Les navigateurs mobiles bloquent le son tant qu'il n'y a pas eu de toucher : on le réautorise au premier geste */
+document.addEventListener('pointerdown', () => { try { ac && ac.resume && ac.resume(); } catch (e) {} Object.values(V2.p).forEach(x => { if (x.a && x.a.paused) x.a.play().catch(() => {}); }); }, {passive:true});
 })();
 
 </script>
