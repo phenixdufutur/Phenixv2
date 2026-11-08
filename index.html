@@ -190,7 +190,8 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 .avatar-option.selected { border-color: var(--gold); box-shadow: 0 0 15px var(--gold); }
 #game-screen { display: none; z-index: 20; width: 100vw; height: 100dvh; position: absolute; inset: 0; }
 #game-screen.active { display: block; }
-#stage { position: absolute; inset: 0; width: 100%; height: 100%; background: var(--bg-game) center / 100% 100% no-repeat; overflow: hidden; container-type: size; contain: paint; }
+#game-screen { background: #02060f; }
+#stage { position: absolute; inset: auto; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(100vw, calc(100dvh * 688 / 1529)); height: min(100dvh, calc(100vw * 1529 / 688)); background: var(--bg-game) var(--bg-pos, 0 0) / var(--bg-size, 100% 100%) no-repeat #02060f; overflow: hidden; container-type: size; contain: paint; }
 #stage::after { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 45%, transparent 55%, rgba(0,0,0,.5) 100%); pointer-events: none; z-index: 6; }
 #board { position: absolute; inset: 0; contain: layout style paint; }
 .player-container { position: absolute; display: flex; flex-direction: column; align-items: center; gap: 1cqw; z-index: 15; --c: #4a6fa5; }
@@ -304,7 +305,7 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 .btn.danger { background: linear-gradient(180deg, #c62828 0%, #6e0000 100%); color: #fff; border-color: #ff5252; box-shadow: 0 0 12px rgba(198, 40, 40, 0.5), inset 0 1px 0 rgba(255,255,255,.2); text-shadow: 0 0 8px rgba(255, 82, 82, 0.8); }
 .btn.danger:hover { background: linear-gradient(135deg, #c62828 0%, #ff5252 100%); box-shadow: 0 0 20px rgba(198, 40, 40, 0.9); }
 #hand { position: absolute; left: 0; right: 0; bottom: calc(var(--banner-height) + 10px + var(--safe-bottom)); display: flex; justify-content: center; gap: 1.6cqw; z-index: 30; }
-.card { --r: 0deg; --y: 0cqw; position: relative; width: 15cqw; aspect-ratio: 5 / 7; background-color: #fff; border-radius: 2cqw; cursor: pointer; box-shadow: 0 6px 14px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,.5); border: 1.5px solid rgba(255,255,255,.4); transform: translateY(var(--y)) rotate(var(--r)); transform-origin: 50% 120%; transition: transform 0.2s cubic-bezier(.3,1.4,.5,1), border-color 0.15s, box-shadow .2s, filter 0.2s; background-size: cover; background-position: center; }
+.card { --r: 0deg; --y: 0cqw; position: relative; width: 15cqw; aspect-ratio: 5 / 7; background-color: #0c1a3d; border-radius: 2cqw; cursor: pointer; box-shadow: 0 6px 14px rgba(0,0,0,0.65), 0 0 0 1px rgba(0,0,0,.5); border: 1.5px solid rgba(255,255,255,.4); transform: translateY(var(--y)) rotate(var(--r)); transform-origin: 50% 120%; transition: transform 0.2s cubic-bezier(.3,1.4,.5,1), border-color 0.15s, box-shadow .2s, filter 0.2s; background-size: cover; background-position: center; }
 .card:nth-child(1) { --r: -7deg; --y: 1.8cqw; }
 .card:nth-child(2) { --r: -2.5deg; --y: .2cqw; }
 .card:nth-child(3) { --r: 2.5deg; --y: .2cqw; }
@@ -331,6 +332,24 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 #overlay > *:not(.ember-layer) { position: relative; z-index: 2; }
 #overlay h2 { margin-bottom: 15px; font-size: 34px; letter-spacing: 3px; background: linear-gradient(90deg, #b8860b, #fff1b8, #b8860b); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 12px rgba(230,195,92,.7)); }
 #overlay p { margin-bottom: 18px; font-size: 16px; color: #dbe9ff; }
+
+/* ===== Sélecteur de plateau ===== */
+.board-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; width: 100%; }
+.bp-title { text-align: center; font-size: clamp(12px, 3.4cqw, 16px); color: var(--gold-2); letter-spacing: 1px; text-transform: uppercase; margin-top: 1cqw; }
+.bp-item { display: flex; flex-direction: column; align-items: center; gap: .8cqw; padding: 1cqw; border-radius: 2cqw; border: 2px solid rgba(255,255,255,.18); background: rgba(0,0,0,.35); color: #fff; cursor: pointer; font-family: inherit; }
+.bp-item .bp-thumb { width: 100%; aspect-ratio: 1; border-radius: 1.4cqw; background: center / cover no-repeat #0a1a3a; }
+.bp-item .bp-name { font-size: clamp(10px, 3cqw, 14px); }
+.bp-item.selected { border-color: var(--cyan); box-shadow: 0 0 14px rgba(0,229,255,.7); background: rgba(0,229,255,.12); }
+/* ===== Message défausse forcée (10 du joueur précédent) ===== */
+#force-banner { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 60; display: none; text-align: center; padding: 3cqw 6cqw; border-radius: 4cqw; background: linear-gradient(160deg, rgba(130,12,12,.96), rgba(50,0,0,.97)); border: 3px solid #ff5a3c; box-shadow: 0 0 30px rgba(255,60,30,.8), 0 0 60px rgba(255,60,30,.4); pointer-events: none; animation: forcePulse .9s ease-in-out infinite alternate; }
+#force-banner.show { display: block; }
+#force-banner b { display: block; font-size: clamp(20px, 7cqw, 34px); color: var(--gold-2); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 12px #ff9a3c; }
+#force-banner span { display: block; margin-top: 1cqw; font-size: clamp(12px, 3.4cqw, 17px); color: #fff; }
+@keyframes forcePulse { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.06); } }
+@keyframes flameBox { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.07); } }
+
+.card.face-fallback::before, .discard-card.face-fallback::before { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 8cqw; font-weight: 800; color: #1a1a2e; background: linear-gradient(160deg, #f6f0dd, #d9cfae); z-index: 0; }
+.discard-card { background-color: #0c1a3d !important; }
 </style>
 </head>
 <body>
@@ -366,6 +385,8 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 <div id="bot-difficulty-modal">
   <div class="bot-diff-box">
     <h2>Niveau des bots</h2>
+    <div class="bp-title">Plateau</div>
+    <div class="board-picker"></div>
     <button class="btn easy" onclick="startGameWithBots('easy')">Nul</button>
     <button class="btn medium" onclick="startGameWithBots('medium')">Moyen</button>
     <button class="btn expert" onclick="startGameWithBots('expert')">Expert</button>
@@ -411,6 +432,8 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
             <option value="expert">Expert</option>
           </select>
         </div>
+        <div class="bp-title">Plateau</div>
+        <div class="board-picker"></div>
         <div class="room-actions">
           <button class="btn block" id="btn-ready" onclick="toggleReadyState()">Je suis prêt !</button>
           <button class="btn gold block" id="btn-start-multi" style="display: none;" onclick="startMultiplayerGame()">▶ Lancer</button>
@@ -475,16 +498,17 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 <div id="game-screen" class="screen">
   <div id="stage">
     <div id="board"><div id="discard-pile"></div></div>
-    <div class="player-container pos-p1"><div id="avatar-game-p1" class="in-game-avatar"></div><div id="name-game-p1" class="game-pseudo">Jaune</div><div class="turn-timer" id="timer-p1">30</div></div>
-    <div class="player-container pos-p2"><div id="avatar-game-p2" class="in-game-avatar"></div><div id="name-game-p2" class="game-pseudo">Rouge</div><div class="turn-timer" id="timer-p2">30</div></div>
-    <div class="player-container pos-p3"><div id="avatar-game-p3" class="in-game-avatar"></div><div id="name-game-p3" class="game-pseudo">Vert</div><div class="turn-timer" id="timer-p3">30</div></div>
-    <div class="player-container pos-p0"><div id="avatar-game-p0" class="in-game-avatar"></div><div id="name-game-p0" class="game-pseudo">Vous</div><div class="turn-timer" id="timer-p0">30</div></div>
+    <div class="player-container pos-p1"><div id="avatar-game-p1" class="in-game-avatar"></div><div id="name-game-p1" class="game-pseudo">Jaune</div><div class="turn-timer" id="timer-p1">20</div></div>
+    <div class="player-container pos-p2"><div id="avatar-game-p2" class="in-game-avatar"></div><div id="name-game-p2" class="game-pseudo">Rouge</div><div class="turn-timer" id="timer-p2">20</div></div>
+    <div class="player-container pos-p3"><div id="avatar-game-p3" class="in-game-avatar"></div><div id="name-game-p3" class="game-pseudo">Vert</div><div class="turn-timer" id="timer-p3">20</div></div>
+    <div class="player-container pos-p0"><div id="avatar-game-p0" class="in-game-avatar"></div><div id="name-game-p0" class="game-pseudo">Vous</div><div class="turn-timer" id="timer-p0">20</div></div>
     <div id="settings-buttons">
       <button id="btn-mute" onclick="toggleSound()">🔊</button>
       <button id="btn-anims" onclick="toggleAnimations()">✨</button>
       <button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button>
     </div>
     <div id="hand"></div>
+    <div id="force-banner"><b>⚠️ Abandonnez une carte</b><span>Un 10 a été joué avant vous : choisissez une carte à défausser</span></div>
     <button id="btn-menu" onclick="backToMenu()">Menu</button>
     <div id="bottom-banner">
       <div id="actions"></div>
@@ -498,6 +522,17 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 </div>
 
 <script>
+/* ============================================================
+   PHOENIX JACKAROO — version corrigée & boostée
+   Correctifs principaux :
+   - Fix race-condition multijoueur (seq) → plus de freeze
+   - Chronomètre 20s universel + auto-défausse
+   - Carte 7 : plus de faux "injouable"
+   - Aperçu + clic pion : plus de déplacement de pion adverse
+   - executeSpawn : garde-fous ajoutés
+   - Bots : boost medium/expert
+   ============================================================ */
+
 function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 let toastTimer = null;
 function showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'show' + (type ? ' ' + type : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3200); }
@@ -507,9 +542,9 @@ function authErrorMsg(err) {
 }
 
 let currentRoomCode = null, roomListener = null, roomStarted = false, authMode = 'login', regAvatar = 'az', lastRoomData = null;
-let myPlayerIndex = 0; // 0 = Hôte, 1 = Joueur 2, etc.
-let gameStateListener = null; // Pour le multijoueur
-let botTimeout = null; let roomUids = null; // Pour éviter les doubles déclenchements
+let myPlayerIndex = 0;
+let gameStateListener = null;
+let botTimeout = null; let roomUids = null;
 
 function showAuthTab(mode) { authMode = mode; const reg = mode === 'register'; document.getElementById('auth-tab-login').classList.toggle('active', !reg); document.getElementById('auth-tab-register').classList.toggle('active', reg); document.getElementById('auth-register-fields').classList.toggle('show', reg); document.getElementById('auth-title').textContent = reg ? 'Inscription' : 'Connexion'; document.getElementById('auth-submit').textContent = reg ? 'Créer mon compte' : 'Se connecter'; document.getElementById('auth-pass').setAttribute('autocomplete', reg ? 'new-password' : 'current-password'); }
 function submitAuth() { if (authMode === 'register') registerUser(); else loginUser(); }
@@ -584,13 +619,11 @@ function launchFromRoom() {
   if (roomStarted) return;
   roomStarted = true;
   state.botDifficulty = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
-  
   const user = window.FB.auth.currentUser;
   const players = lastRoomData.players || [];
   myPlayerIndex = players.findIndex(p => p.uid === user.uid);
-  if (myPlayerIndex === -1) myPlayerIndex = 0; // Fallback
+  if (myPlayerIndex === -1) myPlayerIndex = 0;
   roomUids = players.map(p => p.uid);
-
   if (roomListener) { roomListener(); roomListener = null; }
   currentRoomCode = lastRoomData.code;
   startGame(true);
@@ -646,17 +679,17 @@ const RULES_PAGES = [
   { title: "Objectif & Tour", content: `
     <div class="rule-section"><h3>🎯 Objectif</h3><p>Être la première équipe à amener ses <strong>8 pions</strong> jusqu'à l'arrivée au centre.</p></div>
     <div class="rule-section"><h3>🔄 Tour de jeu</h3><p>Jouer <strong>1 carte</strong>, déplacer un pion, puis piocher une nouvelle carte. <strong>Une seule carte par tour.</strong></p><p>Chaque joueur joue son tour dans l'ordre. Un tour ne peut pas être sauté sauf effet de carte.</p></div>
-    <div class="rule-section"><h3>⏱️ Chronomètre</h3><p><strong>30 secondes par tour.</strong> Temps écoulé = une <strong>carte aléatoire</strong> de la main est défaussée et le tour passe au joueur suivant.</p></div>
+    <div class="rule-section"><h3>⏱️ Chronomètre</h3><p><strong>20 secondes par tour.</strong> Temps écoulé = une <strong>carte aléatoire</strong> de la main est défaussée et le tour passe au joueur suivant.</p></div>
     <div class="rule-section"><h3>🃏 Main de cartes</h3><p>4 cartes en main. Les cartes injouables apparaissent grisées et ne peuvent pas être jouées.</p></div>
-    <div class="rule-section"><h3>🤖 Niveaux des bots</h3><p><strong>Nul</strong> : joue au hasard. <strong>Moyen</strong> : joue la première carte jouable. <strong>Expert</strong> : privilégie les captures et les sorties.</p><p>Les bots réfléchissent <strong>3 secondes</strong> avant de jouer pour laisser le temps d'observer.</p></div>
+    <div class="rule-section"><h3>🤖 Niveaux des bots</h3><p><strong>Nul</strong> : joue au hasard. <strong>Moyen</strong> : privilégie les captures. <strong>Expert</strong> : captures > sorties > coups sûrs.</p></div>
   ` },
   { title: "Règles Avancées", content: `
     <div class="rule-section"><h3>🧱 Murs et Protections</h3><p>Deux pions alliés adjacents sur le tracé forment un <strong>mur</strong> qui bloque le passage.</p><p>Un pion qui a un allié adjacent sur le tracé est <strong>protégé</strong> : on ne peut pas le capturer, mais on peut le dépasser.</p></div>
-    <div class="rule-section"><h3>🛡️ Blocages et pions</h3><p>Un joueur <strong>ne peut pas dépasser ses propres pions</strong> : ceux-ci le bloquent et forment un mur infranchissable.</p><p>Un pion d'un <strong>coéquipier</strong> (même équipe) <strong>ne bloque pas</strong> le passage, <strong>sauf s'il est sur sa propre base</strong>.</p><p>Un pion sur une case de <strong>base</strong> bloque la sortie de tous les autres pions sur cette même base.</p></div>
+    <div class="rule-section"><h3>🛡️ Blocages et pions</h3><p>Un joueur <strong>ne peut pas dépasser ses propres pions</strong> : ceux-ci le bloquent et forment un mur infranchissable.</p><p>Un pion d'un <strong>coéquipier</strong> (même équipe) <strong>ne bloque pas</strong> le passage, <strong>sauf s'il est sur sa propre base</strong>.</p><p>Un pion posé sur <strong>sa propre base</strong> est protégé et bloque le passage. Un pion posé sur la <strong>base d'un autre joueur</strong> n'est pas protégé : n'importe quelle carte qui atteint cette case peut le renvoyer à la maison.</p><p>Un pion qui arrive (ou sort) sur une case occupée par un adversaire non protégé le <strong>capture automatiquement</strong>, sauf blocage. Un pion ne peut jamais doubler plus d'un pion à la fois : deux pions adjacents forment un mur.</p></div>
     <div class="rule-section"><h3>🎴 Carte 5 (Déplacer de 5)</h3><p>La carte 5 déplace n'importe quel pion sur le tracé de 5 cases (avance).</p><p><strong>Un pion posé sur sa propre base ne peut pas être déplacé par la carte 5 d'un autre joueur</strong> : seul son propriétaire peut le déplacer avec cette carte.</p></div>
-    <div class="rule-section"><h3>🎴 Carte 10 : Passer le tour</h3><p>Si vous passez avec un 10, le joueur suivant est <strong>forcé de défausser une carte</strong> puis passe son tour. Le jeu continue ensuite normalement avec le joueur d'après.</p></div>
-    <div class="rule-section"><h3>🔥 Le Phénix</h3><p>Le souffle enflamme les 6 cases devant le pion déclencheur. Tous les pions non protégés sur ces cases retournent à la base.</p><p>La téléportation envoie votre pion sur le Nid (🔥) si celui-ci est libre.</p></div>
-    <div class="rule-section"><h3>☸️ Le Mandala</h3><p>Protège l'équipe du joueur <strong>pendant 2 tours complets</strong> (retour au joueur d'origine).</p><p>Le Mandala protège <strong>uniquement les pions sur le tracé</strong> de l'équipe. Les pions en maison ou dans le couloir d'arrivée ne sont pas protégés par le Mandala.</p></div>
+    <div class="rule-section"><h3>🎴 Carte 10 : Passer le tour</h3><p>Si vous passez avec un 10, le joueur suivant voit s'afficher au centre le message <strong>« Abandonnez une carte »</strong> : il est forcé de défausser une carte puis passe son tour. Le jeu continue ensuite normalement avec le joueur d'après.</p></div>
+    <div class="rule-section"><h3>🔥 Le Phénix</h3><p>Le souffle enflamme les 6 cases devant le pion déclencheur. Tous les pions non protégés sur ces cases retournent à la base. Il peut brûler un pion posé sur <strong>sa propre base</strong> pour libérer le chemin (sauf mur ou Mandala).</p><p>Le souffle peut être <strong>divisé sur 2 pions</strong> (ex. 2 + 4 cases), comme un 7.</p><p>La téléportation envoie votre pion sur le Nid (🔥) si celui-ci est libre.</p></div>
+    <div class="rule-section"><h3>☸️ Le Mandala</h3><p>Protège l'équipe du joueur <strong>pendant 2 tours complets</strong> (retour au joueur d'origine). Rejouer un Mandala renouvelle la protection pour votre équipe.</p><p>Le Mandala protège <strong>uniquement les pions sur le tracé</strong> de l'équipe. Les pions en maison ou dans le couloir d'arrivée ne sont pas protégés par le Mandala.</p></div>
   ` },
   { title: "Guide des Cartes", content: `
     <div class="rule-section"><h3>Cartes de base</h3><div class="card-grid">
@@ -702,6 +735,17 @@ function closeAvatarModal() { document.getElementById('avatar-modal').classList.
 /* ================= DONNÉES DU JEU ================= */
 const BOT_NAMES = ["Nova", "Zephyr", "Orion", "Titan", "Echo", "Ares", "Luna", "Vortex", "Nyx", "Atlas"];
 function getRandom(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+const CARD_IMG_CACHE = {};
+const CARD_LABELS = { JOKER: '🃏', PHOENIX: '🔥', MANDALA: '☸', K: 'R' };
+function cardImg(rank) { const u = getCardImage(rank); let im = CARD_IMG_CACHE[u]; if (!im) { im = new Image(); im.src = u; CARD_IMG_CACHE[u] = im; } return im; }
+function applyCardFace(el, rank) {
+  const u = getCardImage(rank); el.style.backgroundImage = `url('${u}')`;
+  const im = cardImg(rank); if (im.complete && im.naturalWidth > 0) return;
+  el.dataset.label = CARD_LABELS[rank] || rank; el.classList.add('face-fallback');
+  im.addEventListener('load', () => el.classList.remove('face-fallback'), { once: true });
+  im.addEventListener('error', () => { if (!im._retry) { im._retry = 1; im.src = u + '?r=' + Date.now(); el.style.backgroundImage = `url('${im.src}')`; } }, { once: true });
+}
+setTimeout(() => ['A','2','3','4','5','6','7','8','9','10','J','Q','K','JOKER','PHOENIX','MANDALA'].forEach(cardImg), 0);
 function getCardImage(rank) { if (rank === 'JOKER') return 'carte/jk.jpg'; if (rank === 'PHOENIX') return 'carte/p.jpg'; if (rank === 'MANDALA') return 'carte/m.jpg'; if (rank === 'J') return 'carte/j.jpg'; if (rank === 'Q') return 'carte/q.jpg'; if (rank === 'K') return 'carte/r.jpg'; return `carte/${rank}.jpg`; }
 const TRACK = [
   {x:-1.4,y:-203.8},{x:-86.3,y:-203.5},{x:-175.3,y:-198.3},{x:-175.3,y:-161.7},{x:-174.7,y:-124.9},{x:-174.7,y:-87.8},{x:-173.8,y:-49.8},{x:-173.5,y:-12.4},
@@ -735,11 +779,10 @@ const PLAYERS = [
   { name:'Vert',  color:'#43A047', c3:'#145a18', isBot:true,  team:1, baseIdx:59, safeEntry:57, avatarFile:'ac' }
 ];
 const TRACE_COLORS = ['#00e5ff', '#b04fd6', '#E53935', '#43A047'];
-// ===== Vue personnelle : chaque joueur se voit à la place du bas gauche (rotation par re-placement des sièges) =====
-let viewShift = 0;                         // numéro de joueur affiché en bas à gauche
-const TRACK_STEP = TRACK.length / 4;       // cases entre deux départs
+let viewShift = 0;
+const TRACK_STEP = TRACK.length / 4;
 function coordToPct(p) { return { x: (p.x + 1000) / 20, y: (1000 - p.y) / 20 }; }
-const seatOf = p => (p - viewShift + 4) % 4;   // place affichée d'un joueur
+const seatOf = p => (p - viewShift + 4) % 4;
 function trackPct(k) { const n = TRACK.length; return coordToPct(TRACK[(((k - TRACK_STEP * viewShift) % n) + n) % n]); }
 function setView(me) {
   viewShift = me;
@@ -767,62 +810,121 @@ let audioCtx = null, muted = false, botPlaying = false, animationsEnabled = true
 
 function toggleSound() { muted = !muted; document.getElementById('btn-mute').textContent = muted ? '🔇' : '🔊'; }
 function toggleAnimations() { animationsEnabled = !animationsEnabled; document.getElementById('btn-anims').textContent = animationsEnabled ? '✨' : '🚫'; if (animationsEnabled) document.body.classList.remove('no-anims'); else document.body.classList.add('no-anims'); }
-function toggleFullscreen() { 
-    if (!document.fullscreenElement) { 
+function toggleFullscreen() {
+    if (!document.fullscreenElement) {
         document.documentElement.requestFullscreen().catch(err => {});
         if (screen.orientation && screen.orientation.lock) screen.orientation.lock('portrait').catch(()=>{});
-    } else { 
-        if (document.exitFullscreen) document.exitFullscreen(); 
-    } 
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
 }
 function beep(freq, dur, type='sine') { if (muted) return; try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination); g.gain.setValueAtTime(0.06, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); } catch(e) {} }
 function setPos(el, pos) { el.style.setProperty('--x', pos.x); el.style.setProperty('--y', pos.y); }
 function getControlledPlayerId(playerId) { const myPawns = state.pawns[playerId]; if (myPawns.every(p => p.state === 'SAFE')) { const team = PLAYERS[playerId].team; if (team === 0) return playerId === 0 ? 2 : 0; if (team === 1) return playerId === 1 ? 3 : 1; } return playerId; }
 
-let turnTimerInterval = null, timeLeft = 30;
-function updateTimerDisplay() { for (let i = 0; i < 4; i++) { const el = document.getElementById(`timer-p${i}`); if (el) el.classList.remove('active'); } const active = document.getElementById(`timer-p${state.turn}`); if (active) { active.classList.add('active'); active.textContent = timeLeft; } }
+/* ============================================================
+   ✅ FIX + BOOST : Chronomètre 20s universel + auto-défausse
+   ============================================================ */
+const TURN_DURATION = 20;
+let turnTimerInterval = null, timeLeft = TURN_DURATION;
+let lastTimerTurn = -2;   // évite de reset le chrono sur des updates sans changement de tour
+let timeoutLock = false;  // anti-doublon
+
+function updateTimerDisplay() {
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`timer-p${i}`);
+    if (el) el.classList.remove('active');
+  }
+  const active = document.getElementById(`timer-p${state.turn}`);
+  if (active) { active.classList.add('active'); active.textContent = timeLeft; }
+}
 function startTimer() {
-  clearInterval(turnTimerInterval); timeLeft = 30; updateTimerDisplay();
+  clearInterval(turnTimerInterval);
+  timeLeft = TURN_DURATION;
+  updateTimerDisplay();
   turnTimerInterval = setInterval(() => {
-    timeLeft--; if (timeLeft < 0) timeLeft = 0; updateTimerDisplay();
-    if (timeLeft <= 0) { clearInterval(turnTimerInterval); timeoutAction(); }
+    timeLeft--;
+    if (timeLeft < 0) timeLeft = 0;
+    updateTimerDisplay();
+    if (timeLeft <= 0) {
+      clearInterval(turnTimerInterval);
+      timeoutAction();
+    }
   }, 1000);
 }
-function stopTimer() { clearInterval(turnTimerInterval); document.querySelectorAll('.turn-timer').forEach(el => el.classList.remove('active')); }
-function timeoutAction() {
-  if (state.gameOver) return;
-  const playerId = state.turn;
-  if (PLAYERS[playerId].isBot) return;
-  if (playerId !== myPlayerIndex) return; // Seulement si c'est notre tour
+function stopTimer() {
+  clearInterval(turnTimerInterval);
+  document.querySelectorAll('.turn-timer').forEach(el => el.classList.remove('active'));
+}
+function updateTurnUI() {
+  document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn'));
+  const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`);
+  if (activeAvatar) activeAvatar.classList.add('active-turn');
 
-  if (state.forcedDiscardFor === playerId) {
-    const hand = state.hands[playerId];
-    if (hand.length > 0) {
-      const randIdx = Math.floor(Math.random() * hand.length);
-      const card = hand.splice(randIdx, 1)[0];
-      state.discard.push(card); showDiscard(card);
-      beep(300, 0.15, 'square');
-      drawCard(playerId);
-    }
-    state.forcedDiscardFor = null;
-    state.cardPlayedThisTurn = true;
-    clearSelection(); clearActions(); clearPathPreviews();
+  const isHost = !currentRoomCode || myPlayerIndex === 0;
+  const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot;
+  // En solo : timer seulement sur le tour du joueur local.
+  // En multi : l'hôte fait tourner le timer pour TOUS (autorité du timeout),
+  // et chaque joueur humain fait aussi tourner le sien pour affichage.
+  const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost);
+
+  if (!shouldRunTimer) { stopTimer(); return; }
+
+  // Ne redémarre le chrono que si le tour a réellement changé
+  if (lastTimerTurn === state.turn) return;
+
+  startTimer();
+  lastTimerTurn = state.turn;
+}
+function timeoutAction() {
+  if (state.gameOver || timeoutLock) return;
+  const playerId = state.turn;
+  const isHost = !currentRoomCode || myPlayerIndex === 0;
+  if (!isHost) return;                                        // en multi, seul l'hôte agit
+  if (!currentRoomCode && playerId !== myPlayerIndex) return; // en solo, seul le joueur local
+
+  timeoutLock = true;
+  // Petite grâce (500ms) au cas où une action serait en cours de synchro Firestore
+  setTimeout(() => {
+    timeoutLock = false;
+    if (state.gameOver) return;
+    if (state.turn !== playerId) return;
+    applyTimeoutAction(playerId);
+  }, 500);
+}
+function applyTimeoutAction(playerId) {
+  const name = PLAYERS[playerId] ? PLAYERS[playerId].name : playerId;
+  console.log(`[TIMEOUT] Tour de ${name} expiré → défausse auto`);
+
+  clearSelection(); clearActions(); clearPathPreviews();
+  state.mode = null;
+  state.pendingSelection = null;
+  state.previewCardIdx = null;
+  state.forcedDiscardFor = null;
+  state.pendingSkip = null;
+
+  const hand = state.hands[playerId] || [];
+  const hadPlayed = state.cardPlayedThisTurn;
+
+  if (hadPlayed) {
+    // Carte déjà jouée mais effet non finalisé → on termine simplement le tour
+    state.cardPlayedThisTurn = false;
     renderHand();
     if (currentRoomCode) saveGameState();
-    setTimeout(endTurn, 500);
+    setTimeout(endTurn, 400);
     return;
   }
 
-  const hand = state.hands[playerId];
-  if (hand.length > 0 && !state.cardPlayedThisTurn) {
+  if (hand.length > 0) {
     const randIdx = Math.floor(Math.random() * hand.length);
     const card = hand.splice(randIdx, 1)[0];
-    state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square');
-    drawCard(playerId); renderHand();
+    state.discard.push(card);
+    showDiscard(card);
+    beep(300, 0.15, 'square');
+    drawCard(playerId);
   }
-  state.cardPlayedThisTurn = true;
-  state.mode = null; state.pendingSelection = null; state.previewCardIdx = null;
-  clearSelection(); clearActions(); clearPathPreviews();
+  state.cardPlayedThisTurn = false;
+  renderHand();
   if (currentRoomCode) saveGameState();
   setTimeout(endTurn, 500);
 }
@@ -833,7 +935,7 @@ function getFromPool(poolArray) { for (let i = 0; i < poolArray.length; i++) { i
 let fxTimeouts = [];
 function fxRing(pct, color = '#ffb300', size = 14) { const el = getFromPool(pools.rings); if (!el) return; el.style.display = 'block'; el.style.left = pct.x + '%'; el.style.top = pct.y + '%'; el.style.width = size + '%'; el.style.setProperty('--rc', color); el.style.borderColor = color; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'ringOut .85s ease-out forwards'; fxTimeouts.push(setTimeout(() => { el.style.display = 'none'; }, 900)); }
 function fxEmbers(pct, n = 4, essential = false) { if (!animationsEnabled && !essential) return; let used = 0; for (let k = 0; k < pools.embers.length && used < n; k++) { const e = pools.embers[k]; if (e.style.display === 'block') continue; e.style.display = 'block'; e.style.left = (pct.x + (Math.random() * 3 - 1.5)) + '%'; e.style.top = (pct.y + (Math.random() * 2 - 1)) + '%'; e.style.background = `hsl(${20 + Math.random() * 40}, 100%, ${55 + Math.random() * 15}%)`; e.style.setProperty('--dx', (Math.random() * 10 - 5) + 'vw'); e.style.setProperty('--dy', -(3 + Math.random() * 7) + 'vw'); e.style.animation = 'none'; void e.offsetWidth; e.style.animation = `emberUp ${0.8 + Math.random() * 0.9}s ease-out forwards`; fxTimeouts.push(setTimeout(() => { e.style.display = 'none'; }, 1800)); used++; } }
-function fxFlame(pct) { const el = getFromPool(pools.flames); if (!el) return; el.style.display = 'block'; el.style.left = pct.x + '%'; el.style.top = pct.y + '%'; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'tongueFlick .2s ease-in-out infinite alternate'; fxTimeouts.push(setTimeout(() => { el.style.display = 'none'; }, 1600)); }
+function fxFlame(pct) { const el = getFromPool(pools.flames); if (!el) return; el.style.display = 'block'; el.style.left = pct.x + '%'; el.style.top = pct.y + '%'; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'flameBox .2s ease-in-out infinite alternate'; fxTimeouts.push(setTimeout(() => { el.style.display = 'none'; }, 1600)); }
 function fxMandala() {
   const c = { x: 50, y: 42 };
   const pile = document.getElementById('discard-pile');
@@ -890,7 +992,7 @@ function showCardPreviews(playerId, card) {
   if (rank === 'A') {
     const spawnOk = canSpawn(pId);
     if (spawnOk) { for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'HOME') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
-    for (let i = 0; i < 4; i++) { if (canMove(pId, i, 1)) showPathPreview(pId, i, 1, false, '#00e5ff'); if (canMove(pId, i, 11)) showPathPreview(pId, i, 11, false, '#b04fd6'); }
+    for (let i = 0; i < 4; i++) { if (canMove(pId, i, 1)) showPathPreview(pId, i, 1, false, '#00e5ff'); if (canMove(pId, i, 11)) showPathPreview(pId, i, 11, false, '#b04fd6'); if (state.pawns[pId][i].state !== 'HOME' && (canMove(pId, i, 1) || canMove(pId, i, 11))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
     return;
   }
   if (rank === 'K') {
@@ -926,6 +1028,7 @@ function pawnsAt(idx) { const r = []; for (let p = 0; p < 4; p++) for (let i = 0
 function hasTeamPawnAt(playerId, idx) { const team = PLAYERS[playerId].team; return pawnsAt(idx).some(p => PLAYERS[p.player].team === team); }
 function getStartPlayerAt(idx) { for (let p = 0; p < 4; p++) if (PLAYERS[p].baseIdx === idx) return p; return -1; }
 function hasOwnPawnAt(playerId, idx) { return state.pawns[playerId].some(p => p.state === 'TRACK' && p.trackIdx === idx); }
+function isPawnOnOwnBaseAt(idx) { return pawnsAt(idx).some(o => PLAYERS[o.player].baseIdx === idx); }
 function isPawnOnOwnBase(p, i) { const pw = state.pawns[p][i]; return pw.state === 'TRACK' && pw.trackIdx === PLAYERS[p].baseIdx; }
 function getWallTeamAt(idx) { for (let team = 0; team < 2; team++) { const hasHere = pawnsAt(idx).some(p => PLAYERS[p.player].team === team); if (!hasHere) continue; const prev = (idx - 1 + TRACK.length) % TRACK.length; const next = (idx + 1) % TRACK.length; if (pawnsAt(prev).some(p => PLAYERS[p.player].team === team) || pawnsAt(next).some(p => PLAYERS[p.player].team === team)) return team; } return -1; }
 function isProtectedByWall(owner, pawnIdx) { const pawn = state.pawns[owner][pawnIdx]; if (pawn.state !== 'TRACK') return false; const team = PLAYERS[owner].team, idx = pawn.trackIdx; const prev = (idx - 1 + TRACK.length) % TRACK.length, next = (idx + 1) % TRACK.length; return pawnsAt(next).some(p => PLAYERS[p.player].team === team) || pawnsAt(prev).some(p => PLAYERS[p.player].team === team); }
@@ -955,7 +1058,7 @@ document.addEventListener('visibilitychange', () => {
     document.body.classList.remove('tab-hidden');
     if (document.getElementById('game-screen') && document.getElementById('game-screen').classList.contains('active')) {
       startNestTimer();
-      if (state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot) startTimer();
+      // Le timer reprendra via updateTurnUI au prochain event, pas besoin de forcer
     }
   }
 });
@@ -967,10 +1070,9 @@ function initGame(isHost = true) {
     clearPathPreviews();
     pools.rings.forEach(e => e.style.display = 'none'); pools.embers.forEach(e => e.style.display = 'none'); pools.flames.forEach(e => e.style.display = 'none');
 
-    // L'INITIALISATION DE BASE (POUR TOUT LE MONDE, HOTE COMME INVITE)
     state.pawns = [[],[],[],[]];
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) state.pawns[p].push({ state:'HOME', trackIdx:-1, safeIdx:-1, homeSlot:i });
-    state.hands = [[],[],[],[]]; // On initialise les mains vides
+    state.hands = [[],[],[],[]];
 
     if (isHost) {
       if (currentRoomCode && lastRoomData && lastRoomData.players) {
@@ -1006,9 +1108,10 @@ function initGame(isHost = true) {
       const starts = new Set(PLAYERS.map(p => p.baseIdx)), cands = [];
       for (let i = 0; i < TRACK.length; i++) if (!starts.has(i)) cands.push(i);
       state.phoenixNest = cands[Math.floor(Math.random() * cands.length)];
+    } else {
+      state.phoenixNest = -1; state.mandala = null; state.gameOver = false; state.forcedDiscardFor = null; state.pendingSkip = null; state.cardPlayedThisTurn = false;
     }
 
-    // On s'assure que les avatars correspondent toujours aux bons joueurs, peu importe qui regarde l'écran.
     for (let i = 0; i < 4; i++) {
         document.getElementById(`avatar-game-p${i}`).style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
         document.getElementById(`avatar-game-p${i}`).className = `in-game-avatar square`;
@@ -1018,6 +1121,10 @@ function initGame(isHost = true) {
         document.getElementById(`name-game-p${i}`).textContent = PLAYERS[i].name;
         document.getElementById(`avatar-game-p${i}`).parentElement.style.setProperty('--c', PLAYERS[i].color);
     }
+
+    // ✅ FIX : reset tracker du chrono
+    lastTimerTurn = -2;
+    timeoutLock = false;
 
     document.getElementById('overlay').classList.remove('show');
     renderBoard(); renderHand(); updateTurnUI();
@@ -1058,6 +1165,9 @@ function updatePawnPositions() {
   document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); });
 }
 
+/* ============================================================
+   ✅ FIX : isCardPlayable délègue à sevenOptions pour la 7
+   ============================================================ */
 function isCardPlayable(playerId, card) {
   const rank = card.r, pId = getControlledPlayerId(playerId);
   if (rank === 'MANDALA' || rank === 'JOKER' || rank === '10') return true;
@@ -1072,7 +1182,11 @@ function isCardPlayable(playerId, card) {
     }
     return false;
   }
-  if (rank === '7') { for (let i = 0; i < 4; i++) for (let x = 1; x <= 6; x++) if (canMove(pId, i, x)) for (let j = 0; j < 4; j++) if (i !== j && canMove(pId, j, 7 - x)) return true; return false; }
+  // ✅ FIX 7 : sevenOptions gère correctement x=7 ET simule le 2e déplacement
+  if (rank === '7') {
+    for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).length > 0) return true;
+    return false;
+  }
   if (rank === 'J') return hasValidSwap(pId);
   let steps = rank === '4' ? -4 : (rank === 'Q' ? 12 : parseInt(rank));
   for (let i = 0; i < 4; i++) if (canMove(pId, i, steps)) return true;
@@ -1083,6 +1197,7 @@ function renderHand() {
   const hand = document.getElementById('hand'); hand.innerHTML = '';
   if (!state.hands || !state.hands[myPlayerIndex]) return;
   const isForced = state.forcedDiscardFor === myPlayerIndex;
+  const fb = document.getElementById('force-banner'); if (fb) fb.classList.toggle('show', !!isForced && !state.gameOver);
   const myHand = state.hands[myPlayerIndex] || [];
   const allUnplayable = myHand.every(card => !isCardPlayable(myPlayerIndex, card));
   const isMyTurn = state.turn === myPlayerIndex && !state.mode && !state.pendingSelection && !state.gameOver && !state.cardPlayedThisTurn && !isForced;
@@ -1091,7 +1206,7 @@ function renderHand() {
     if (!card || !card.r) return;
     const el = document.createElement('div');
     el.className = 'card';
-    el.style.backgroundImage = `url('${getCardImage(card.r)}')`;
+    applyCardFace(el, card.r);
     if (state.freshCard && idx === myHand.length - 1) el.classList.add('fresh');
     if (state.previewCardIdx === idx) el.classList.add('selected-for-play');
 
@@ -1142,16 +1257,7 @@ function discardStuckCard(playerId, cardIdx) {
   setTimeout(endTurn, 400);
 }
 
-function updateTurnUI() {
-  document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn'));
-  const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`); if (activeAvatar) activeAvatar.classList.add('active-turn');
-
-  stopTimer();
-  if (state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot) {
-      startTimer();
-  }
-}
-function showDiscard(card) { const pile = document.getElementById('discard-pile'); const el = document.createElement('div'); el.className = 'discard-card'; el.style.backgroundImage = `url('${getCardImage(card.r)}')`; el.style.transform = `rotate(${Math.random()*20-10}deg)`; pile.innerHTML = ''; pile.appendChild(el); }
+function showDiscard(card) { const pile = document.getElementById('discard-pile'); const el = document.createElement('div'); el.className = 'discard-card'; applyCardFace(el, card.r); el.style.transform = `rotate(${Math.random()*20-10}deg)`; pile.innerHTML = ''; pile.appendChild(el); }
 
 function canMove(playerId, pawnIdx, steps, isFive = false) {
   const pawn = state.pawns[playerId][pawnIdx]; if (pawn.state === 'HOME') return false;
@@ -1166,8 +1272,8 @@ function canMove(playerId, pawnIdx, steps, isFive = false) {
     let cur = pawn.trackIdx;
     for (let i = 0; i < Math.abs(steps); i++) {
       const next = (cur - 1 + TRACK.length) % TRACK.length;
-      if (getWallTeamAt(next) >= 0) return false;
-      if (getStartPlayerAt(next) >= 0 && pawnsAt(next).length > 0) return false;
+      { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; }
+      if (isPawnOnOwnBaseAt(next)) return false;
       if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false;
       if (i === Math.abs(steps) - 1) {
         if (hasTeamPawnAt(playerId, next)) return false;
@@ -1186,8 +1292,8 @@ function canMove(playerId, pawnIdx, steps, isFive = false) {
       return true;
     }
     const next = (cur + 1) % TRACK.length;
-    if (getWallTeamAt(next) >= 0) return false;
-    if (getStartPlayerAt(next) >= 0 && pawnsAt(next).length > 0) return false;
+    { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; }
+    if (isPawnOnOwnBaseAt(next)) return false;
     if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false;
     if (i === steps) {
       if (hasTeamPawnAt(playerId, next)) return false;
@@ -1197,7 +1303,6 @@ function canMove(playerId, pawnIdx, steps, isFive = false) {
   }
   return true;
 }
-// 7 : un pion peut jouer x cases seulement si le reste (7-x) est jouable par un autre pion APRÈS ce déplacement
 function sevenSecondFeasible(pId, pawnIdx, x) {
   const dest = computeDestination(pId, pawnIdx, x); if (!dest) return false;
   const pw = state.pawns[pId][pawnIdx], bak = { s: pw.state, t: pw.trackIdx, f: pw.safeIdx };
@@ -1263,17 +1368,29 @@ async function handleCapture(playerId, pawn) {
   }
 }
 function findFreeHomeSlot(playerId) { const used = state.pawns[playerId].filter(p => p.state === 'HOME').map(p => p.homeSlot); for (let i = 0; i < 4; i++) if (!used.includes(i)) return i; return 0; }
-function canSpawn(playerId) { if (hasTeamPawnAt(playerId, PLAYERS[playerId].baseIdx)) return false; return state.pawns[playerId].some(p => p.state === 'HOME'); }
+function canSpawn(playerId) { const b = PLAYERS[playerId].baseIdx; if (hasTeamPawnAt(playerId, b)) return false; for (const e of pawnsAt(b)) if (isProtected(e.player, e.pawn)) return false; return state.pawns[playerId].some(p => p.state === 'HOME'); }
+
+/* ============================================================
+   ✅ FIX : executeSpawn avec garde-fous
+   ============================================================ */
 async function executeSpawn(playerId, pawnIdx) {
   clearPathPreviews();
-  const pawn = state.pawns[playerId][pawnIdx]; pawn.state = 'TRACK'; pawn.trackIdx = PLAYERS[playerId].baseIdx; pawn.homeSlot = -1;
+  const pawn = state.pawns[playerId][pawnIdx];
+  if (!pawn || pawn.state !== 'HOME') return;
+  if (hasTeamPawnAt(playerId, PLAYERS[playerId].baseIdx)) return;
+  pawn.state = 'TRACK';
+  pawn.trackIdx = PLAYERS[playerId].baseIdx;
+  pawn.homeSlot = -1;
   beep(800, 0.15); updateSinglePawn(playerId, pawnIdx);
   const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`);
   if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); }
-  const pct = trackPct(pawn.trackIdx); fxRing(pct, PLAYERS[playerId].color, 13); fxRing(pct, '#fff', 8);
+  const pct = trackPct(pawn.trackIdx);
+  fxRing(pct, PLAYERS[playerId].color, 13); fxRing(pct, '#fff', 8);
   await sleep(250);
+  await handleCapture(playerId, pawn);
   if (currentRoomCode) saveGameState();
 }
+
 function clearSelection() { state.pendingSelection = null; document.querySelectorAll('.pawn.selectable').forEach(p => p.classList.remove('selectable')); clearPathPreviews(); }
 function clearActions() { document.getElementById('actions').innerHTML = ''; }
 function addBtn(text, onClick, cls) { const btn = document.createElement('button'); btn.className = 'btn' + (cls ? ' ' + cls : ''); btn.textContent = text; btn.onclick = onClick; document.getElementById('actions').appendChild(btn); }
@@ -1295,13 +1412,18 @@ function autoSelectRandom(playerId, steps) {
   return executeMove(pId, pick, steps).then(() => true);
 }
 
+/* ============================================================
+   ✅ FIX + BOOST : onPawnClick — plus de déplacement de pion adverse
+   pendant le flux aperçu + clic
+   ============================================================ */
 function onPawnClick(playerId, pawnIdx) {
   const pId = getControlledPlayerId(state.turn);
 
-  // Si une carte est en prévisualisation et qu'on clique sur un pion
+  // === CAS APERÇU : on joue la carte PUIS on re-dispatch le clic dans le pipeline normal ===
   if (state.turn === myPlayerIndex && state.previewCardIdx !== null) {
     const card = state.hands[myPlayerIndex][state.previewCardIdx];
     const cardIdx = state.hands[myPlayerIndex].indexOf(card);
+    if (!card || cardIdx < 0) return;
 
     clearPathPreviews();
     document.querySelectorAll('.pawn.selectable').forEach(p => p.classList.remove('selectable'));
@@ -1309,37 +1431,12 @@ function onPawnClick(playerId, pawnIdx) {
     renderHand();
 
     playCard(myPlayerIndex, cardIdx).then(() => {
-        // Au lieu de rappeler onPawnClick, on applique directement le mouvement
-        const pawn = state.pawns[playerId][pawnIdx];
-        if (state.mode === 'as_select') {
-            if (pawn.state === 'HOME' && canSpawn(pId)) {
-                state.mode = null; clearSelection(); clearActions(); 
-                executeSpawn(playerId, pawnIdx).then(() => endTurn());
-            } else if (pawn.state === 'TRACK') {
-                const c1 = canMove(playerId, pawnIdx, 1), c11 = canMove(playerId, pawnIdx, 11);
-                state.mode = null; clearSelection(); clearActions();
-                if (c1 && !c11) executeMove(playerId, pawnIdx, 1).then(() => endTurn());
-                else if (!c1 && c11) executeMove(playerId, pawnIdx, 11).then(() => endTurn());
-                else if (c1 && c11) {
-                    showPathPreview(playerId, pawnIdx, 1, false, '#00e5ff'); showPathPreview(playerId, pawnIdx, 11, false, '#b04fd6'); 
-                    addBtn('Avancer de 1', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 1).then(() => endTurn()); }); 
-                    addBtn('Avancer de 11', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 11).then(() => endTurn()); });
-                }
-            }
-        } else if (state.mode === 'k_select') {
-            if (pawn.state === 'HOME' && canSpawn(pId)) {
-                state.mode = null; clearSelection(); clearActions(); 
-                executeSpawn(playerId, pawnIdx).then(() => endTurn());
-            } else if (pawn.state === 'TRACK' && canMove(playerId, pawnIdx, 13)) {
-                state.mode = null; clearSelection(); clearActions(); 
-                executeMove(playerId, pawnIdx, 13).then(() => endTurn());
-            }
-        }
+      onPawnClick(playerId, pawnIdx);
     });
     return;
   }
 
-  // Sinon, comportement normal
+  // === CAS NORMAL ===
   if (state.mode === 'move5') {
     if (!canMove(playerId, pawnIdx, 5, true)) return;
     if (playerId !== pId && isPawnOnOwnBase(playerId, pawnIdx)) return;
@@ -1347,29 +1444,64 @@ function onPawnClick(playerId, pawnIdx) {
     executeMove(playerId, pawnIdx, 5).then(() => endTurn()); return;
   }
   if (state.mode === 'as_select') {
-    if (playerId !== pId) return; const pawn = state.pawns[playerId][pawnIdx];
-    if (pawn.state === 'HOME') { if (!canSpawn(pId)) return; state.mode = null; clearSelection(); clearActions(); executeSpawn(playerId, pawnIdx).then(() => endTurn()); return; }
+    if (playerId !== pId) return;
+    const pawn = state.pawns[playerId][pawnIdx];
+    if (pawn.state === 'HOME') {
+      if (!canSpawn(pId)) return;
+      state.mode = null; clearSelection(); clearActions();
+      executeSpawn(playerId, pawnIdx).then(() => endTurn()); return;
+    }
+    if (pawn.state === 'SAFE') {
+      if (!canMove(playerId, pawnIdx, 1)) return;
+      state.mode = null; clearSelection(); clearActions();
+      executeMove(playerId, pawnIdx, 1).then(() => endTurn()); return;
+    }
     if (pawn.state === 'TRACK') {
       const c1 = canMove(playerId, pawnIdx, 1), c11 = canMove(playerId, pawnIdx, 11);
       clearSelection(); clearActions();
-      if (c1 && c11) { showPathPreview(playerId, pawnIdx, 1, false, '#00e5ff'); showPathPreview(playerId, pawnIdx, 11, false, '#b04fd6'); addBtn('Avancer de 1', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 1).then(() => endTurn()); }); addBtn('Avancer de 11', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 11).then(() => endTurn()); }); }
-      else if (c1) { executeMove(playerId, pawnIdx, 1).then(() => endTurn()); }
-      else if (c11) { executeMove(playerId, pawnIdx, 11).then(() => endTurn()); }
+      if (c1 && c11) {
+        showPathPreview(playerId, pawnIdx, 1, false, '#00e5ff');
+        showPathPreview(playerId, pawnIdx, 11, false, '#b04fd6');
+        addBtn('Avancer de 1',  () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 1 ).then(() => endTurn()); });
+        addBtn('Avancer de 11', () => { clearActions(); clearPathPreviews(); executeMove(playerId, pawnIdx, 11).then(() => endTurn()); });
+      } else if (c1)  { executeMove(playerId, pawnIdx, 1 ).then(() => endTurn()); }
+      else if (c11)  { executeMove(playerId, pawnIdx, 11).then(() => endTurn()); }
       else endTurn();
     } return;
   }
   if (state.mode === 'k_select') {
     if (playerId !== pId) return;
     const kPawn = state.pawns[playerId][pawnIdx];
-    if (kPawn.state === 'HOME') { if (!canSpawn(pId)) return; state.mode = null; clearSelection(); clearActions(); executeSpawn(playerId, pawnIdx).then(() => endTurn()); return; }
+    if (kPawn.state === 'HOME') {
+      if (!canSpawn(pId)) return;
+      state.mode = null; clearSelection(); clearActions();
+      executeSpawn(playerId, pawnIdx).then(() => endTurn()); return;
+    }
     if (kPawn.state !== 'TRACK' || !canMove(playerId, pawnIdx, 13)) return;
     state.mode = null; clearSelection(); clearActions();
     executeMove(playerId, pawnIdx, 13).then(() => endTurn()); return;
   }
   if (state.mode === 'seven_first') {
-    if (playerId !== pId) return; const options = sevenOptions(playerId, pawnIdx); if (!options.length) return; clearSelection(); clearActions();
-    options.forEach(x => { addBtn(`${x}`, async () => { clearActions(); clearPathPreviews(); await executeMove(playerId, pawnIdx, x); if (x === 7) return endTurn(); state.mode = 'seven_second'; state.sevenRemainder = 7 - x; for (let j = 0; j < 4; j++) if (j !== pawnIdx && canMove(playerId, j, 7 - x)) document.getElementById(`pawn-${playerId}-${j}`).classList.add('selectable'); if (!document.querySelector('.pawn.selectable')) { state.mode = null; clearPathPreviews(); setTimeout(endTurn, 600); return; } showCandidatesPreview(playerId, 7 - x); }); });
-    addBtn('Annuler', () => { undoPlayedCard(); }, 'danger'); return;
+    if (playerId !== pId) return;
+    const options = sevenOptions(playerId, pawnIdx);
+    if (!options.length) return;
+    clearSelection(); clearActions();
+    options.forEach(x => {
+      addBtn(`${x}`, async () => {
+        clearActions(); clearPathPreviews();
+        await executeMove(playerId, pawnIdx, x);
+        if (x === 7) return endTurn();
+        state.mode = 'seven_second';
+        state.sevenRemainder = 7 - x;
+        for (let j = 0; j < 4; j++)
+          if (j !== pawnIdx && canMove(playerId, j, 7 - x))
+            document.getElementById(`pawn-${playerId}-${j}`).classList.add('selectable');
+        if (!document.querySelector('.pawn.selectable')) { state.mode = null; clearPathPreviews(); setTimeout(endTurn, 600); return; }
+        showCandidatesPreview(playerId, 7 - x);
+      });
+    });
+    addBtn('Annuler', () => { undoPlayedCard(); }, 'danger');
+    return;
   }
   if (state.mode === 'seven_second') {
     if (playerId !== pId || !canMove(playerId, pawnIdx, state.sevenRemainder)) return;
@@ -1377,10 +1509,31 @@ function onPawnClick(playerId, pawnIdx) {
     executeMove(playerId, pawnIdx, state.sevenRemainder).then(() => endTurn()); return;
   }
   if (state.mode === 'phoenix_select') {
-    if (playerId !== pId || state.pawns[playerId][pawnIdx].state !== 'TRACK') return; clearSelection(); clearActions();
-    addBtn('Souffle', () => { clearActions(); executePhoenixFire(playerId, pawnIdx).then(() => endTurn()); });
-    if (state.phoenixNest >= 0 && pawnsAt(state.phoenixNest).length === 0) addBtn('Téléport.', () => { clearActions(); executePhoenixTeleport(playerId, pawnIdx).then(() => endTurn()); });
+    if (playerId !== pId || state.pawns[playerId][pawnIdx].state !== 'TRACK') return;
+    clearSelection(); clearActions();
+    addBtn('Souffle', () => { clearActions(); state.mode = 'phoenix_busy'; executePhoenixFire(playerId, pawnIdx).then(() => endTurn()); });
+    if (state.phoenixNest >= 0 && pawnsAt(state.phoenixNest).length === 0)
+      addBtn('Téléport.', () => { clearActions(); state.mode = 'phoenix_busy'; executePhoenixTeleport(playerId, pawnIdx).then(() => endTurn()); });
+    const otherTrack = j => j !== pawnIdx && state.pawns[playerId][j].state === 'TRACK';
+    if ([0, 1, 2, 3].some(otherTrack)) addBtn('Diviser', () => {
+      clearActions();
+      for (let x = 1; x <= 5; x++) addBtn(`${x}+${6 - x}`, async () => {
+        clearActions(); state.mode = 'phoenix_busy';
+        await executePhoenixFire(playerId, pawnIdx, x);
+        const cands = [0, 1, 2, 3].filter(otherTrack);
+        if (!cands.length) return endTurn();
+        state.mode = 'phoenix_second'; state.phoenixFirst = pawnIdx; state.phoenixRemainder = 6 - x;
+        cands.forEach(j => { const el = document.getElementById(`pawn-${playerId}-${j}`); if (el) el.classList.add('selectable'); });
+        showToast(`Choisissez le 2e pion : souffle de ${6 - x} case${6 - x > 1 ? 's' : ''}`);
+      });
+      addBtn('Annuler', () => { undoPlayedCard(); }, 'danger');
+    });
     return;
+  }
+  if (state.mode === 'phoenix_second') {
+    if (playerId !== pId || pawnIdx === state.phoenixFirst || state.pawns[playerId][pawnIdx].state !== 'TRACK') return;
+    state.mode = 'phoenix_busy'; clearSelection(); clearActions();
+    executePhoenixFire(playerId, pawnIdx, state.phoenixRemainder).then(() => endTurn()); return;
   }
   if (state.mode === 'swapAlly') {
     if (playerId !== pId) return;
@@ -1393,8 +1546,10 @@ function onPawnClick(playerId, pawnIdx) {
     state.mode = null; clearSelection();
     executeSwap(pId, state.swapAlly, playerId, pawnIdx).then(() => endTurn()); return;
   }
-  const sel = state.pendingSelection; if (!sel || sel.playerId !== playerId || !sel.candidates.includes(pawnIdx)) return;
-  clearSelection(); clearActions(); executeMove(sel.playerId, pawnIdx, sel.steps).then(() => endTurn());
+  const sel = state.pendingSelection;
+  if (!sel || sel.playerId !== playerId || !sel.candidates.includes(pawnIdx)) return;
+  clearSelection(); clearActions();
+  executeMove(sel.playerId, pawnIdx, sel.steps).then(() => endTurn());
 }
 
 function onCardClick(playerId, cardIdx) {
@@ -1455,9 +1610,11 @@ async function processCard(playerId, card) {
   clearActions(); const rank = card.r, isBot = PLAYERS[playerId].isBot, pId = getControlledPlayerId(playerId);
 
   if (rank === 'MANDALA') {
-    if (!state.mandala) {
+    {
+      const renewed = state.mandala && state.mandala.team === PLAYERS[playerId].team;
       state.mandala = { team: PLAYERS[playerId].team, owner: playerId, turnsLeft: 8 };
-      beep(500, 0.3); updateTurnUI(); updatePawnPositions(); fxMandala();
+      beep(500, 0.3); updatePawnPositions(); fxMandala();
+      showToast(renewed ? '☸ Mandala renouvelé : protection prolongée' : '☸ Mandala activé : les pions de votre équipe sur le tracé sont protégés');
     }
     if (currentRoomCode) saveGameState();
     setTimeout(endTurn, 450); return;
@@ -1473,13 +1630,8 @@ async function processCard(playerId, card) {
     const hasTrackPawn = state.pawns[pId].some(p => p.state === 'TRACK');
     const canSpawnNow = canSpawn(pId);
     const noPawnOut = !hasTrackPawn && canSpawnNow;
-    const playablePool = ['MANDALA', '10'];
-    if (hasTrackPawn) playablePool.push('PHOENIX');
-    if (hasValidSwap(pId)) playablePool.push('J');
-    for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).length) { playablePool.push('7'); break; }
-    let hasFive = false;
-    for (let p = 0; p < 4 && !hasFive; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; hasFive = true; break; }
-    if (hasFive) playablePool.push('5');
+    // Le Joker ne propose que des cartes réellement jouables (même test que pour une vraie carte)
+    const playablePool = ['A','2','3','4','5','6','7','8','9','10','J','Q','K','PHOENIX','MANDALA'].filter(r => isCardPlayable(playerId, { r }));
 
     if (isBot) {
       if (noPawnOut) return processCard(playerId, {r: 'K'});
@@ -1502,7 +1654,7 @@ async function processCard(playerId, card) {
     const spawnOk = canSpawn(pId);
     if (isBot) { const spawnChance = state.botDifficulty === 'expert' ? 0.9 : (state.botDifficulty === 'easy' ? 0.35 : 0.5); if (spawnOk && Math.random() < spawnChance) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); const pick = state.botDifficulty === 'easy' ? homes[Math.floor(Math.random()*homes.length)] : homes[0]; await executeSpawn(pId, pick); } else { const m1 = await autoSelectRandom(pId, 1); if (!m1) { if (spawnOk) { const hs = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, hs[0]); } else await autoSelectRandom(pId, 11); } } return endTurn(); }
     state.mode = 'as_select'; state.asPlayer = pId;
-    for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || (pawn.state === 'TRACK' && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
+    for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || ((pawn.state === 'TRACK' || pawn.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
     return;
   }
   if (rank === 'K') {
@@ -1522,10 +1674,10 @@ async function processCard(playerId, card) {
     return;
   }
   if (rank === '10') {
-    if (isBot) { 
-        const moved = await autoSelectRandom(pId, 10); 
+    if (isBot) {
+        const moved = await autoSelectRandom(pId, 10);
         if (!moved) state.pendingSkip = (state.turn + 1) % 4;
-        return endTurn(); 
+        return endTurn();
     }
     state.mode = 'ten_choice';
     if (somePawnCanMove(pId, 10)) addBtn('Avancer de 10', () => { clearActions(); selectPawn(pId, 10); });
@@ -1536,13 +1688,22 @@ async function processCard(playerId, card) {
     }, 'danger');
     return;
   }
+
+  /* ============================================================
+     ✅ BOOST : carte 5 — bot privilégie les captures
+     ============================================================ */
   if (rank === '5') {
     if (isBot) {
+      let best = null, bestScore = -1;
       for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
         if (!canMove(p, i, 5, true)) continue;
         if (p !== pId && isPawnOnOwnBase(p, i)) continue;
-        await executeMove(p, i, 5); return endTurn();
+        const dest = computeDestination(p, i, 5, true);
+        const cap = dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(p, dest.idx) ? 2 : 1;
+        const score = cap + Math.random() * 0.5;
+        if (score > bestScore) { bestScore = score; best = { p, i }; }
       }
+      if (best) await executeMove(best.p, best.i, 5);
       return endTurn();
     }
     state.mode = 'move5';
@@ -1586,16 +1747,31 @@ async function processCard(playerId, card) {
   selectPawn(pId, steps);
 }
 
-async function executePhoenixFire(playerId, pawnIdx) {
-  clearPathPreviews();
-  const pawn = state.pawns[playerId][pawnIdx];
-  const origin = trackPct(pawn.trackIdx);
-  const zone = []; for (let k = 1; k <= 6; k++) zone.push((pawn.trackIdx + k) % TRACK.length);
+function playFireFx(startIdx, n = 6) {
+  const origin = trackPct(startIdx);
   beep(200, 0.4, 'sawtooth');
   fxRing(origin, '#ffb300', 18); fxEmbers(origin, 8, true);
-  zone.forEach((idx, k) => { const pct = trackPct(idx); setTimeout(() => { fxFlame(pct); fxEmbers(pct, 3, true); }, k * 110); });
+  for (let k = 1; k <= n; k++) { const pct = trackPct((startIdx + k) % TRACK.length); setTimeout(() => { fxFlame(pct); fxEmbers(pct, 3, true); }, (k - 1) * 110); }
+}
+async function playRemoteFx(f) {
+  if (f.t === 'fire') { playFireFx(f.idx, f.n || 6); await sleep(1800); }
+  else if (f.t === 'swap') {
+    const ea = document.getElementById(`pawn-${f.a.p}-${f.a.i}`), eb = document.getElementById(`pawn-${f.b.p}-${f.b.i}`);
+    if (ea) ea.classList.add('swapping'); if (eb) eb.classList.add('swapping');
+    beep(400, 0.15); await sleep(350);
+    setTimeout(() => { if (ea) ea.classList.remove('swapping'); if (eb) eb.classList.remove('swapping'); }, 1200);
+  }
+}
+function isProtectedForFire(owner, idx) { const pw = state.pawns[owner][idx]; if (pw.state !== 'TRACK') return false; if (state.mandala && state.mandala.team === PLAYERS[owner].team) return true; return isProtectedByWall(owner, idx); }
+async function executePhoenixFire(playerId, pawnIdx, len = 6) {
+  clearPathPreviews();
+  const pawn = state.pawns[playerId][pawnIdx];
+  const zone = []; for (let k = 1; k <= len; k++) zone.push((pawn.trackIdx + k) % TRACK.length);
+  pushFx({ t: 'fire', idx: pawn.trackIdx, n: len });
+  if (currentRoomCode) saveGameState();
+  playFireFx(pawn.trackIdx, len);
   const hitPawns = [];
-  for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtected(p, i)) hitPawns.push({p, i, pct: trackPct(idx)}); }
+  for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i, pct: trackPct(idx)}); }
   await sleep(1800);
   for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } }
   updatePawnPositions();
@@ -1609,23 +1785,25 @@ async function executeSwap(playerA, pawnA, playerB, pawnB) {
   const a = state.pawns[playerA][pawnA], b = state.pawns[playerB][pawnB];
   const elA = document.getElementById(`pawn-${playerA}-${pawnA}`);
   const elB = document.getElementById(`pawn-${playerB}-${pawnB}`);
-
+  pushFx({ t: 'swap', a: { p: playerA, i: pawnA }, b: { p: playerB, i: pawnB } });
   if (elA) elA.classList.add('swapping');
   if (elB) elB.classList.add('swapping');
   beep(400, 0.15);
   await sleep(350);
-
   const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp;
   updatePawnPositions();
+  fxRing(trackPct(a.trackIdx), '#b04fd6', 14); fxRing(trackPct(b.trackIdx), '#b04fd6', 14);
   beep(800, 0.2);
   await sleep(550);
-
   if (elA) elA.classList.remove('swapping');
   if (elB) elB.classList.remove('swapping');
   await sleep(150);
   if (currentRoomCode) saveGameState();
 }
 
+/* ============================================================
+   ✅ FIX : endTurn unifié — scheduleBot gère solo ET multi
+   ============================================================ */
 function endTurn() {
   if (state.gameOver) return;
   stopTimer(); clearSelection(); clearActions();
@@ -1665,15 +1843,9 @@ function endTurn() {
   }
 
   renderHand(); updateTurnUI();
-  
-  if (currentRoomCode) {
-    saveGameState();
-    if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) scheduleBot(1200);
-  } else {
-    if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) {
-        setTimeout(botPlay, 1200);
-    }
-  }
+
+  if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) scheduleBot(1200);
+  if (currentRoomCode) saveGameState();
 }
 
 function checkWin() {
@@ -1696,27 +1868,51 @@ function cardCapturesSomething(playerId, card) {
   for (const s of stepsList) for (let i = 0; i < 4; i++) { if (!canMove(pId, i, s)) continue; const dest = computeDestination(pId, i, s); if (dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(pId, dest.idx)) return true; }
   return false;
 }
+
+/* ============================================================
+   ✅ BOOST : pickBotCardIndex — medium privilégie les captures,
+   expert : captures > spawn > anti-4
+   ============================================================ */
 function pickBotCardIndex(playerId) {
-  const hand = state.hands[playerId]; if (hand.length === 0) return 0;
+  const hand = state.hands[playerId];
+  if (hand.length === 0) return 0;
   const playable = hand.map((c, i) => i).filter(i => isCardPlayable(playerId, hand[i]));
   if (playable.length === 0) return Math.floor(Math.random() * hand.length);
   const diff = state.botDifficulty || 'medium';
   if (diff === 'easy') return playable[Math.floor(Math.random() * playable.length)];
-  if (diff === 'expert') {
-    const pId = getControlledPlayerId(playerId);
+
+  const pId = getControlledPlayerId(playerId);
+
+  // MEDIUM : priorité capture si dispo, sinon 1re carte jouable
+  if (diff === 'medium') {
     const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i]));
-    if (caps.length) return caps[0];
-    const spawns = playable.filter(i => (hand[i].r === 'A' || hand[i].r === 'K') && canSpawn(pId));
-    if (spawns.length) return spawns[0];
-    return playable[0];
+    return caps.length ? caps[0] : playable[0];
   }
-  return playable[0];
+
+  // EXPERT : 1) captures 2) spawn 3) coups "safe" 4) fallback
+  const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i]));
+  if (caps.length) return caps[0];
+
+  const spawns = playable.filter(i => (hand[i].r === 'A' || hand[i].r === 'K') && canSpawn(pId));
+  if (spawns.length) return spawns[0];
+
+  // Éviter le 4 (recul) quand on a des pions proches du but
+  const safePlayable = playable.filter(i => {
+    const card = hand[i];
+    if (card.r === '4') {
+      const hasNearGoal = state.pawns[pId].some(p => p.state === 'SAFE' && p.safeIdx >= 2);
+      if (hasNearGoal) return false;
+    }
+    return true;
+  });
+  return (safePlayable.length ? safePlayable : playable)[0];
 }
-async function botPlay() { 
-    if (botPlaying || state.gameOver || !PLAYERS[state.turn].isBot) return; 
-    botPlaying = true; 
-    try { 
-        const playerId = state.turn, hand = state.hands[playerId]; 
+
+async function botPlay() {
+    if (botPlaying || state.gameOver || !PLAYERS[state.turn].isBot) return;
+    botPlaying = true;
+    try {
+        const playerId = state.turn, hand = state.hands[playerId];
         if (state.forcedDiscardFor === playerId) {
             if (hand.length > 0) {
               const idx = Math.floor(Math.random() * hand.length);
@@ -1732,28 +1928,27 @@ async function botPlay() {
             setTimeout(endTurn, 450);
             return;
         }
-
-        if (hand.length === 0) { endTurn(); return; } 
-        const idx = pickBotCardIndex(playerId); 
-        await playCard(playerId, idx); 
+        if (hand.length === 0) { endTurn(); return; }
+        const idx = pickBotCardIndex(playerId);
+        await playCard(playerId, idx);
     } catch(e) {
         console.error("Bot play failed:", e);
-        endTurn(); // Fail-safe
-    } finally { 
-        botPlaying = false; 
-    } 
+        endTurn();
+    } finally {
+        botPlaying = false;
+    }
 }
 
 function runLoader() {
   const loader = document.getElementById('loader'), fill = document.getElementById('loader-fill'), pctEl = document.getElementById('loader-pct'), msgEl = document.getElementById('loader-msg');
   const cards = ['A','2','3','4','5','6','7','8','9','10','j','q','r','jk','p','m'].map(c => `carte/${c}.jpg`);
   const avatars = AVATAR_FILES.map(a => `avatar/${a}.jpg`);
-  const urls = ['p1.jpg', 'p2.jpg', 'inerface.jpg', ...cards, ...avatars];
+  const urls = ['p1.jpg', 'p2.jpg', BOARD_FILES[boardChoice], ...cards, ...avatars];
   const total = urls.length + 1;
   let done = 0, finished = false;
   const startedAt = Date.now();
   function tick() { done = Math.min(total, done + 1); const p = Math.round(done / total * 100); fill.style.width = p + '%'; pctEl.textContent = p + '%'; msgEl.textContent = p < 35 ? 'Allumage du Phénix…' : (p < 75 ? 'Chargement des textures…' : (p < 100 ? 'Préparation des cartes…' : 'Prêt !')); }
-  function loadImg(u) { return new Promise(res => { const im = new Image(); const fin = () => { tick(); res(); }; im.onload = () => { if (im.decode) im.decode().catch(() => {}).then(fin); else fin(); }; im.onerror = fin; im.src = u; }); }
+  function loadImg(u) { return new Promise(res => { const im = new Image(); (window.__keepImgs = window.__keepImgs || []).push(im); const fin = () => { tick(); res(); }; im.onload = () => { if (im.decode) im.decode().catch(() => {}).then(fin); else fin(); }; im.onerror = fin; im.src = u; }); }
   function waitFirebase() { return new Promise(res => { let t = 0; const iv = setInterval(() => { t += 100; if (window.FB || t >= 6000) { clearInterval(iv); tick(); res(); } }, 100); }); }
   function finish() { if (finished) return; finished = true; const wait = Math.max(0, 900 - (Date.now() - startedAt)); setTimeout(() => { fill.style.width = '100%'; pctEl.textContent = '100%'; loader.classList.add('done'); setTimeout(() => { loader.style.display = 'none'; }, 700); }, wait); }
   Promise.all([...urls.map(loadImg), waitFirebase()]).then(finish).catch(finish);
@@ -1770,24 +1965,78 @@ window.onload = () => {
   runLoader();
 };
 
-window.openBotDifficulty = function() { document.getElementById('bot-difficulty-modal').classList.add('show'); };
+window.openBotDifficulty = function() { enableThumbs(); document.getElementById('bot-difficulty-modal').classList.add('show'); };
 window.closeBotDifficulty = function() { document.getElementById('bot-difficulty-modal').classList.remove('show'); };
 window.startGameWithBots = function(diff) { state.botDifficulty = diff || 'medium'; closeBotDifficulty(); startGame(false); };
 
+/* ================= CHOIX DU PLATEAU ================= */
+const BOARD_FILES = ['inerface.jpg', 'inerface1.jpg', 'inerface2.jpg', 'inerface3.jpg', 'inerface4.jpg', 'inerface5.jpg'];
+let boardChoice = (() => { try { const v = parseInt(localStorage.getItem('phoenix_board'), 10); return v >= 0 && v < BOARD_FILES.length ? v : 0; } catch (e) { return 0; } })();
+/* Calage de chaque image sur le tracé : w,h = taille de l'image (fraction de l'écran), l,t = position gauche/haut (fraction de l'écran) */
+const BOARD_CALIB = [
+  { w: 1, h: 1, l: 0, t: 0 },                                    // Plateau 1 (inerface.jpg)
+  { w: 0.9885, h: 0.9899, l: 0.0059, t: 0 },                     // Plateau 2 (inerface1.jpg)
+  { w: 0.9766, h: 0.9791, l: 0.01166, t: -0.00035 },             // Plateau 3 (inerface2.jpg)
+  { w: 0.9246, h: 0.9315, l: 0.03759, t: -0.0008 },              // Plateau 4 (inerface3.jpg)
+  { w: 0.9343, h: 0.9397, l: 0.0327, t: -0.0002 },               // Plateau 5 (inerface4.jpg)
+  { w: 0.9124, h: 0.9203, l: 0.04384, t: -0.0001 }               // Plateau 6 (inerface5.jpg)
+];
+function applyBoard() {
+  const c = BOARD_CALIB[boardChoice] || { w: 1, h: 1, l: 0, t: 0 }, st = document.documentElement.style;
+  st.setProperty('--bg-game', `url('${BOARD_FILES[boardChoice]}')`);
+  st.setProperty('--bg-size', `${(c.w * 100).toFixed(3)}% ${(c.h * 100).toFixed(3)}%`);
+  const px = c.w < 1 ? c.l / (1 - c.w) * 100 : 0, py = c.h < 1 ? c.t / (1 - c.h) * 100 : 0;
+  st.setProperty('--bg-pos', `${px.toFixed(3)}% ${py.toFixed(3)}%`);
+}
+/* Outil de réglage (uniquement avec ?calib=1 dans l'adresse) */
+if (/[?&]calib=1/.test(location.search)) {
+  const d = document.createElement('div');
+  d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,.88);color:#fff;font:12px sans-serif;padding:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center';
+  const out = document.createElement('span');
+  const refresh = () => { const c = BOARD_CALIB[boardChoice]; out.textContent = `Plateau ${boardChoice + 1} : { w: ${c.w}, h: ${c.h}, l: ${c.l}, t: ${c.t} }`; };
+  ['w', 'h', 'l', 't'].forEach(k => {
+    const lab = document.createElement('label'); lab.textContent = k + ' '; const inp = document.createElement('input');
+    inp.type = 'number'; inp.step = '0.002'; inp.style.width = '70px';
+    inp.onfocus = () => { inp.value = BOARD_CALIB[boardChoice][k]; };
+    inp.oninput = () => { const v = parseFloat(inp.value); if (!isNaN(v)) { BOARD_CALIB[boardChoice][k] = v; applyBoard(); refresh(); } };
+    lab.appendChild(inp); d.appendChild(lab);
+  });
+  d.appendChild(out); document.body.appendChild(d); refresh();
+}
+let thumbsOn = false;
+function enableThumbs() { if (!thumbsOn) { thumbsOn = true; buildBoardPickers(); } }
+setTimeout(enableThumbs, 6000);
+function buildBoardPickers() {
+  document.querySelectorAll('.board-picker').forEach(c => {
+    c.innerHTML = '';
+    BOARD_FILES.forEach((f, i) => {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'bp-item' + (i === boardChoice ? ' selected' : '');
+      b.innerHTML = `<span class="bp-thumb" style="${thumbsOn ? `background-image:url('${f}')` : ''}"></span><span class="bp-name">Plateau ${i + 1}</span>`;
+      b.onclick = () => selectBoard(i); c.appendChild(b);
+    });
+  });
+}
+function selectBoard(i) { boardChoice = i; try { localStorage.setItem('phoenix_board', String(i)); } catch (e) {} applyBoard(); buildBoardPickers(); }
+applyBoard(); buildBoardPickers();
+
 function startGame(isMulti = false) {
+  applyBoard();
   if (!isMulti) myPlayerIndex = 0;
   setView(myPlayerIndex);
+  // ✅ FIX : reset tracker chrono à chaque nouvelle partie
+  lastTimerTurn = -2;
+  timeoutLock = false;
   if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById('game-screen').classList.add('active');
-  
+
   if (isMulti) {
     resetSync(); startWatchdog();
-    if (myPlayerIndex === 0) { // L'hôte initialise
+    if (myPlayerIndex === 0) {
       initGame(true);
       saveGameState();
     } else {
-      initGame(false); // L'invité prépare l'UI
+      initGame(false);
     }
     listenToGameState();
   } else {
@@ -1795,8 +2044,11 @@ function startGame(isMulti = false) {
   }
 }
 
-// ================= MULTIJOUEUR SYNCHRONISATION =================
+/* ================= MULTIJOUEUR SYNCHRONISATION ================= */
 let syncSeq = 0, lastAppliedSeq = 0, hasApplied = false, lastRaw = '', pendingAnim = [], animHistory = [], saveTimer = null, applyChain = Promise.resolve(), lastDiscardKey = '';
+let fxHistory = [], seenFx = new Set();
+function pushFx(ev) { ev.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); fxHistory = fxHistory.concat([ev]).slice(-6); seenFx.add(ev.id); return ev; }
+let myLastWriteSeq = 0;   // ✅ FIX : distingue nos propres écritures des écritures distantes
 const REMOTE_STEP = 110;
 let lastActivity = Date.now(), syncWatch = null;
 function stopWatchdog() { clearInterval(syncWatch); syncWatch = null; }
@@ -1805,8 +2057,11 @@ function startWatchdog() {
   syncWatch = setInterval(() => {
     if (!currentRoomCode || state.gameOver || myPlayerIndex !== 0) return;
     const idle = Date.now() - lastActivity, pid = state.turn;
-    if (PLAYERS[pid].isBot) { if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); } }
-    else if (pid !== myPlayerIndex && idle > 45000) {          // joueur absent : on défausse à sa place
+    if (PLAYERS[pid].isBot) {
+      if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); }
+    } else if (pid !== myPlayerIndex && idle > 45000) {
+      // Filet de sécurité : le timer 20s fait déjà le travail normalement.
+      // Ceci ne se déclenche qu'en cas de blocage total de la synchro.
       lastActivity = Date.now();
       const hand = state.hands[pid];
       if (hand.length) { const card = hand.splice(Math.floor(Math.random() * hand.length), 1)[0]; state.discard.push(card); showDiscard(card); drawCard(pid); }
@@ -1814,7 +2069,13 @@ function startWatchdog() {
     }
   }, 2000);
 }
-function resetSync() { lastActivity = Date.now(); syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = ''; pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = ''; clearTimeout(saveTimer); saveTimer = null; }
+function resetSync() {
+  lastActivity = Date.now();
+  syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = '';
+  pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = '';
+  myLastWriteSeq = 0; fxHistory = []; seenFx = new Set();
+  clearTimeout(saveTimer); saveTimer = null;
+}
 function scheduleBot(ms) { clearTimeout(botTimeout); botTimeout = setTimeout(() => { if (!state.gameOver && PLAYERS[state.turn].isBot) botPlay(); }, ms); }
 function getWinnerTeam(pawns) {
   const A = [...pawns[0], ...pawns[2]].every(p => p.state === 'SAFE');
@@ -1822,7 +2083,6 @@ function getWinnerTeam(pawns) {
   return A ? 'A' : (B ? 'B' : null);
 }
 
-// Plusieurs appels dans le même instant = une seule écriture (plus rapide, moins de conflits)
 function saveGameState() {
   if (!currentRoomCode || saveTimer) return;
   saveTimer = setTimeout(flushGameState, 0);
@@ -1834,6 +2094,7 @@ function flushGameState() {
   try {
     syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1;
     lastAppliedSeq = syncSeq;
+    myLastWriteSeq = syncSeq;   // ✅ FIX : on note notre écriture
     const ready = pendingAnim.filter(a => a.done);
     pendingAnim = pendingAnim.filter(a => !a.done);
     ready.forEach(a => { a.q = syncSeq; delete a.done; });
@@ -1843,7 +2104,7 @@ function flushGameState() {
       mandala: state.mandala, phoenixNest: state.phoenixNest, gameOver: state.gameOver,
       cardPlayedThisTurn: state.cardPlayedThisTurn, pendingSkip: state.pendingSkip, forcedDiscardFor: state.forcedDiscardFor,
       players: PLAYERS.map(p => ({ name: p.name, avatarFile: p.avatarFile, isBot: p.isBot })),
-      seq: syncSeq, anim: animHistory, lastActionPlayer: myPlayerIndex, uids: roomUids
+      seq: syncSeq, anim: animHistory, fx: fxHistory, lastActionPlayer: myPlayerIndex, uids: roomUids
     };
     lastActivity = Date.now();
     const roomRef = window.FB.doc(window.FB.db, 'rooms', code);
@@ -1872,11 +2133,21 @@ function leaveGameRemote() {
   document.getElementById('main-menu').classList.add('active');
 }
 
+/* ============================================================
+   ✅ FIX CRITIQUE : applyRemoteState — suppression du gate sur seq
+   qui causait le freeze multijoueur à 2 clients rapides.
+   On garde seulement le gate sur `raw` (Firestore garantit l'ordre)
+   + un skip des échos de nos propres écritures (own && seq <= myLastWriteSeq)
+   ============================================================ */
 async function applyRemoteState(parsed, raw, closed) {
+  if (raw === lastRaw) return;
+
   const own = parsed.lastActionPlayer === myPlayerIndex;
   const seq = parsed.seq || 0;
-  if (seq) { if (own && seq <= lastAppliedSeq) return; if (!own && seq < lastAppliedSeq) return; }
-  if (raw === lastRaw) return;
+
+  // Skip des échos de nos propres écritures (mais laisse passer une écriture distante)
+  if (own && seq <= myLastWriteSeq) return;
+
   const first = !hasApplied, prevSeq = lastAppliedSeq;
   lastActivity = Date.now();
   try {
@@ -1885,17 +2156,24 @@ async function applyRemoteState(parsed, raw, closed) {
   } catch (e) {}
   hasApplied = true; lastRaw = raw; lastAppliedSeq = Math.max(lastAppliedSeq, seq);
 
-  // 1) On rejoue les déplacements case par case chez les autres joueurs
+  // 1) Rejouer les déplacements case par case chez les autres
   if (!first && !own && !document.hidden && Array.isArray(parsed.anim)) {
     const todo = parsed.anim.filter(a => a.q > prevSeq && a.path && a.path.length);
     for (const a of todo) await replayPath(a);
   }
 
+  if (Array.isArray(parsed.fx)) {
+    const fresh = parsed.fx.filter(f => f && f.id && !seenFx.has(f.id));
+    fresh.forEach(f => seenFx.add(f.id));
+    if (!first && !own && !document.hidden) for (const f of fresh) { try { await playRemoteFx(f); } catch (e) {} }
+  }
   const wasOver = state.gameOver, prevMandala = state.mandala;
   const prev = JSON.parse(JSON.stringify(state.pawns));
 
   state.turn = parsed.turn; state.deck = parsed.deck; state.discard = parsed.discard; state.hands = parsed.hands;
+  const prevNest = state.phoenixNest;
   state.pawns = parsed.pawns; state.mandala = parsed.mandala; state.phoenixNest = parsed.phoenixNest;
+  if (prevNest !== state.phoenixNest) renderBoard();
   state.gameOver = parsed.gameOver; state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
   state.pendingSkip = parsed.pendingSkip; state.forcedDiscardFor = parsed.forcedDiscardFor;
 
@@ -1914,7 +2192,7 @@ async function applyRemoteState(parsed, raw, closed) {
     av.parentElement.style.setProperty('--c', PLAYERS[i].color);
   }
 
-  // 2) Effets visuels : prise, sortie de base, échange, téléportation
+  // 2) Effets visuels
   if (!first && !own) {
     const moved = [];
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
@@ -1931,8 +2209,9 @@ async function applyRemoteState(parsed, raw, closed) {
     if (moved.length >= 2) {
       moved.forEach(m => { const el = document.getElementById(`pawn-${m.p}-${m.i}`); if (el) { el.classList.add('swapping'); setTimeout(() => el.classList.remove('swapping'), 900); } });
       beep(800, 0.2);
+      moved.forEach(m => fxRing(trackPct(m.idx), '#b04fd6', 14));
     } else if (moved.length === 1) fxRing(trackPct(moved[0].idx), '#ffb300', 16);
-    if (!prevMandala && state.mandala) { beep(500, 0.3); fxMandala(); }
+    if (state.mandala && (!prevMandala || prevMandala.owner !== state.mandala.owner || state.mandala.turnsLeft > prevMandala.turnsLeft)) { beep(500, 0.3); fxMandala(); showToast('☸ Mandala : ' + (PLAYERS[state.mandala.owner].team === PLAYERS[myPlayerIndex].team ? 'votre équipe est protégée' : 'l\'équipe adverse est protégée')); }
   }
 
   updatePawnPositions();
@@ -1945,7 +2224,6 @@ async function applyRemoteState(parsed, raw, closed) {
   else if (!lastCard) { const dp = document.getElementById('discard-pile'); if (dp) dp.innerHTML = ''; }
   lastDiscardKey = key;
 
-  // 3) Fin de partie visible chez tout le monde
   if (state.gameOver && !wasOver) {
     const w = getWinnerTeam(state.pawns);
     if (w) {
@@ -1957,7 +2235,6 @@ async function applyRemoteState(parsed, raw, closed) {
   }
   if (closed && !getWinnerTeam(state.pawns)) { leaveGameRemote(); return; }
 
-  // 4) L'hôte fait jouer les bots
   if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) scheduleBot(1200);
 }
 
@@ -1974,21 +2251,22 @@ function listenToGameState() {
   }, (err) => { console.error("Erreur écoute:", err); });
 }
 
-function backToMenu() { 
-  if(confirm("Voulez-vous vraiment quitter la partie ?")) { 
-    state.gameOver = true; 
+function backToMenu() {
+  if(confirm("Voulez-vous vraiment quitter la partie ?")) {
+    state.gameOver = true;
     if (currentRoomCode) {
-       flushGameState(); // On sauvegarde la fin immédiatement
+       flushGameState();
        if(gameStateListener) { gameStateListener(); gameStateListener = null; }
        const roomRef = window.FB.doc(window.FB.db, 'rooms', currentRoomCode);
        window.FB.updateDoc(roomRef, { status: 'closed' }).catch(()=>{});
        currentRoomCode = null; roomStarted = false; clearTimeout(botTimeout);
     }
-    stopWatchdog(); clearInterval(nestTimer); 
-    stopTimer(); 
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); 
-    document.getElementById('main-menu').classList.add('active'); 
-  } 
+    stopWatchdog(); clearInterval(nestTimer);
+    stopTimer();
+    lastTimerTurn = -2; timeoutLock = false;
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('main-menu').classList.add('active');
+  }
 }
 </script>
 </body>
