@@ -292,11 +292,16 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 @keyframes mandalaShake { 0%, 100% { transform: translate(-50%, -50%) scale(1); } 20% { transform: translate(-52%, -50%) scale(1.08); } 40% { transform: translate(-48%, -50%) scale(1.05); } 60% { transform: translate(-51%, -50%) scale(1.06); } 80% { transform: translate(-49%, -50%) scale(1.02); } }
 .discard-card { position: absolute; inset: 0; background-color: #fff; border-radius: 2cqw; box-shadow: -2px 4px 14px rgba(0,0,0,0.8), 0 0 16px rgba(0,229,255,.4); border: 1px solid #333; background-size: cover; background-position: center; animation: drop 0.3s ease-out; }
 @keyframes drop { from { transform: scale(1.6) translateY(-20px); opacity: 0; } to { transform: scale(1) translateY(0); opacity: 1; } }
+@keyframes shake {
+  10%, 90% { transform: translate3d(-2px, 1px, 0); }
+  20%, 80% { transform: translate3d(3px, -2px, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 2px, 0); }
+  40%, 60% { transform: translate3d(4px, -1px, 0); }
+}
+.screen-shake { animation: shake 0.32s cubic-bezier(.36,.07,.19,.97) both; }
 #bottom-banner { position: absolute; bottom: 0; left: 0; right: 0; height: calc(13.5vh + var(--safe-bottom)); background: linear-gradient(rgba(6,22,60,0.9), rgba(4,12,36,0.98)), url('p2.jpg') center / cover no-repeat; border-top: 1px solid rgba(0,229,255,.5); box-shadow: 0 -6px 30px rgba(0, 229, 255, 0.4); z-index: 35; display: flex; flex-direction: column; justify-content: flex-start; align-items: center; text-align: center; padding: 1.5cqw 2cqw; padding-bottom: calc(max(2cqh, var(--safe-bottom) + 10px) + var(--sc-size) + 6px); }
 #bottom-banner::before { content: ''; position: absolute; top: -2px; left: 0; right: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--cyan), var(--gold-2), var(--cyan), transparent); background-size: 200% 100%; animation: bannerFlow 4s linear infinite; }
 @keyframes bannerFlow { to { background-position: 200% 0; } }
-
-/* Actions regroupées au centre, sous la pile de défausse, sans couvrir les cases de sélection. */
 #bottom-banner{top:0;bottom:0;height:auto;background:none;border:0;box-shadow:none;padding:0;pointer-events:none;overflow:visible}
 #bottom-banner::before{display:none}
 #actions{position:absolute;left:50%;top:57%;transform:translate(-50%,-50%);width:min(76%,420px);max-width:76%;min-height:0;flex:0 0 auto;display:flex;justify-content:center;align-items:center;gap:6px;flex-wrap:wrap;pointer-events:auto;padding:5px 8px;border-radius:14px;background:rgba(3,12,34,.58);border:1px solid rgba(0,229,255,.28);backdrop-filter:blur(5px);z-index:42}
@@ -338,31 +343,24 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 #overlay > *:not(.ember-layer) { position: relative; z-index: 2; }
 #overlay h2 { margin-bottom: 15px; font-size: 34px; letter-spacing: 3px; background: linear-gradient(90deg, #b8860b, #fff1b8, #b8860b); -webkit-background-clip: text; background-clip: text; color: transparent; filter: drop-shadow(0 0 12px rgba(230,195,92,.7)); }
 #overlay p { margin-bottom: 18px; font-size: 16px; color: #dbe9ff; }
-
-/* ===== Sélecteur de plateau ===== */
 .board-picker { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2cqw; width: 100%; }
 .bp-title { text-align: center; font-size: clamp(12px, 3.4cqw, 16px); color: var(--gold-2); letter-spacing: 1px; text-transform: uppercase; margin-top: 1cqw; }
 .bp-item { display: flex; flex-direction: column; align-items: center; gap: .8cqw; padding: 1cqw; border-radius: 2cqw; border: 2px solid rgba(255,255,255,.18); background: rgba(0,0,0,.35); color: #fff; cursor: pointer; font-family: inherit; }
 .bp-item .bp-thumb { width: 100%; aspect-ratio: 1; border-radius: 1.4cqw; background: center / cover no-repeat #0a1a3a; }
 .bp-item .bp-name { font-size: clamp(10px, 3cqw, 14px); }
 .bp-item.selected { border-color: var(--cyan); box-shadow: 0 0 14px rgba(0,229,255,.7); background: rgba(0,229,255,.12); }
-/* ===== Message défausse forcée (10 du joueur précédent) ===== */
 #force-banner { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 60; display: none; text-align: center; padding: 3cqw 6cqw; border-radius: 4cqw; background: linear-gradient(160deg, rgba(130,12,12,.96), rgba(50,0,0,.97)); border: 3px solid #ff5a3c; box-shadow: 0 0 30px rgba(255,60,30,.8), 0 0 60px rgba(255,60,30,.4); pointer-events: none; animation: forcePulse .9s ease-in-out infinite alternate; }
 #force-banner.show { display: block; }
 #force-banner b { display: block; font-size: clamp(20px, 7cqw, 34px); color: var(--gold-2); text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 12px #ff9a3c; }
 #force-banner span { display: block; margin-top: 1cqw; font-size: clamp(12px, 3.4cqw, 17px); color: #fff; }
 @keyframes forcePulse { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.06); } }
 @keyframes flameBox { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.07); } }
-
 .card.face-fallback::before, .discard-card.face-fallback::before { content: attr(data-label); position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 8cqw; font-weight: 800; color: #1a1a2e; background: linear-gradient(160deg, #f6f0dd, #d9cfae); z-index: 0; }
 .discard-card { background-color: #0c1a3d !important; }
-
-/* Position finale du dock d’actions : sous la défausse, au centre du plateau. */
 #bottom-banner{top:0!important;bottom:0!important;height:auto!important;background:none!important;border:0!important;box-shadow:none!important;padding:0!important;pointer-events:none!important;overflow:visible!important}
 #bottom-banner::before{display:none!important}
 #actions{position:absolute!important;left:50%!important;top:57%!important;right:auto!important;bottom:auto!important;transform:translate(-50%,-50%)!important;width:min(76%,420px)!important;max-width:76%!important;min-height:0!important;flex:0 0 auto!important;display:flex!important;justify-content:center!important;align-items:center!important;gap:6px!important;flex-wrap:wrap!important;pointer-events:auto!important;padding:5px 8px!important;border-radius:14px!important;background:rgba(3,12,34,.58)!important;border:1px solid rgba(0,229,255,.28)!important;backdrop-filter:blur(5px);z-index:42!important}
 #actions .btn{min-width:0!important;padding:7px 11px!important;font-size:clamp(10px,2.6cqw,14px)!important;letter-spacing:.3px!important;border-radius:10px!important}
-/* ===== Révision interface de jeu : dock d'actions sous le plateau, bande bleue, bouton vocal ===== */
 #actions{top:68.6%!important;width:min(40%,280px)!important;max-width:40%!important;padding:4px 6px!important;gap:5px!important}
 #actions .btn{padding:6px 9px!important;font-size:clamp(10px,2.3cqw,13px)!important}
 #actions:empty{display:none!important}
@@ -372,7 +370,6 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 #btn-voice{margin-left:auto;border-color:var(--gold)!important}
 #btn-voice.on{border-color:#00ffa8!important;box-shadow:0 0 12px #00ffa8!important}
 #btn-voice.mu{border-color:#ff5252!important;background:rgba(80,10,16,.92)!important}
-/* ===== Menu principal 2026 : tuiles claires, aérées ===== */
 #main-menu{padding:3cqw 4.5cqw;padding-top:calc(13cqw + var(--safe-top));justify-content:flex-start;gap:4cqw}
 #main-menu .top-bar{padding:2.4cqw 3.4cqw;border-radius:5cqw;background:rgba(5,16,46,.82);border:1px solid rgba(0,229,255,.3);backdrop-filter:blur(10px)}
 #main-menu .avatar-frame{width:13cqw;height:13cqw}
@@ -577,13 +574,6 @@ body.tab-hidden *, body.tab-hidden *::before, body.tab-hidden *::after { animati
 <script>
 /* ============================================================
    PHOENIX JACKAROO — version corrigée & boostée
-   Correctifs principaux :
-   - Fix race-condition multijoueur (seq) → plus de freeze
-   - Chronomètre 20s universel + auto-défausse
-   - Carte 7 : plus de faux "injouable"
-   - Aperçu + clic pion : plus de déplacement de pion adverse
-   - executeSpawn : garde-fous ajoutés
-   - Bots : boost medium/expert
    ============================================================ */
 
 function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
@@ -653,7 +643,6 @@ function showRoomView(code, isHost) {
   if (diff) diff.value = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
   const wrap = document.getElementById('room-bot-difficulty-wrap');
   if (wrap) wrap.style.display = isHost ? 'flex' : 'none';
-  // AJOUT : gestion de la mise
   const stakeWrap = document.getElementById('room-stake-wrap');
   if (stakeWrap) stakeWrap.style.display = isHost ? 'flex' : 'none';
   const stake = document.getElementById('room-stake');
@@ -673,7 +662,6 @@ function renderRoomSlots() {
   list.innerHTML = html;
   const me = user && players.find(p => p.uid === user.uid); const btn = document.getElementById('btn-ready'); if (btn) btn.textContent = me && me.ready ? 'Annuler « Prêt »' : 'Je suis prêt !';
 }
-/* Sièges : chaque joueur a un champ seat (0-3). Sans seat → premier siège libre. Sièges 0 & 2 = équipe A, 1 & 3 = équipe B. */
 function seatList(players) {
   const r = [null, null, null, null], rest = [];
   (players || []).forEach(p => { if (p && p.seat >= 0 && p.seat < 4 && !r[p.seat]) r[p.seat] = p; else if (p) rest.push(p); });
@@ -905,6 +893,30 @@ function toggleFullscreen() {
     }
 }
 function beep(freq, dur, type='sine') { if (muted) return; try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const o = audioCtx.createOscillator(), g = audioCtx.createGain(); o.type = type; o.frequency.value = freq; o.connect(g); g.connect(audioCtx.destination); g.gain.setValueAtTime(0.06, audioCtx.currentTime); g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + dur); o.start(); o.stop(audioCtx.currentTime + dur); } catch(e) {} }
+
+function playSound(type) {
+  if (muted) return;
+  try {
+    if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+    if (type === 'spawn') {
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(200, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.2);
+      gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.3);
+    } else if (type === 'kill') {
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(150, audioCtx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime + 0.3);
+      gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.4);
+    }
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.4);
+  } catch(e) {}
+}
+
 function setPos(el, pos) { el.style.setProperty('--x', pos.x); el.style.setProperty('--y', pos.y); }
 function getControlledPlayerId(playerId) { const myPawns = state.pawns[playerId]; if (myPawns.every(p => p.state === 'SAFE')) { const team = PLAYERS[playerId].team; if (team === 0) return playerId === 0 ? 2 : 0; if (team === 1) return playerId === 1 ? 3 : 1; } return playerId; }
 
@@ -949,15 +961,17 @@ function updateTurnUI() {
 
   const isHost = !currentRoomCode || myPlayerIndex === 0;
   const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot;
-  // En solo : timer seulement sur le tour du joueur local.
-  // En multi : l'hôte fait tourner le timer pour TOUS (autorité du timeout),
-  // et chaque joueur humain fait aussi tourner le sien pour affichage.
-  const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost);
+  
+  // Le chrono tourne si c'est le tour du joueur local, ou si on est l'hôte (pour gérer les bots et les autres joueurs)
+  const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost) || (!currentRoomCode && PLAYERS[state.turn].isBot);
 
   if (!shouldRunTimer) { stopTimer(); return; }
 
   // Ne redémarre le chrono que si le tour a réellement changé
-  if (lastTimerTurn === state.turn) return;
+  if (lastTimerTurn === state.turn) {
+      updateTimerDisplay(); // Met à jour l'affichage sans reset le décompte
+      return;
+  }
 
   startTimer();
   lastTimerTurn = state.turn;
@@ -967,7 +981,7 @@ function timeoutAction() {
   const playerId = state.turn;
   const isHost = !currentRoomCode || myPlayerIndex === 0;
   if (!isHost) return;                                        // en multi, seul l'hôte agit
-  if (!currentRoomCode && playerId !== myPlayerIndex) return; // en solo, seul le joueur local
+  if (!currentRoomCode && playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; // en solo, seul le joueur local ou les bots
 
   timeoutLock = true;
   // Petite grâce (500ms) au cas où une action serait en cours de synchro Firestore
@@ -993,7 +1007,6 @@ function applyTimeoutAction(playerId) {
   const hadPlayed = state.cardPlayedThisTurn;
 
   if (hadPlayed) {
-    // Carte déjà jouée mais effet non finalisé → on termine simplement le tour
     state.cardPlayedThisTurn = false;
     renderHand();
     if (currentRoomCode) saveGameState();
@@ -1144,7 +1157,6 @@ document.addEventListener('visibilitychange', () => {
     document.body.classList.remove('tab-hidden');
     if (document.getElementById('game-screen') && document.getElementById('game-screen').classList.contains('active')) {
       startNestTimer();
-      // Le timer reprendra via updateTurnUI au prochain event, pas besoin de forcer
     }
   }
 });
@@ -1208,7 +1220,6 @@ function initGame(isHost = true) {
         document.getElementById(`avatar-game-p${i}`).parentElement.style.setProperty('--c', PLAYERS[i].color);
     }
 
-    // ✅ FIX : reset tracker du chrono
     lastTimerTurn = -2;
     timeoutLock = false;
 
@@ -1251,9 +1262,6 @@ function updatePawnPositions() {
   document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); });
 }
 
-/* ============================================================
-   ✅ FIX : isCardPlayable délègue à sevenOptions pour la 7
-   ============================================================ */
 function isCardPlayable(playerId, card) {
   const rank = card.r, pId = getControlledPlayerId(playerId);
   if (rank === 'MANDALA' || rank === 'JOKER' || rank === '10') return true;
@@ -1268,7 +1276,6 @@ function isCardPlayable(playerId, card) {
     }
     return false;
   }
-  // ✅ FIX 7 : sevenOptions gère correctement x=7 ET simule le 2e déplacement
   if (rank === '7') {
     for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).length > 0) return true;
     return false;
@@ -1446,6 +1453,15 @@ async function handleCapture(playerId, pawn) {
         enemy.state = 'HOME'; enemy.trackIdx = -1; enemy.homeSlot = findFreeHomeSlot(p);
         const el = document.getElementById(`pawn-${p}-${i}`);
         if (el) { flyHome(el); el.classList.add('captured'); setTimeout(()=>el.classList.remove('captured'), 1300); }
+        
+        playSound('kill');
+        const stage = document.getElementById('stage');
+        if (stage) {
+          stage.classList.remove('screen-shake');
+          void stage.offsetWidth;
+          stage.classList.add('screen-shake');
+        }
+        
         updateSinglePawn(p, i);
         beep(150, 0.3, 'sawtooth');
         await sleep(800);
@@ -1456,9 +1472,6 @@ async function handleCapture(playerId, pawn) {
 function findFreeHomeSlot(playerId) { const used = state.pawns[playerId].filter(p => p.state === 'HOME').map(p => p.homeSlot); for (let i = 0; i < 4; i++) if (!used.includes(i)) return i; return 0; }
 function canSpawn(playerId) { const b = PLAYERS[playerId].baseIdx; if (hasTeamPawnAt(playerId, b)) return false; for (const e of pawnsAt(b)) if (isProtected(e.player, e.pawn)) return false; return state.pawns[playerId].some(p => p.state === 'HOME'); }
 
-/* ============================================================
-   ✅ FIX : executeSpawn avec garde-fous
-   ============================================================ */
 async function executeSpawn(playerId, pawnIdx) {
   clearPathPreviews();
   const pawn = state.pawns[playerId][pawnIdx];
@@ -1468,6 +1481,9 @@ async function executeSpawn(playerId, pawnIdx) {
   pawn.trackIdx = PLAYERS[playerId].baseIdx;
   pawn.homeSlot = -1;
   beep(800, 0.15); updateSinglePawn(playerId, pawnIdx);
+  
+  playSound('spawn');
+  
   const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`);
   if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); }
   const pct = trackPct(pawn.trackIdx);
@@ -1498,10 +1514,6 @@ function autoSelectRandom(playerId, steps) {
   return executeMove(pId, pick, steps).then(() => true);
 }
 
-/* ============================================================
-   ✅ FIX + BOOST : onPawnClick — plus de déplacement de pion adverse
-   pendant le flux aperçu + clic
-   ============================================================ */
 function onPawnClick(playerId, pawnIdx) {
   const pId = getControlledPlayerId(state.turn);
 
@@ -1627,8 +1639,8 @@ function onPawnClick(playerId, pawnIdx) {
     state.mode = 'swapEnemy'; state.swapAlly = pawnIdx; clearSelection(); showSwapEnemyTargets(playerId); return;
   }
   if (state.mode === 'swapEnemy') {
-    if (playerId === pId) return;
-    if (state.pawns[playerId][pawnIdx].state !== 'TRACK' || isProtected(playerId, pawnIdx)) return;
+    if (playerId === pId && pawnIdx === state.swapAlly) return;
+    if (state.pawns[playerId][pawnIdx].state !== 'TRACK' || isPawnOnOwnBase(playerId, pawnIdx)) return;
     state.mode = null; clearSelection();
     executeSwap(pId, state.swapAlly, playerId, pawnIdx).then(() => endTurn()); return;
   }
@@ -1667,12 +1679,13 @@ async function playCard(playerId, cardIdx) {
 
 function hasValidSwap(playerId) {
   const pId = getControlledPlayerId(playerId);
-  let hasAlly = false, hasOther = false;
+  let hasSource = false, hasTarget = false;
   for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
     if (state.pawns[p][i].state !== 'TRACK') continue;
-    if (p === pId) hasAlly = true; else if (!isProtected(p, i)) hasOther = true;
+    if (p === pId) hasSource = true;
+    if (!isPawnOnOwnBase(p, i)) hasTarget = true;
   }
-  return hasAlly && hasOther;
+  return hasSource && hasTarget;
 }
 
 function undoPlayedCard() {
@@ -1716,7 +1729,6 @@ async function processCard(playerId, card) {
     const hasTrackPawn = state.pawns[pId].some(p => p.state === 'TRACK');
     const canSpawnNow = canSpawn(pId);
     const noPawnOut = !hasTrackPawn && canSpawnNow;
-    // Le Joker ne propose que des cartes réellement jouables (même test que pour une vraie carte)
     const playablePool = ['A','2','3','4','5','6','7','8','9','10','J','Q','K','PHOENIX','MANDALA'].filter(r => isCardPlayable(playerId, { r }));
 
     if (isBot) {
@@ -1775,9 +1787,6 @@ async function processCard(playerId, card) {
     return;
   }
 
-  /* ============================================================
-     ✅ BOOST : carte 5 — bot privilégie les captures
-     ============================================================ */
   if (rank === '5') {
     if (isBot) {
       let best = null, bestScore = -1;
@@ -1823,9 +1832,27 @@ async function processCard(playerId, card) {
   }
   if (rank === 'J') {
     if (!hasValidSwap(pId)) { setTimeout(endTurn, 500); return; }
-    if (isBot) { const mine = [], targets = []; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (state.pawns[p][i].state !== 'TRACK') continue; if (p === pId) mine.push(i); else if (!isProtected(p, i)) targets.push({ p, i }); } if (mine.length && targets.length) { const a = mine[Math.floor(Math.random() * mine.length)]; const t = targets[Math.floor(Math.random() * targets.length)]; await executeSwap(pId, a, t.p, t.i); await sleep(500); } return endTurn(); }
+    if (isBot) {
+      const mine = [], targets = [];
+      for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
+        if (state.pawns[p][i].state !== 'TRACK') continue;
+        if (p === pId) mine.push(i);
+        if (!isPawnOnOwnBase(p, i)) targets.push({ p, i });
+      }
+      const validTargets = targets.filter(t => !(t.p === pId && mine.includes(t.i)));
+      if (mine.length && validTargets.length) {
+        const a = mine[Math.floor(Math.random() * mine.length)];
+        const t = validTargets[Math.floor(Math.random() * validTargets.length)];
+        await executeSwap(pId, a, t.p, t.i); await sleep(500);
+      }
+      return endTurn();
+    }
     state.mode = 'swapAlly'; state.swapAlly = -1;
-    for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if (pawn.state !== 'TRACK') continue; document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); }
+    for (let i = 0; i < 4; i++) {
+      const pawn = state.pawns[pId][i];
+      if (pawn.state !== 'TRACK') continue;
+      document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable');
+    }
     return;
   }
   let steps = rank === '4' ? -4 : (rank === 'Q' ? 12 : parseInt(rank));
@@ -1859,12 +1886,33 @@ async function executePhoenixFire(playerId, pawnIdx, len = 6) {
   const hitPawns = [];
   for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i, pct: trackPct(idx)}); }
   await sleep(1800);
-  for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } }
+  for (const {p, i} of hitPawns) { 
+    const t = state.pawns[p][i]; 
+    t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); 
+    const el = document.getElementById(`pawn-${p}-${i}`); 
+    if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } 
+    playSound('kill');
+    const stage = document.getElementById('stage');
+    if (stage) {
+      stage.classList.remove('screen-shake');
+      void stage.offsetWidth;
+      stage.classList.add('screen-shake');
+    }
+  }
   updatePawnPositions();
   if (currentRoomCode) saveGameState();
 }
 async function executePhoenixTeleport(playerId, pawnIdx) { if (pawnsAt(state.phoenixNest).length > 0) return; clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; pawn.trackIdx = state.phoenixNest; updatePawnPositions(); if (currentRoomCode) saveGameState(); }
-function showSwapEnemyTargets(playerId) { clearActions(); for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (p === playerId) continue; if (state.pawns[p][i].state === 'TRACK' && !isProtected(p, i)) document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); } addBtn('Annuler', () => { undoPlayedCard(); }); }
+function showSwapEnemyTargets(playerId) { 
+  clearActions(); 
+  for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { 
+    if (p === playerId && i === state.swapAlly) continue; // Ne pas échanger avec le même pion
+    if (state.pawns[p][i].state === 'TRACK' && !isPawnOnOwnBase(p, i)) {
+      document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); 
+    }
+  } 
+  addBtn('Annuler', () => { undoPlayedCard(); }); 
+}
 
 async function executeSwap(playerA, pawnA, playerB, pawnB) {
   clearPathPreviews();
@@ -1887,9 +1935,6 @@ async function executeSwap(playerA, pawnA, playerB, pawnB) {
   if (currentRoomCode) saveGameState();
 }
 
-/* ============================================================
-   ✅ FIX : endTurn unifié — scheduleBot gère solo ET multi
-   ============================================================ */
 function endTurn() {
   if (state.gameOver) return;
   stopTimer(); clearSelection(); clearActions();
@@ -1955,10 +2000,6 @@ function cardCapturesSomething(playerId, card) {
   return false;
 }
 
-/* ============================================================
-   ✅ BOOST : pickBotCardIndex — medium privilégie les captures,
-   expert : captures > spawn > anti-4
-   ============================================================ */
 function pickBotCardIndex(playerId) {
   const hand = state.hands[playerId];
   if (hand.length === 0) return 0;
@@ -1969,20 +2010,17 @@ function pickBotCardIndex(playerId) {
 
   const pId = getControlledPlayerId(playerId);
 
-  // MEDIUM : priorité capture si dispo, sinon 1re carte jouable
   if (diff === 'medium') {
     const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i]));
     return caps.length ? caps[0] : playable[0];
   }
 
-  // EXPERT : 1) captures 2) spawn 3) coups "safe" 4) fallback
   const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i]));
   if (caps.length) return caps[0];
 
   const spawns = playable.filter(i => (hand[i].r === 'A' || hand[i].r === 'K') && canSpawn(pId));
   if (spawns.length) return spawns[0];
 
-  // Éviter le 4 (recul) quand on a des pions proches du but
   const safePlayable = playable.filter(i => {
     const card = hand[i];
     if (card.r === '4') {
@@ -2055,17 +2093,15 @@ window.openBotDifficulty = function() { enableThumbs(); document.getElementById(
 window.closeBotDifficulty = function() { document.getElementById('bot-difficulty-modal').classList.remove('show'); };
 window.startGameWithBots = function(diff) { state.botDifficulty = diff || 'medium'; closeBotDifficulty(); startGame(false); };
 
-/* ================= CHOIX DU PLATEAU ================= */
 const BOARD_FILES = ['inerface.jpg', 'inerface1.jpg', 'inerface2.jpg', 'inerface3.jpg', 'inerface4.jpg', 'inerface5.jpg'];
 let boardChoice = (() => { try { const v = parseInt(localStorage.getItem('phoenix_board'), 10); return v >= 0 && v < BOARD_FILES.length ? v : 0; } catch (e) { return 0; } })();
-/* Calage de chaque image sur le tracé : w,h = taille de l'image (fraction de l'écran), l,t = position gauche/haut (fraction de l'écran) */
 const BOARD_CALIB = [
-  { w: 1, h: 1, l: 0, t: 0 },                                    // Plateau 1 (inerface.jpg)
-  { w: 0.9885, h: 0.9899, l: 0.0059, t: 0 },                     // Plateau 2 (inerface1.jpg)
-  { w: 0.9766, h: 0.9791, l: 0.01166, t: -0.00035 },             // Plateau 3 (inerface2.jpg)
-  { w: 0.9348, h: 0.9384, l: 0.0327, t: 0.0031 },                // Plateau 4 (inerface3.jpg) - recalé sur les trous du tracé (écart moyen < 2 px)
-  { w: 0.9343, h: 0.9397, l: 0.0327, t: -0.0002 },               // Plateau 5 (inerface4.jpg)
-  { w: 0.9124, h: 0.9203, l: 0.04384, t: -0.0001 }               // Plateau 6 (inerface5.jpg)
+  { w: 1, h: 1, l: 0, t: 0 },
+  { w: 0.9885, h: 0.9899, l: 0.0059, t: 0 },
+  { w: 0.9766, h: 0.9791, l: 0.01166, t: -0.00035 },
+  { w: 0.9348, h: 0.9384, l: 0.0327, t: 0.0031 },
+  { w: 0.9343, h: 0.9397, l: 0.0327, t: -0.0002 },
+  { w: 0.9124, h: 0.9203, l: 0.04384, t: -0.0001 }
 ];
 function applyBoard() {
   const c = BOARD_CALIB[boardChoice] || { w: 1, h: 1, l: 0, t: 0 }, st = document.documentElement.style;
@@ -2075,7 +2111,6 @@ function applyBoard() {
   st.setProperty('--bg-pos', `${px.toFixed(3)}% ${py.toFixed(3)}%`);
   st.setProperty('--strip-min', `${Math.max(5, (1 - (c.t + c.h * 0.944)) * 100).toFixed(2)}%`);
 }
-/* Outil de réglage (uniquement avec ?calib=1 dans l'adresse) */
 if (/[?&]calib=1/.test(location.search)) {
   const d = document.createElement('div');
   d.style.cssText = 'position:fixed;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,.88);color:#fff;font:12px sans-serif;padding:6px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;justify-content:center';
@@ -2105,7 +2140,6 @@ function buildBoardPickers() {
 }
 function selectBoard(i) {
   boardChoice = i; try { localStorage.setItem('phoenix_board', String(i)); } catch (e) {}
-  /* Le plateau choisi devient le plateau par défaut du joueur (profil local + compte) */
   try { playerProfile.boardChoice = i; saveProfile(); const u = window.FB && window.FB.auth.currentUser; if (u) window.FB.updateDoc(window.FB.doc(window.FB.db, 'users', u.uid), { boardChoice: i }).catch(() => {}); } catch (e) {}
   applyBoard(); buildBoardPickers();
 }
@@ -2119,7 +2153,6 @@ function startGame(isMulti = false) {
   applyBoard();
   if (!isMulti) myPlayerIndex = 0;
   setView(myPlayerIndex);
-  // ✅ FIX : reset tracker chrono à chaque nouvelle partie
   lastTimerTurn = -2;
   timeoutLock = false;
   if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(e => {});
@@ -2140,11 +2173,10 @@ function startGame(isMulti = false) {
   }
 }
 
-/* ================= MULTIJOUEUR SYNCHRONISATION ================= */
 let syncSeq = 0, lastAppliedSeq = 0, hasApplied = false, lastRaw = '', pendingAnim = [], animHistory = [], saveTimer = null, applyChain = Promise.resolve(), lastDiscardKey = '';
 let fxHistory = [], seenFx = new Set();
 function pushFx(ev) { ev.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); fxHistory = fxHistory.concat([ev]).slice(-6); seenFx.add(ev.id); return ev; }
-let myLastWriteSeq = 0;   // ✅ FIX : distingue nos propres écritures des écritures distantes
+let myLastWriteSeq = 0;
 const REMOTE_STEP = 110;
 let lastActivity = Date.now(), syncWatch = null;
 function stopWatchdog() { clearInterval(syncWatch); syncWatch = null; }
@@ -2156,8 +2188,6 @@ function startWatchdog() {
     if (PLAYERS[pid].isBot) {
       if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); }
     } else if (pid !== myPlayerIndex && idle > 45000) {
-      // Filet de sécurité : le timer 20s fait déjà le travail normalement.
-      // Ceci ne se déclenche qu'en cas de blocage total de la synchro.
       lastActivity = Date.now();
       const hand = state.hands[pid];
       if (hand.length) { const card = hand.splice(Math.floor(Math.random() * hand.length), 1)[0]; state.discard.push(card); showDiscard(card); drawCard(pid); }
@@ -2190,7 +2220,7 @@ function flushGameState() {
   try {
     syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1;
     lastAppliedSeq = syncSeq;
-    myLastWriteSeq = syncSeq;   // ✅ FIX : on note notre écriture
+    myLastWriteSeq = syncSeq;
     const ready = pendingAnim.filter(a => a.done);
     pendingAnim = pendingAnim.filter(a => !a.done);
     ready.forEach(a => { a.q = syncSeq; delete a.done; });
@@ -2229,19 +2259,12 @@ function leaveGameRemote() {
   document.getElementById('main-menu').classList.add('active');
 }
 
-/* ============================================================
-   ✅ FIX CRITIQUE : applyRemoteState — suppression du gate sur seq
-   qui causait le freeze multijoueur à 2 clients rapides.
-   On garde seulement le gate sur `raw` (Firestore garantit l'ordre)
-   + un skip des échos de nos propres écritures (own && seq <= myLastWriteSeq)
-   ============================================================ */
 async function applyRemoteState(parsed, raw, closed) {
   if (raw === lastRaw) return;
 
   const own = parsed.lastActionPlayer === myPlayerIndex;
   const seq = parsed.seq || 0;
 
-  // Skip des échos de nos propres écritures (mais laisse passer une écriture distante)
   if (own && seq <= myLastWriteSeq) return;
 
   const first = !hasApplied, prevSeq = lastAppliedSeq;
@@ -2252,7 +2275,6 @@ async function applyRemoteState(parsed, raw, closed) {
   } catch (e) {}
   hasApplied = true; lastRaw = raw; lastAppliedSeq = Math.max(lastAppliedSeq, seq);
 
-  // 1) Rejouer les déplacements case par case chez les autres
   if (!first && !own && !document.hidden && Array.isArray(parsed.anim)) {
     const todo = parsed.anim.filter(a => a.q > prevSeq && a.path && a.path.length);
     for (const a of todo) await replayPath(a);
@@ -2288,7 +2310,6 @@ async function applyRemoteState(parsed, raw, closed) {
     av.parentElement.style.setProperty('--c', PLAYERS[i].color);
   }
 
-  // 2) Effets visuels
   if (!first && !own) {
     const moved = [];
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
@@ -2296,10 +2317,14 @@ async function applyRemoteState(parsed, raw, closed) {
       if (a.state === 'TRACK' && b.state === 'HOME') {
         const pct = trackPct(a.trackIdx); fxRing(pct, '#ff3d3d', 13); fxRing(pct, '#fff', 8); fxEmbers(pct, 6, true);
         if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); }
+        playSound('kill');
+        const stage = document.getElementById('stage');
+        if (stage) { stage.classList.remove('screen-shake'); void stage.offsetWidth; stage.classList.add('screen-shake'); }
         beep(150, 0.3, 'sawtooth');
       } else if (a.state === 'HOME' && b.state === 'TRACK') {
         if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); }
         const pct = trackPct(b.trackIdx); fxRing(pct, PLAYERS[p].color, 13); fxRing(pct, '#fff', 8); beep(800, 0.15);
+        playSound('spawn');
       } else if (a.state === 'TRACK' && b.state === 'TRACK' && a.trackIdx !== b.trackIdx) moved.push({ p, i, idx: b.trackIdx });
     }
     if (moved.length >= 2) {
