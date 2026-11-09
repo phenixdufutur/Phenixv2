@@ -49,12 +49,12 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 #toast.error { border-color: #ff5252; }
 #toast.success { border-color: #00ffa8; }
 #btn-rules { position: absolute; top: max(2%, calc(var(--safe-top) + 10px)); right: max(2%, 10px); z-index: 150; width: 9cqw; height: 9cqw; border-radius: 50%; background: radial-gradient(circle at 35% 30%, rgba(40,90,170,.95), rgba(4,16,48,.95)); border: 2px solid var(--cyan); color: var(--cyan); font-size: 5cqw; font-weight: bold; display: flex; justify-content: center; align-items: center; cursor: pointer; }
-#rules-modal, #bot-difficulty-modal, #avatar-modal { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 200; padding: 4cqw; backdrop-filter: blur(8px); }
-#rules-modal.show, #bot-difficulty-modal.show, #avatar-modal.show { display: flex; }
-.rules-content, .bot-diff-box, .avatar-grid { background: linear-gradient(160deg, rgba(10,35,85,.95), rgba(4,16,48,.98)); border: 2px solid var(--cyan); border-radius: 4cqw; padding: 4cqw; width: 95cqw; max-width: 480px; max-height: 90dvh; display: flex; flex-direction: column; gap: 3cqw; }
-.rules-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,229,255,.4); padding-bottom: 2cqw; }
-.rules-header h2 { color: var(--gold-2); font-size: 5.5cqw; text-transform: uppercase; }
-.rules-body { flex: 1; overflow-y: auto; padding: 2cqw; display: flex; flex-direction: column; gap: 2cqw; }
+#rules-modal, #bot-difficulty-modal, #avatar-modal, #bag-modal { position: absolute; inset: 0; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 200; padding: 4cqw; backdrop-filter: blur(8px); }
+#rules-modal.show, #bot-difficulty-modal.show, #avatar-modal.show, #bag-modal.show { display: flex; }
+.rules-content, .bot-diff-box, .avatar-grid, .bag-content { background: linear-gradient(160deg, rgba(10,35,85,.95), rgba(4,16,48,.98)); border: 2px solid var(--cyan); border-radius: 4cqw; padding: 4cqw; width: 95cqw; max-width: 480px; max-height: 90dvh; display: flex; flex-direction: column; gap: 3cqw; }
+.rules-header, .bag-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid rgba(0,229,255,.4); padding-bottom: 2cqw; }
+.rules-header h2, .bag-header h2 { color: var(--gold-2); font-size: 5.5cqw; text-transform: uppercase; }
+.rules-body, .bag-body { flex: 1; overflow-y: auto; padding: 2cqw; display: flex; flex-direction: column; gap: 2cqw; }
 .rule-section { background: rgba(255,255,255,0.03); border: 1px solid rgba(0,229,255,0.2); border-radius: 3cqw; padding: 3cqw; }
 .rule-section h3 { color: var(--cyan); font-size: 4.2cqw; margin-bottom: 1.5cqw; }
 .rule-section p { font-size: 3.4cqw; line-height: 1.5; color: #dbe9ff; margin-bottom: 1cqw; }
@@ -195,6 +195,14 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 @keyframes ringOut { 0% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(1); opacity: 0; } }
 .ember { position: absolute; width: .9%; aspect-ratio: 1; border-radius: 50%; background: #ffcf5a; box-shadow: 0 0 6px #ff9800; pointer-events: none; z-index: 17; display: none; }
 @keyframes emberUp { 0% { transform: translate(-50%, -50%); opacity: 1; } 100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(.2); opacity: 0; } }
+/* FLAMES re-added */
+.flame-effect { position: absolute; width: 7.5%; aspect-ratio: 1; transform: translate(-50%, -50%); z-index: 16; pointer-events: none; display: none; }
+.flame-effect b { position: absolute; inset: -25%; border-radius: 50%; background: radial-gradient(circle, rgba(255,190,0,.6), rgba(255,60,0,.28) 45%, transparent 70%); animation: nestPulse .4s ease-in-out infinite alternate; }
+.flame-effect .tongue { bottom: 18%; }
+.flame-effect .tongue:nth-of-type(1) { width: 48%; margin-left: -24%; }
+.flame-effect .tongue:nth-of-type(2) { width: 34%; margin-left: -17%; }
+.flame-effect .tongue:nth-of-type(3) { width: 34%; margin-left: -17%; }
+@keyframes flameBox { from { transform: translate(-50%, -50%) scale(1); } to { transform: translate(-50%, -50%) scale(1.07); } }
 #discard-pile { position: absolute; left: 50%; top: 42%; transform: translate(-50%, -50%); width: 15%; aspect-ratio: 5 / 7; z-index: 5; pointer-events: none; }
 .discard-card { position: absolute; inset: 0; background-color: #fff; border-radius: 2cqw; box-shadow: -2px 4px 14px rgba(0,0,0,0.8); border: 1px solid #333; background-size: cover; background-position: center; }
 #force-banner { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 60; display: none; text-align: center; padding: 3cqw 6cqw; border-radius: 4cqw; background: linear-gradient(160deg, rgba(130,12,12,.96), rgba(50,0,0,.97)); border: 3px solid #ff5a3c; pointer-events: none; }
@@ -247,7 +255,6 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .stake-row.active { background: linear-gradient(90deg, rgba(230,195,92,.25), rgba(230,195,92,.08)); border: 1.5px solid var(--gold); }
 .stake-row .div-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: .9em; flex-shrink: 0; }
 .stake-row.active .div-badge { box-shadow: 0 0 12px currentColor; }
-/* Badge bot imposé */
 .bot-imposed { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, rgba(176,79,214,.18), rgba(4,16,48,.9)); border: 1.5px solid var(--purple); margin-bottom: 12px; }
 .bot-imposed-icon { font-size: 2.2em; flex-shrink: 0; }
 .bot-imposed-body { flex: 1; min-width: 0; }
@@ -257,6 +264,15 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .bot-imposed .diff-tag.easy { background: rgba(0,255,168,.18); color: #00ffa8; border: 1px solid #00ffa8; }
 .bot-imposed .diff-tag.medium { background: rgba(0,229,255,.18); color: #00e5ff; border: 1px solid #00e5ff; }
 .bot-imposed .diff-tag.expert { background: rgba(255,82,82,.18); color: #ff8a80; border: 1px solid #ff5252; }
+/* Bag item card */
+.bag-item { display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 14px; background: rgba(0,0,0,.35); border: 1.5px solid rgba(0,229,255,.25); margin-bottom: 8px; cursor: pointer; }
+.bag-item:active { border-color: var(--gold); }
+.bag-item.disabled { opacity: .4; pointer-events: none; }
+.bag-item-icon { font-size: 1.8em; width: 46px; height: 46px; display: flex; align-items: center; justify-content: center; border-radius: 12px; background: rgba(230,195,92,.15); border: 1px solid var(--gold); flex-shrink: 0; }
+.bag-item-body { flex: 1; }
+.bag-item-title { font-weight: 900; color: #fff; }
+.bag-item-desc { font-size: .78em; color: #9fc3ea; }
+.bag-item-count { padding: 4px 10px; border-radius: 10px; background: rgba(230,195,92,.2); color: var(--gold-2); font-weight: 900; font-size: .85em; flex-shrink: 0; }
 </style>
 </head>
 <body>
@@ -272,7 +288,8 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 <div id="toast"></div>
 <div id="btn-rules" onclick="openRules()">?</div>
 <div id="rules-modal"><div class="rules-content"><div class="rules-header"><h2 id="rules-title">Règles</h2><button class="close-modal" onclick="closeRules()">✕</button></div><div class="rules-body" id="rules-body"></div><div class="rules-pagination"><button class="btn" id="btn-prev-rule" onclick="prevRulePage()">← Préc.</button><span class="rules-page-indicator" id="rule-page-indicator">1 / 4</span><button class="btn" id="btn-next-rule" onclick="nextRulePage()">Suiv. →</button></div></div></div>
-<div id="bot-difficulty-modal"><div class="bot-diff-box"><h2>Niveau des bots</h2><div class="bp-title">Plateau</div><div class="board-picker"></div><button class="btn easy" onclick="startGameWithBots('easy')">Nul</button><button class="btn medium" onclick="startGameWithBots('medium')">Moyen</button><button class="btn expert" onclick="startGameWithBots('expert')">Expert</button><button class="btn ghost" onclick="closeBotDifficulty()">Annuler</button></div></div>
+<div id="bot-difficulty-modal"><div class="bot-diff-box"><h2>Niveau des bots</h2><div class="bp-title">Plateau</div><div class="board-picker"></div><button class="btn easy" onclick="startGameWithBots(10)">Débutant</button><button class="btn medium" onclick="startGameWithBots(6)">Moyen</button><button class="btn expert" onclick="startGameWithBots(1)">Légende</button><button class="btn ghost" onclick="closeBotDifficulty()">Annuler</button></div></div>
+<div id="bag-modal"><div class="bag-content"><div class="bag-header"><h2>🎒 Sac d'objets</h2><button class="close-modal" onclick="closeBag()">✕</button></div><div class="bag-body" id="bag-body"></div></div></div>
 <div id="lobby-screen" class="screen">
   <div class="lobby-wrap">
     <div class="lobby-header"><button class="lobby-back" onclick="backToMainMenuFromLobby()">←</button><div class="lobby-title"><span class="lobby-sub">Phoenix Jackaroo</span><h2>Salon privé</h2></div></div>
@@ -282,7 +299,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
     </div>
     <div id="lobby-room-view" style="display: none; flex-direction: column; gap: 12px;">
       <div class="lobby-card gold"><div style="text-align:center;"><div style="font-size:3cqw;letter-spacing:3px;color:#9fc3ea;">CODE DU SALON</div><div style="font-size:14cqw;font-weight:800;color:var(--gold-2);letter-spacing:.25em;" id="span-room-code">----</div><button class="btn ghost" onclick="copyRoomCode()">📋 Copier</button></div></div>
-      <div class="lobby-card"><div class="room-slots" id="room-players-list"></div><label class="switch-row"><span>🤖 Compléter avec des Bots</span><span class="switch"><input type="checkbox" id="check-bots" checked onchange="renderRoomSlots()"><i></i></span></label><div class="input-group" id="room-bot-difficulty-wrap"><label>Difficulté des bots</label><select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()"><option value="easy">Nul</option><option value="medium" selected>Moyen</option><option value="expert">Expert</option></select></div><div class="input-group" id="room-stake-wrap"><label>Mise (barème division)</label><input id="room-stake" readonly style="padding:2.5cqw;border-radius:2cqw;border:1px solid #4a6fa5;background:rgba(0,0,0,0.5);color:var(--gold-2);font-weight:900;text-align:center;"></div><div style="display:flex;gap:8px;"><button class="btn block" id="btn-ready" onclick="toggleReadyState()">Je suis prêt !</button><button class="btn gold block" id="btn-start-multi" style="display: none;" onclick="startMultiplayerGame()">▶ Lancer</button></div></div>
+      <div class="lobby-card"><div class="room-slots" id="room-players-list"></div><label class="switch-row"><span>🤖 Compléter avec des Bots</span><span class="switch"><input type="checkbox" id="check-bots" checked onchange="renderRoomSlots()"><i></i></span></label><div class="input-group" id="room-bot-difficulty-wrap"><label>Difficulté des bots</label><select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()"><option value="10">Débutant</option><option value="8">Rusé</option><option value="6">Redoutable</option><option value="4">Implacable</option><option value="2">Phénix Noir</option></select></div><div class="input-group" id="room-stake-wrap"><label>Mise (barème division)</label><input id="room-stake" readonly style="padding:2.5cqw;border-radius:2cqw;border:1px solid #4a6fa5;background:rgba(0,0,0,0.5);color:var(--gold-2);font-weight:900;text-align:center;"></div><div style="display:flex;gap:8px;"><button class="btn block" id="btn-ready" onclick="toggleReadyState()">Je suis prêt !</button><button class="btn gold block" id="btn-start-multi" style="display: none;" onclick="startMultiplayerGame()">▶ Lancer</button></div></div>
     </div>
     <button class="btn ghost block" onclick="backToMainMenuFromLobby()">Retour au menu</button>
   </div>
@@ -312,7 +329,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
     <div class="hex-btn-container primary" onclick="openLeagueView('home')"><div class="hex-btn"><div class="hex-icon">🏆</div></div><div class="hex-label">Ligue<small>3 modes de compétition</small></div></div>
     <div class="hex-btn-container" onclick="openLeagueView('career')"><div class="hex-btn"><div class="hex-icon">🎯</div></div><div class="hex-label">Carrière<small>Missions &amp; trophées</small></div></div>
     <div class="hex-btn-container" onclick="openLobbyScreen()"><div class="hex-btn"><div class="hex-icon">🔒</div></div><div class="hex-label">Partie privée<small>Entre amis</small></div></div>
-    <div class="hex-btn-container" onclick="window.openPhoenixWallet()"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Boutique<small>Pièces &amp; gemmes</small></div></div>
+    <div class="hex-btn-container" onclick="window.openPhoenixWallet()"><div class="hex-btn"><div class="hex-icon">🛒</div></div><div class="hex-label">Boutique<small>Pièces &amp; objets</small></div></div>
     <div class="hex-btn-container" onclick="openLeagueView('rankings')"><div class="hex-btn"><div class="hex-icon">🏅</div></div><div class="hex-label">Classements<small>Tops &amp; divisions</small></div></div>
     <div class="hex-btn-container" onclick="openLeagueView('stats')"><div class="hex-btn"><div class="hex-icon">📊</div></div><div class="hex-label">Mes stats<small>Progression</small></div></div>
   </div>
@@ -331,7 +348,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
     <div class="player-container pos-p3"><div id="avatar-game-p3" class="in-game-avatar"></div><div id="name-game-p3" class="game-pseudo">Vert</div><div class="turn-timer" id="timer-p3">20</div></div>
     <div class="player-container pos-p0"><div id="avatar-game-p0" class="in-game-avatar"></div><div id="name-game-p0" class="game-pseudo">Vous</div><div class="turn-timer" id="timer-p0">20</div></div>
     <div id="bottom-strip"></div>
-    <div id="settings-buttons"><button id="btn-mute" onclick="toggleSound()">🔊</button><button id="btn-anims" onclick="toggleAnimations()">✨</button><button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button></div>
+    <div id="settings-buttons"><button id="btn-mute" onclick="toggleSound()">🔊</button><button id="btn-anims" onclick="toggleAnimations()">✨</button><button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button><button id="btn-bag" onclick="openBag()" style="margin-left:auto;border-color:var(--gold);background:rgba(230,195,92,.15)">🎒</button></div>
     <div id="hand"></div>
     <div id="force-banner"><b>⚠️ Abandonnez une carte</b><span>Un 10 a été joué avant vous</span></div>
     <div id="kill-banner"><b id="kill-banner-text"></b></div>
@@ -343,35 +360,22 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 </div>
 <script>
 /* ============================================================
-   PHOENIX JACKAROO — Bot lié à la division (pas de choix en ligue)
+   PHOENIX JACKAROO — 6 rois (78%+), flammes, 10 bots, sac, 100+ trophées
    ============================================================ */
 function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 let toastTimer = null;
 function showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'show' + (type ? ' ' + type : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3000); }
 function authErrorMsg(err) { const map = { 'auth/email-already-in-use': "Cet email est déjà utilisé.", 'auth/invalid-email': "Adresse email invalide.", 'auth/weak-password': "Mot de passe trop court.", 'auth/invalid-credential': "Email ou mot de passe incorrect.", 'auth/user-not-found': "Aucun compte.", 'auth/wrong-password': "Mot de passe incorrect.", 'auth/too-many-requests': "Trop d'essais.", 'auth/network-request-failed': "Problème de connexion.", 'permission-denied': "Accès refusé.", 'unavailable': "Serveur injoignable." }; return (err && map[err.code]) || (err && err.message) || "Une erreur est survenue."; }
-function fillAv(el, file, pseudo) {
-  if (!el) return;
-  const f = String(file || 'az').replace(/[^a-z0-9_-]/gi, '');
-  const init = (pseudo || '?').slice(0, 1).toUpperCase();
-  el.style.position = 'relative'; el.style.overflow = 'hidden'; el.style.background = '#1e5fa8';
-  el.innerHTML = `<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);font-size:${Math.max(10,Math.floor((el.clientWidth||32)*0.4))}px;z-index:0">${init}</span><div style="position:absolute;inset:0;background:url('avatar/${f}.jpg') center/cover;z-index:1"></div>`;
-}
-let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, boardChoice: 0 };
-if(localStorage.getItem('phoenix_profile')) { try { playerProfile = Object.assign(playerProfile, JSON.parse(localStorage.getItem('phoenix_profile'))); } catch(e){} }
+function fillAv(el, file, pseudo) { if (!el) return; const f = String(file || 'az').replace(/[^a-z0-9_-]/gi, ''); const init = (pseudo || '?').slice(0, 1).toUpperCase(); el.style.position = 'relative'; el.style.overflow = 'hidden'; el.style.background = '#1e5fa8'; el.innerHTML = `<span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.6);font-size:${Math.max(10,Math.floor((el.clientWidth||32)*0.4))}px;z-index:0">${init}</span><div style="position:absolute;inset:0;background:url('avatar/${f}.jpg') center/cover;z-index:1"></div>`; }
+let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, boardChoice: 0, inventory: { king: 0 } };
+if(localStorage.getItem('phoenix_profile')) { try { playerProfile = Object.assign(playerProfile, JSON.parse(localStorage.getItem('phoenix_profile'))); if (!playerProfile.inventory) playerProfile.inventory = { king: 0 }; } catch(e){} }
 const AVATAR_FILES = ['az','ay','ax','aw','av','au','at','as','ar','aq','ap','ao','an','am','al','ak','aj','ai','ah','ag','af','ae','ad','ac'];
 let currentRoomCode = null, roomListener = null, roomStarted = false, authMode = 'login', regAvatar = 'az', lastRoomData = null;
 let myPlayerIndex = 0, gameStateListener = null, botTimeout = null, roomUids = null;
-let currentMatchStake = 0;
-let currentMatchId = null;
-let currentGameKind = null;
+let currentMatchStake = 0, currentMatchId = null, currentGameKind = null;
 function saveProfile() { try { localStorage.setItem('phoenix_profile', JSON.stringify(playerProfile)); } catch(e){} }
 function updateCurrencyUI() { try { document.getElementById('menu-gold').textContent = `🪙 ${(playerProfile.gold||0).toLocaleString('fr-FR')}`; document.getElementById('menu-gems').textContent = `💎 ${(playerProfile.gems||0).toLocaleString('fr-FR')}`; } catch(e) {} }
-function applyProfileUI() {
-  const p = document.getElementById('profile-pseudo'); if (p) p.textContent = playerProfile.pseudo;
-  const avEl = document.getElementById('profile-avatar');
-  if (avEl) { avEl.className = 'avatar-frame' + (playerProfile.avatarShape === 'round' ? '' : ' square'); fillAv(avEl, playerProfile.avatarFile, playerProfile.pseudo); }
-  updateCurrencyUI();
-}
+function applyProfileUI() { const p = document.getElementById('profile-pseudo'); if (p) p.textContent = playerProfile.pseudo; const avEl = document.getElementById('profile-avatar'); if (avEl) { avEl.className = 'avatar-frame' + (playerProfile.avatarShape === 'round' ? '' : ' square'); fillAv(avEl, playerProfile.avatarFile, playerProfile.pseudo); } updateCurrencyUI(); }
 function openAvatarModal() { document.getElementById('avatar-modal').classList.add('show'); const grid = document.getElementById('avatar-grid'); grid.innerHTML = ''; AVATAR_FILES.forEach(file => { const el = document.createElement('div'); el.className = `avatar-option ${playerProfile.avatarShape === 'round' ? '' : 'square'}`; fillAv(el, file, file); if (playerProfile.avatarFile === file) el.classList.add('selected'); el.onclick = () => { playerProfile.avatarFile = file; saveProfile(); applyProfileUI(); closeAvatarModal(); if (window.FB && window.FB.auth.currentUser) { window.FB.updateDoc(window.FB.doc(window.FB.db,'users',window.FB.auth.currentUser.uid), {avatarFile: file}).catch(()=>{}); } showToast('Avatar mis à jour','success'); }; grid.appendChild(el); }); }
 function closeAvatarModal() { document.getElementById('avatar-modal').classList.remove('show'); }
 function showAuthTab(mode) { authMode = mode; const reg = mode === 'register'; document.getElementById('auth-tab-login').classList.toggle('active', !reg); document.getElementById('auth-tab-register').classList.toggle('active', reg); document.getElementById('auth-register-fields').classList.toggle('show', reg); document.getElementById('auth-title').textContent = reg ? 'Inscription' : 'Connexion'; document.getElementById('auth-submit').textContent = reg ? 'Créer mon compte' : 'Se connecter'; }
@@ -384,7 +388,7 @@ window.registerUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; playerProfile.gold = 1000; playerProfile.wallet = {coins:1000, initialized:true, loginDate:'', missions:{date:'',played:0,won:0,claimed:[]}, ledger:[{id:'welcome-'+res.user.uid,t:Date.now(),label:'Bonus de bienvenue',delta:1000,balance:1000}]}; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); showToast('🎁 Bienvenue ! 1 000 pièces.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; playerProfile.gold = 1000; playerProfile.inventory = {king:0}; playerProfile.wallet = {coins:1000, initialized:true, loginDate:'', missions:{date:'',played:0,won:0,claimed:[]}, ledger:[{id:'welcome-'+res.user.uid,t:Date.now(),label:'Bonus de bienvenue',delta:1000,balance:1000}]}; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); showToast('🎁 Bienvenue ! 1 000 pièces.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.loginUser = async function() {
@@ -392,13 +396,13 @@ window.loginUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = Object.assign(playerProfile, docSnap.data()); } saveProfile(); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); if(window.applySavedBoard) window.applySavedBoard(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = Object.assign(playerProfile, docSnap.data()); if (!playerProfile.inventory) playerProfile.inventory = { king: 0 }; } saveProfile(); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); if(window.applySavedBoard) window.applySavedBoard(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 const RULES_PAGES = [
   { title: "Objectif & Tour", content: `<div class="rule-section"><h3>🎯 Objectif</h3><p>Être la première équipe à amener ses <strong>8 pions</strong> au centre.</p><p>Équipe A = J1 & J3 · Équipe B = J2 & J4.</p></div><div class="rule-section"><h3>🔄 Tour</h3><p>Choisir une carte, cliquer un pion. <strong>1 carte par tour.</strong></p></div><div class="rule-section"><h3>⏱️ Chrono</h3><p><strong>20s par tour.</strong> À zéro : carte au hasard défaussée.</p></div><div class="rule-section"><h3>🎴 Sortie</h3><p>Roi ou As pour sortir un pion.</p></div>` },
-  { title: "Avancé", content: `<div class="rule-section"><h3>🧱 Murs</h3><p>Deux pions alliés adjacents = mur. Allié adjacent = protégé.</p></div><div class="rule-section"><h3>🎴 Carte 5</h3><p>Déplace n'importe quel pion de 5.</p></div><div class="rule-section"><h3>🎴 Carte 7 — SPÉCIAL</h3><p>Si 3 pions SAFE et le 4ᵉ peut finir avec un 7, le 7 termine le pion.</p></div><div class="rule-section"><h3>🎴 Carte 10</h3><p>+10 ou passer.</p></div><div class="rule-section"><h3>🎴 Carte J</h3><p>Échange deux pions. Sauf sur base.</p></div>` },
-  { title: "Légendaires", content: `<div class="rule-section"><h3>🔥 Phénix</h3><p>Souffle sur 6 cases. Divisible. Téléport au Nid.</p></div><div class="rule-section"><h3>☸️ Mandala</h3><p>Protège l'équipe 2 tours.</p></div><div class="rule-section"><h3>🃏 Joker</h3><p>2 cartes au choix.</p></div>` },
+  { title: "Avancé", content: `<div class="rule-section"><h3>🧱 Murs</h3><p>Deux pions alliés adjacents = mur. Allié adjacent = protégé.</p></div><div class="rule-section"><h3>🚫 Doubler</h3><p>Un pion <strong>ne peut pas doubler un pion de sa propre couleur</strong>.</p></div><div class="rule-section"><h3>🎴 Carte 5</h3><p>Déplace n'importe quel pion de 5.</p></div><div class="rule-section"><h3>🎴 Carte 7 — SPÉCIAL</h3><p>Si 3 pions SAFE et le 4ᵉ peut finir avec un 7, le 7 termine le pion.</p></div><div class="rule-section"><h3>🎴 Carte 10</h3><p>+10 ou passer.</p></div>` },
+  { title: "Légendaires", content: `<div class="rule-section"><h3>🔥 Phénix</h3><p>Souffle sur 6 cases. Divisible. Téléport au Nid.</p></div><div class="rule-section"><h3>☸️ Mandala</h3><p>Protège l'équipe 2 tours.</p></div><div class="rule-section"><h3>🃏 Joker</h3><p>2 cartes au choix.</p></div></div><div class="rule-section"><h3>👑 Roi magique</h3><p>Achat boutique (1000 pièces). Utilisable en partie via le sac 🎒 pour remplacer une carte.</p></div>` },
   { title: "Cartes", content: `<div class="rule-section"><h3>Valeurs</h3><p><strong>A</strong> : Sortir / +1 / +11</p><p><strong>2-3-6-8-9</strong> : avancer</p><p><strong>4</strong> : reculer</p><p><strong>5</strong> : déplacer n'importe quel pion</p><p><strong>7</strong> : diviser</p><p><strong>10</strong> : +10 ou passer</p><p><strong>J</strong> : échanger</p><p><strong>Q</strong> : +12</p><p><strong>K</strong> : Sortir / +13</p></div>` }
 ];
 let currentRulePage = 0;
@@ -407,7 +411,7 @@ function closeRules() { document.getElementById('rules-modal').classList.remove(
 function renderRulePage() { const page = RULES_PAGES[currentRulePage]; document.getElementById('rules-title').textContent = page.title; document.getElementById('rules-body').innerHTML = page.content; document.getElementById('rule-page-indicator').textContent = `${currentRulePage + 1} / ${RULES_PAGES.length}`; document.getElementById('btn-prev-rule').style.visibility = currentRulePage === 0 ? 'hidden' : 'visible'; document.getElementById('btn-next-rule').style.visibility = currentRulePage === RULES_PAGES.length - 1 ? 'hidden' : 'visible'; document.getElementById('rules-body').scrollTop = 0; }
 function prevRulePage() { if (currentRulePage > 0) { currentRulePage--; renderRulePage(); } }
 function nextRulePage() { if (currentRulePage < RULES_PAGES.length - 1) { currentRulePage++; renderRulePage(); } }
-/* ==== GAME ENGINE ==== */
+/* === GAME ENGINE === */
 const BOT_NAMES = ["Nova","Zephyr","Orion","Titan","Echo","Ares","Luna","Vortex","Nyx","Atlas"];
 const getRandom = arr => arr[Math.floor(Math.random() * arr.length)];
 const CARD_IMG_CACHE = {};
@@ -433,7 +437,7 @@ const coordToPct = p => ({ x: (p.x + 1000) / 20, y: (1000 - p.y) / 20 });
 const seatOf = p => (p - viewShift + 4) % 4;
 function trackPct(k) { const n = TRACK.length; return coordToPct(TRACK[(((k - TRACK_STEP * viewShift) % n) + n) % n]); }
 function setView(me) { viewShift = me; for (let i = 0; i < 4; i++) { const av = document.getElementById(`avatar-game-p${i}`); if (!av || !av.parentElement) continue; const box = av.parentElement; box.classList.remove('pos-p0', 'pos-p1', 'pos-p2', 'pos-p3'); box.classList.add('pos-p' + seatOf(i)); } }
-const state = { turn:0, deck:[], discard:[], hands:[[],[],[],[]], pawns:[[],[],[],[]], pendingSelection:null, gameOver:false, mandala:null, phoenixNest:-1, mode:null, asPlayer:0, kPlayer:0, sevenPlayer:0, sevenRemainder:0, phoenixPlayer:0, swapAlly:-1, jokerPlayer:0, cardsPlayed:0, skipNextTurn:false, freshCard:false, previewCardIdx:null, cardPlayedThisTurn:false, botDifficulty:'medium', pendingSkip:null, forcedDiscardFor:null, phoenixPlayed:0, mandalaPlayed:0 };
+const state = { turn:0, deck:[], discard:[], hands:[[],[],[],[]], pawns:[[],[],[],[]], pendingSelection:null, gameOver:false, mandala:null, phoenixNest:-1, mode:null, asPlayer:0, kPlayer:0, sevenPlayer:0, sevenRemainder:0, phoenixPlayer:0, swapAlly:-1, jokerPlayer:0, cardsPlayed:0, skipNextTurn:false, freshCard:false, previewCardIdx:null, cardPlayedThisTurn:false, botDifficulty:'medium', botLevel:10, pendingSkip:null, forcedDiscardFor:null, phoenixPlayed:0, mandalaPlayed:0 };
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let audioCtx = null, muted = false, botPlaying = false, animationsEnabled = true;
 function toggleSound() { muted = !muted; const m = document.getElementById('btn-mute'); if (m) m.textContent = muted ? '🔇' : '🔊'; }
@@ -451,12 +455,20 @@ function stopTimer() { clearInterval(turnTimerInterval); document.querySelectorA
 function updateTurnUI() { document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn')); const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`); if (activeAvatar) activeAvatar.classList.add('active-turn'); const isHost = !currentRoomCode || myPlayerIndex === 0; const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot; const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost) || (!currentRoomCode && PLAYERS[state.turn].isBot); if (!shouldRunTimer) { stopTimer(); return; } if (lastTimerTurn === state.turn) { updateTimerDisplay(); return; } startTimer(); lastTimerTurn = state.turn; }
 function timeoutAction() { if (state.gameOver || timeoutLock) return; const playerId = state.turn; const isHost = !currentRoomCode || myPlayerIndex === 0; if (!isHost) return; if (!currentRoomCode && playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; timeoutLock = true; setTimeout(() => { timeoutLock = false; if (state.gameOver) return; if (state.turn !== playerId) return; applyTimeoutAction(playerId); }, 500); }
 function applyTimeoutAction(playerId) { clearSelection(); clearActions(); clearPathPreviews(); state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; state.forcedDiscardFor = null; state.pendingSkip = null; const hand = state.hands[playerId] || []; const hadPlayed = state.cardPlayedThisTurn; if (hadPlayed) { state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); return; } if (hand.length > 0) { const randIdx = Math.floor(Math.random() * hand.length); const card = hand.splice(randIdx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(playerId); } state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 500); }
-const pools = { rings: [], embers: [] };
-function initPools() { const board = document.getElementById('board'); for (let i = 0; i < 15; i++) { const el = document.createElement('div'); el.className = 'fx-ring'; board.appendChild(el); pools.rings.push(el); } for (let i = 0; i < 40; i++) { const el = document.createElement('div'); el.className = 'ember'; board.appendChild(el); pools.embers.push(el); } }
+/* === POOLS (rings, embers, flames) === */
+const pools = { rings: [], embers: [], flames: [] };
+function initPools() {
+  const board = document.getElementById('board');
+  for (let i = 0; i < 15; i++) { const el = document.createElement('div'); el.className = 'fx-ring'; board.appendChild(el); pools.rings.push(el); }
+  for (let i = 0; i < 40; i++) { const el = document.createElement('div'); el.className = 'ember'; board.appendChild(el); pools.embers.push(el); }
+  for (let i = 0; i < 15; i++) { const el = document.createElement('div'); el.className = 'flame-effect'; el.innerHTML = '<b></b><i class="tongue"></i><i class="tongue"></i><i class="tongue"></i>'; board.appendChild(el); pools.flames.push(el); }
+}
 const getFromPool = arr => { for (let i = 0; i < arr.length; i++) if (arr[i].style.display === 'none' || arr[i].style.display === '') return arr[i]; return null; };
 let fxTimeouts = [];
 function fxRing(pct, color = '#ffb300', size = 14) { const el = getFromPool(pools.rings); if (!el) return; el.style.display = 'block'; el.style.left = pct.x+'%'; el.style.top = pct.y+'%'; el.style.width = size+'%'; el.style.setProperty('--rc', color); el.style.borderColor = color; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'ringOut .85s ease-out forwards'; fxTimeouts.push(setTimeout(() => { el.style.display = 'none'; }, 900)); }
 function fxEmbers(pct, n = 4, essential = false) { if (!animationsEnabled && !essential) return; let used = 0; for (let k = 0; k < pools.embers.length && used < n; k++) { const e = pools.embers[k]; if (e.style.display === 'block') continue; e.style.display = 'block'; e.style.left = (pct.x + (Math.random()*3-1.5))+'%'; e.style.top = (pct.y + (Math.random()*2-1))+'%'; e.style.background = `hsl(${20+Math.random()*40},100%,${55+Math.random()*15}%)`; e.style.setProperty('--dx', (Math.random()*10-5)+'vw'); e.style.setProperty('--dy', -(3+Math.random()*7)+'vw'); e.style.animation = 'none'; void e.offsetWidth; e.style.animation = `emberUp ${0.8+Math.random()*0.9}s ease-out forwards`; fxTimeouts.push(setTimeout(() => { e.style.display = 'none'; }, 1800)); used++; } }
+/* FLAMES — réactivées */
+function fxFlame(pct) { const el = getFromPool(pools.flames); if (!el) return; el.style.display = 'block'; el.style.left = pct.x+'%'; el.style.top = pct.y+'%'; el.style.animation = 'none'; void el.offsetWidth; el.style.animation = 'flameBox .2s ease-in-out infinite alternate'; fxTimeouts.push(setTimeout(() => { el.style.display = 'none'; }, 1600)); }
 function fxMandala() { const c = { x: 50, y: 42 }; fxRing(c, '#00ffa8', 34); setTimeout(() => fxRing(c, '#fff1b8', 24), 170); setTimeout(() => fxRing(c, '#00e5ff', 16), 340); fxEmbers(c, 6, true); }
 function flyHome(el) { if (!el) return; el.style.transition = 'transform .7s cubic-bezier(.5,0,.2,1), filter .3s'; setTimeout(() => { el.style.transition = ''; }, 900); }
 function showKillBanner(killer, victim) { const b = document.getElementById('kill-banner'); const t = document.getElementById('kill-banner-text'); if (!b || !t) return; t.innerHTML = `<b>${escapeHTML(killer)}</b> <span class="sword">⚔️</span> <b style="color:#ff8a80">${escapeHTML(victim)}</b>`; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 2000); }
@@ -481,8 +493,7 @@ function showCardPreviews(playerId, card) {
     for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; moves.push({p, i, s: 5}); }
   } else if (rank === '7') {
     for (let i = 0; i < 4; i++) { const opts = sevenOptions(pId, i); if (opts.length) moves.push({p: pId, i, s: opts[0]}); }
-  } else if (rank === 'J' || rank === 'MANDALA' || rank === 'PHOENIX' || rank === 'JOKER') {
-    return;
+  } else if (rank === 'J' || rank === 'MANDALA' || rank === 'PHOENIX' || rank === 'JOKER') { return;
   } else {
     const steps = rank === '4' ? -4 : (rank === 'Q' ? 12 : parseInt(rank));
     if (!isNaN(steps)) for (let i = 0; i < 4; i++) if (canMove(pId, i, steps)) moves.push({p: pId, i, s: steps});
@@ -502,13 +513,31 @@ function showCardPreviews(playerId, card) {
 function pawnsAt(idx) { const r = []; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const pw = state.pawns[p][i]; if (pw.state === 'TRACK' && pw.trackIdx === idx) r.push({player:p, pawn:i}); } return r; }
 function hasTeamPawnAt(playerId, idx) { const team = PLAYERS[playerId].team; return pawnsAt(idx).some(p => PLAYERS[p.player].team === team); }
 function hasOwnPawnAt(playerId, idx) { return state.pawns[playerId].some(p => p.state === 'TRACK' && p.trackIdx === idx); }
+/* NEW: exclude the moving pawn itself */
+function hasOtherOwnPawnAt(playerId, idx, excludeIdx) { return state.pawns[playerId].some((p, i) => i !== excludeIdx && p.state === 'TRACK' && p.trackIdx === idx); }
 function isPawnOnOwnBaseAt(idx) { return pawnsAt(idx).some(o => PLAYERS[o.player].baseIdx === idx); }
 function isPawnOnOwnBase(p, i) { const pw = state.pawns[p][i]; return pw.state === 'TRACK' && pw.trackIdx === PLAYERS[p].baseIdx; }
 function getWallTeamAt(idx) { for (let team = 0; team < 2; team++) { const hasHere = pawnsAt(idx).some(p => PLAYERS[p.player].team === team); if (!hasHere) continue; const prev = (idx - 1 + TRACK.length) % TRACK.length; const next = (idx + 1) % TRACK.length; if (pawnsAt(prev).some(p => PLAYERS[p.player].team === team) || pawnsAt(next).some(p => PLAYERS[p.player].team === team)) return team; } return -1; }
 function isProtectedByWall(owner, pawnIdx) { const pawn = state.pawns[owner][pawnIdx]; if (pawn.state !== 'TRACK') return false; const team = PLAYERS[owner].team, idx = pawn.trackIdx; const prev = (idx - 1 + TRACK.length) % TRACK.length, next = (idx + 1) % TRACK.length; return pawnsAt(next).some(p => PLAYERS[p.player].team === team) || pawnsAt(prev).some(p => PLAYERS[p.player].team === team); }
 function isProtected(owner, pawnIdx) { const pawn = state.pawns[owner][pawnIdx]; if (pawn.state !== 'TRACK') return false; if (pawn.trackIdx === PLAYERS[owner].baseIdx) return true; if (state.mandala && state.mandala.team === PLAYERS[owner].team) return true; if (isProtectedByWall(owner, pawnIdx)) return true; return false; }
 function shuffleArr(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
-function createDeck() { const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K']; const suits = ['♠','♥','♦','♣']; const d = []; for (const s of suits) for (const r of ranks) d.push({r, s}); d.push({r:'JOKER', s:null}); d.push({r:'PHOENIX', s:null}); d.push({r:'MANDALA', s:null}); return shuffleArr(d); }
+/* === DECK — 6 rois pour P(≥1) ≈ 80% > 78% === */
+function createDeck() {
+  const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+  const suits = ['♠','♥','♦','♣'];
+  const d = [];
+  for (const s of suits) for (const r of ranks) d.push({r, s});
+  // 2 rois supplémentaires (au-delà des 4 standards) pour atteindre 6 rois
+  d.push({r:'K', s:'♠', extra:true});
+  d.push({r:'K', s:'♥', extra:true});
+  // 4 cartes spéciales (2 Jokers + Phénix + Mandala)
+  d.push({r:'JOKER', s:null});
+  d.push({r:'JOKER', s:null, extra:true});
+  d.push({r:'PHOENIX', s:null});
+  d.push({r:'MANDALA', s:null});
+  return shuffleArr(d);
+}
+/* === HAND HELPERS === */
 function dealHands() { for (let i = 0; i < 4; i++) { state.hands[i] = []; for (let j = 0; j < 4; j++) if (state.deck.length > 0) state.hands[i].push(state.deck.pop()); } }
 function drawCard(playerId) { if (state.hands[playerId].length >= 4) return; if (state.deck.length === 0) { if (state.discard.length === 0) return; state.deck = shuffleArr(state.discard.splice(0)); } if (state.deck.length > 0) { state.hands[playerId].push(state.deck.pop()); if (playerId === myPlayerIndex) state.freshCard = true; } }
 let nestTimer = null;
@@ -535,7 +564,37 @@ function renderHand() { const hand = document.getElementById('hand'); hand.inner
 function handleForcedDiscard(cardIdx) { if (state.forcedDiscardFor !== myPlayerIndex) return; const card = state.hands[myPlayerIndex][cardIdx]; if (!card) return; state.forcedDiscardFor = null; state.hands[myPlayerIndex].splice(cardIdx, 1); state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(myPlayerIndex); renderHand(); clearActions(); clearSelection(); clearPathPreviews(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); }
 function discardStuckCard(playerId, cardIdx) { if (state.turn !== playerId || state.gameOver || state.mode || state.pendingSelection) return; if (state.cardPlayedThisTurn) return; state.cardPlayedThisTurn = true; const card = state.hands[playerId][cardIdx]; if (!card) return; state.hands[playerId].splice(cardIdx, 1); state.discard.push(card); showDiscard(card); beep(400, 0.1); drawCard(playerId); renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); }
 function showDiscard(card) { const pile = document.getElementById('discard-pile'); const el = document.createElement('div'); el.className = 'discard-card'; applyCardFace(el, card.r); el.style.transform = `rotate(${Math.random()*20-10}deg)`; pile.innerHTML = ''; pile.appendChild(el); }
-function canMove(playerId, pawnIdx, steps, isFive = false) { const pawn = state.pawns[playerId][pawnIdx]; if (pawn.state === 'HOME') return false; const isEnemyPush = isFive && PLAYERS[playerId].team !== PLAYERS[state.turn].team; if (pawn.state === 'SAFE') { if (steps <= 0) return false; const target = pawn.safeIdx + steps; if (target > 3) return false; for (let s = pawn.safeIdx+1; s <= target; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; } if (steps < 0) { let cur = pawn.trackIdx; for (let i = 0; i < Math.abs(steps); i++) { const next = (cur - 1 + TRACK.length) % TRACK.length; { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; } if (isPawnOnOwnBaseAt(next)) return false; if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false; if (i === Math.abs(steps) - 1) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } } cur = next; } return true; } const entry = PLAYERS[playerId].safeEntry; let cur = pawn.trackIdx; for (let i = 1; i <= steps; i++) { if (cur === entry && !isEnemyPush) { const finalSafeIdx = steps - i; if (finalSafeIdx > 3) return false; for (let s = 0; s <= finalSafeIdx; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; } const next = (cur + 1) % TRACK.length; { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; } if (isPawnOnOwnBaseAt(next)) return false; if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false; if (i === steps) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } } cur = next; } return true; }
+/* === CANMOVE avec exclusion du pion mobile (empêche de doubler un pion de la même couleur) === */
+function canMove(playerId, pawnIdx, steps, isFive = false) {
+  const pawn = state.pawns[playerId][pawnIdx]; if (pawn.state === 'HOME') return false;
+  const isEnemyPush = isFive && PLAYERS[playerId].team !== PLAYERS[state.turn].team;
+  if (pawn.state === 'SAFE') { if (steps <= 0) return false; const target = pawn.safeIdx + steps; if (target > 3) return false; for (let s = pawn.safeIdx+1; s <= target; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; }
+  if (steps < 0) {
+    let cur = pawn.trackIdx;
+    for (let i = 0; i < Math.abs(steps); i++) {
+      const next = (cur - 1 + TRACK.length) % TRACK.length;
+      { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; }
+      if (isPawnOnOwnBaseAt(next)) return false;
+      // exclusion du pion mobile → un pion ne peut pas doubler un pion de la même couleur
+      if (!isEnemyPush && hasOtherOwnPawnAt(playerId, next, pawnIdx)) return false;
+      if (i === Math.abs(steps) - 1) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } }
+      cur = next;
+    }
+    return true;
+  }
+  const entry = PLAYERS[playerId].safeEntry; let cur = pawn.trackIdx;
+  for (let i = 1; i <= steps; i++) {
+    if (cur === entry && !isEnemyPush) { const finalSafeIdx = steps - i; if (finalSafeIdx > 3) return false; for (let s = 0; s <= finalSafeIdx; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; }
+    const next = (cur + 1) % TRACK.length;
+    { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; }
+    if (isPawnOnOwnBaseAt(next)) return false;
+    // exclusion du pion mobile
+    if (!isEnemyPush && hasOtherOwnPawnAt(playerId, next, pawnIdx)) return false;
+    if (i === steps) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } }
+    cur = next;
+  }
+  return true;
+}
 function sevenSecondFeasible(pId, pawnIdx, x) { const dest = computeDestination(pId, pawnIdx, x); if (!dest) return false; const pw = state.pawns[pId][pawnIdx], bak = { s: pw.state, t: pw.trackIdx, f: pw.safeIdx }; if (dest.state === 'SAFE') { pw.state = 'SAFE'; pw.safeIdx = dest.idx; pw.trackIdx = -1; } else { pw.trackIdx = dest.idx; } let ok = false; for (let j = 0; j < 4 && !ok; j++) if (j !== pawnIdx && canMove(pId, j, 7 - x)) ok = true; pw.state = bak.s; pw.trackIdx = bak.t; pw.safeIdx = bak.f; return ok; }
 function sevenOptions(pId, pawnIdx) { const o = []; const otherSafe = state.pawns[pId].filter((p, i) => i !== pawnIdx && p.state === 'SAFE').length; const pawn = state.pawns[pId][pawnIdx]; if (otherSafe === 3 && pawn.state === 'TRACK') { const entry = PLAYERS[pId].safeEntry; let cur = pawn.trackIdx, dist = 0; while (cur !== entry && dist < TRACK.length) { cur = (cur + 1) % TRACK.length; dist++; } const total = dist + 4; if (total >= 1 && total <= 7) o.push(7); } for (let x = 1; x <= 7; x++) { if (o.includes(x)) continue; if (!canMove(pId, pawnIdx, x)) continue; if (x === 7 || sevenSecondFeasible(pId, pawnIdx, x)) o.push(x); } return o; }
 function somePawnCanMove(playerId, steps) { for (let i = 0; i < 4; i++) if (canMove(playerId, i, steps)) return true; return false; }
@@ -586,7 +645,7 @@ async function processCard(playerId, card) {
   if (rank === 'MANDALA') { state.mandalaPlayed = (state.mandalaPlayed || 0) + 1; state.mandala = { team: PLAYERS[playerId].team, owner: playerId, turnsLeft: 8 }; beep(500, 0.3); updatePawnPositions(); fxMandala(); showToast('☸ Mandala activé'); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 450); return; }
   if (rank === 'PHOENIX') { state.phoenixPlayed = (state.phoenixPlayed || 0) + 1; if (!state.pawns[pId].some(p => p.state === 'TRACK')) { setTimeout(endTurn, 500); return; } if (isBot) { const tp = []; for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') tp.push(i); const pick = tp[Math.floor(Math.random() * tp.length)]; if (Math.random() < 0.5 || state.phoenixNest < 0 || pawnsAt(state.phoenixNest).length > 0) await executePhoenixFire(pId, pick); else await executePhoenixTeleport(pId, pick); return endTurn(); } state.mode = 'phoenix_select'; state.phoenixPlayer = pId; for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); return; }
   if (rank === 'JOKER') { const hasTrackPawn = state.pawns[pId].some(p => p.state === 'TRACK'); const canSpawnNow = canSpawn(pId); const noPawnOut = !hasTrackPawn && canSpawnNow; const playablePool = ['A','2','3','4','5','6','7','8','9','10','J','Q','K','PHOENIX','MANDALA'].filter(r => isCardPlayable(playerId, { r })); if (isBot) { if (noPawnOut) return processCard(playerId, {r:'K'}); const pick = playablePool[Math.floor(Math.random() * playablePool.length)]; return processCard(playerId, {r: pick}); } let pick1, pick2; if (noPawnOut) { pick1 = 'K'; pick2 = playablePool[Math.floor(Math.random() * playablePool.length)]; } else { const uniq = [...new Set(playablePool)]; if (uniq.length >= 2) { const sh = shuffleArr(uniq); pick1 = sh[0]; pick2 = sh[1]; } else { pick1 = uniq[0] || 'MANDALA'; pick2 = pick1 === 'MANDALA' ? '10' : 'MANDALA'; } } const btn1 = document.createElement('button'); btn1.style.cssText = `width:12cqw;height:15.5cqw;background:url('${getCardImage(pick1)}') center/contain no-repeat;border:3px solid var(--cyan);border-radius:2cqw;margin:0 1.5cqw;cursor:pointer;`; btn1.onclick = () => { clearActions(); processCard(playerId, {r: pick1}); }; const btn2 = document.createElement('button'); btn2.style.cssText = `width:12cqw;height:15.5cqw;background:url('${getCardImage(pick2)}') center/contain no-repeat;border:3px solid var(--cyan);border-radius:2cqw;margin:0 1.5cqw;cursor:pointer;`; btn2.onclick = () => { clearActions(); processCard(playerId, {r: pick2}); }; document.getElementById('actions').appendChild(btn1); document.getElementById('actions').appendChild(btn2); return; }
-  if (rank === 'A') { const spawnOk = canSpawn(pId); if (isBot) { const sc = state.botDifficulty === 'expert' ? 0.9 : (state.botDifficulty === 'easy' ? 0.35 : 0.5); if (spawnOk && Math.random() < sc) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, state.botDifficulty === 'easy' ? homes[Math.floor(Math.random()*homes.length)] : homes[0]); } else { const m1 = await autoSelectRandom(pId, 1); if (!m1) { if (spawnOk) { const hs = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, hs[0]); } else await autoSelectRandom(pId, 11); } } return endTurn(); } state.mode = 'as_select'; state.asPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || ((pawn.state === 'TRACK' || pawn.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
+  if (rank === 'A') { const spawnOk = canSpawn(pId); if (isBot) { const sc = state.botLevel <= 3 ? 0.9 : (state.botLevel >= 8 ? 0.35 : 0.5); if (spawnOk && Math.random() < sc) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, state.botLevel >= 8 ? homes[Math.floor(Math.random()*homes.length)] : homes[0]); } else { const m1 = await autoSelectRandom(pId, 1); if (!m1) { if (spawnOk) { const hs = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, hs[0]); } else await autoSelectRandom(pId, 11); } } return endTurn(); } state.mode = 'as_select'; state.asPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || ((pawn.state === 'TRACK' || pawn.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
   if (rank === 'K') { const spawnOk = canSpawn(pId); if (isBot) { if (spawnOk) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, homes[0]); } else { await autoSelectRandom(pId, 13); } return endTurn(); } state.mode = 'k_select'; state.kPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || (pawn.state === 'TRACK' && canMove(pId, i, 13))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
   if (rank === '10') { if (isBot) { const moved = await autoSelectRandom(pId, 10); if (!moved) state.pendingSkip = (state.turn + 1) % 4; return endTurn(); } state.mode = 'ten_choice'; if (somePawnCanMove(pId, 10)) addBtn('Avancer de 10', () => { clearActions(); selectPawn(pId, 10); }); addBtn('Passer le tour', () => { clearActions(); clearPathPreviews(); state.pendingSkip = (state.turn + 1) % 4; setTimeout(endTurn, 500); }, 'danger'); return; }
   if (rank === '5') { if (isBot) { let best = null, bs = -1; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; const dest = computeDestination(p, i, 5, true); const cap = dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(p, dest.idx) ? 2 : 1; const s = cap + Math.random() * 0.5; if (s > bs) { bs = s; best = { p, i }; } } if (best) await executeMove(best.p, best.i, 5); return endTurn(); } state.mode = 'move5'; let idx = 0; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); showPathPreview(p, i, 5, true, TRACE_COLORS[idx++ % TRACE_COLORS.length]); } return; }
@@ -596,12 +655,27 @@ async function processCard(playerId, card) {
   if (isBot) { await autoSelectRandom(pId, steps); return endTurn(); }
   selectPawn(pId, steps);
 }
-function playFireFx(startIdx, n = 6) { const origin = trackPct(startIdx); beep(200, 0.4, 'sawtooth'); fxRing(origin, '#ffb300', 18); fxEmbers(origin, 8, true); }
+/* FLAMES + FX broadcast */
+function playFireFx(startIdx, n = 6) { const origin = trackPct(startIdx); beep(200, 0.4, 'sawtooth'); fxRing(origin, '#ffb300', 18); fxEmbers(origin, 8, true); for (let k = 1; k <= n; k++) { const pct = trackPct((startIdx + k) % TRACK.length); setTimeout(() => { fxFlame(pct); fxEmbers(pct, 3, true); }, (k - 1) * 110); } }
 function isProtectedForFire(owner, idx) { const pw = state.pawns[owner][idx]; if (pw.state !== 'TRACK') return false; if (state.mandala && state.mandala.team === PLAYERS[owner].team) return true; return isProtectedByWall(owner, idx); }
-async function executePhoenixFire(playerId, pawnIdx, len = 6) { clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; const zone = []; for (let k = 1; k <= len; k++) zone.push((pawn.trackIdx + k) % TRACK.length); if (currentRoomCode) saveGameState(); playFireFx(pawn.trackIdx, len); const hitPawns = []; for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i}); } await sleep(1800); for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); } updatePawnPositions(); if (currentRoomCode) saveGameState(); }
+async function executePhoenixFire(playerId, pawnIdx, len = 6) {
+  clearPathPreviews();
+  const pawn = state.pawns[playerId][pawnIdx];
+  const zone = []; for (let k = 1; k <= len; k++) zone.push((pawn.trackIdx + k) % TRACK.length);
+  // broadcast FX BEFORE jouer l'anim
+  if (typeof pushFx === 'function') pushFx({ t: 'fire', idx: pawn.trackIdx, n: len });
+  if (currentRoomCode) saveGameState();
+  playFireFx(pawn.trackIdx, len);
+  const hitPawns = [];
+  for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i}); }
+  await sleep(1800);
+  for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); }
+  updatePawnPositions();
+  if (currentRoomCode) saveGameState();
+}
 async function executePhoenixTeleport(playerId, pawnIdx) { if (pawnsAt(state.phoenixNest).length > 0) return; clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; pawn.trackIdx = state.phoenixNest; updatePawnPositions(); if (currentRoomCode) saveGameState(); }
 function showSwapEnemyTargets(playerId) { clearActions(); for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (p === playerId && i === state.swapAlly) continue; if (state.pawns[p][i].state === 'TRACK' && !isPawnOnOwnBase(p, i)) document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); } addBtn('Annuler', () => { undoPlayedCard(); }); }
-async function executeSwap(playerA, pawnA, playerB, pawnB) { clearPathPreviews(); const a = state.pawns[playerA][pawnA], b = state.pawns[playerB][pawnB]; beep(400, 0.15); await sleep(350); const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp; updatePawnPositions(); fxRing(trackPct(a.trackIdx), '#b04fd6', 14); fxRing(trackPct(b.trackIdx), '#b04fd6', 14); beep(800, 0.2); await sleep(550); if (currentRoomCode) saveGameState(); }
+async function executeSwap(playerA, pawnA, playerB, pawnB) { clearPathPreviews(); const a = state.pawns[playerA][pawnA], b = state.pawns[playerB][pawnB]; if (typeof pushFx === 'function') pushFx({ t: 'swap', a: { p: playerA, i: pawnA }, b: { p: playerB, i: pawnB } }); beep(400, 0.15); await sleep(350); const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp; updatePawnPositions(); fxRing(trackPct(a.trackIdx), '#b04fd6', 14); fxRing(trackPct(b.trackIdx), '#b04fd6', 14); beep(800, 0.2); await sleep(550); if (currentRoomCode) saveGameState(); }
 function endTurn() { if (state.gameOver) return; stopTimer(); clearSelection(); clearActions(); state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; if (state.mandala) { state.mandala.turnsLeft--; if (state.mandala.turnsLeft <= 0) state.mandala = null; } state.cardPlayedThisTurn = false; updatePawnPositions(); if (checkWin()) return; state.turn = (state.turn + 1) % 4; if (state.pendingSkip === state.turn) { const skipPid = state.turn; state.pendingSkip = null; state.forcedDiscardFor = skipPid; renderHand(); updateTurnUI(); if (currentRoomCode) saveGameState(); if (PLAYERS[skipPid].isBot && (!currentRoomCode || myPlayerIndex === 0)) { setTimeout(() => { const hand = state.hands[skipPid]; if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(skipPid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); }, 1200); } return; } renderHand(); updateTurnUI(); if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) scheduleBot(1200); if (currentRoomCode) saveGameState(); }
 function checkWin() { const winA = [...state.pawns[0], ...state.pawns[2]].every(p => p.state === 'SAFE'); const winB = [...state.pawns[1], ...state.pawns[3]].every(p => p.state === 'SAFE'); if (winA || winB) { state.gameOver = true; clearInterval(nestTimer); stopTimer(); if (currentRoomCode) saveGameState(); handleEndGame(winA); return true; } return false; }
 async function handleEndGame(winTeamA) {
@@ -682,7 +756,45 @@ function showPromotion(oldDiv, newDiv) {
 }
 function hasUnprotectedEnemyAt(playerId, idx) { const team = PLAYERS[playerId].team; for (let p = 0; p < 4; p++) { if (PLAYERS[p].team === team) continue; for (let i = 0; i < 4; i++) { const pw = state.pawns[p][i]; if (pw.state === 'TRACK' && pw.trackIdx === idx && !isProtected(p, i)) return true; } } return false; }
 function cardCapturesSomething(playerId, card) { const pId = getControlledPlayerId(playerId), rank = card.r; if (rank === '5') { for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; const dest = computeDestination(p, i, 5, true); if (dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(p, dest.idx)) return true; } return false; } const stepsList = []; if (rank === 'A') stepsList.push(1, 11); else if (rank === 'K') stepsList.push(13); else if (rank === '4') stepsList.push(-4); else if (rank === 'Q') stepsList.push(12); else if (['2','3','6','8','9','10'].includes(rank)) stepsList.push(parseInt(rank)); for (const s of stepsList) for (let i = 0; i < 4; i++) { if (!canMove(pId, i, s)) continue; const dest = computeDestination(pId, i, s); if (dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(pId, dest.idx)) return true; } return false; }
-function pickBotCardIndex(playerId) { const hand = state.hands[playerId]; if (hand.length === 0) return 0; const playable = hand.map((c, i) => i).filter(i => isCardPlayable(playerId, hand[i])); if (playable.length === 0) return Math.floor(Math.random() * hand.length); const diff = state.botDifficulty || 'medium'; if (diff === 'easy') return playable[Math.floor(Math.random() * playable.length)]; const pId = getControlledPlayerId(playerId); if (diff === 'medium') { const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i])); return caps.length ? caps[0] : playable[0]; } const caps = playable.filter(i => cardCapturesSomething(playerId, hand[i])); if (caps.length) return caps[0]; const spawns = playable.filter(i => (hand[i].r === 'A' || hand[i].r === 'K') && canSpawn(pId)); if (spawns.length) return spawns[0]; const safe = playable.filter(i => { const card = hand[i]; if (card.r === '4') { const near = state.pawns[pId].some(p => p.state === 'SAFE' && p.safeIdx >= 2); if (near) return false; } return true; }); return (safe.length ? safe : playable)[0]; }
+/* === 10 NIVEAUX DE BOTS === */
+/* Niveau 10 = plus faible, Niveau 1 = plus fort. Le niveau = numéro de division. */
+const BOT_LEVELS = {
+  1:  { name:'Phénix Ultime Imbattable', noise: 0.02, aggressive: 1.0, teamAware: true,  anticipate: true  },
+  2:  { name:'Phénix Noir',              noise: 0.08, aggressive: 0.9, teamAware: true,  anticipate: true  },
+  3:  { name:'Maître des flammes',       noise: 0.15, aggressive: 0.8, teamAware: true,  anticipate: false },
+  4:  { name:'Implacable',               noise: 0.22, aggressive: 0.7, teamAware: false, anticipate: false },
+  5:  { name:'Expert',                   noise: 0.30, aggressive: 0.6, teamAware: false, anticipate: false },
+  6:  { name:'Redoutable',               noise: 0.40, aggressive: 0.5, teamAware: false, anticipate: false },
+  7:  { name:'Stratège',                 noise: 0.50, aggressive: 0.4, teamAware: false, anticipate: false },
+  8:  { name:'Rusé',                     noise: 0.65, aggressive: 0.3, teamAware: false, anticipate: false },
+  9:  { name:'Novice',                   noise: 0.80, aggressive: 0.2, teamAware: false, anticipate: false },
+  10: { name:'Débutant',                 noise: 1.00, aggressive: 0.1, teamAware: false, anticipate: false }
+};
+function scoreBotCard(playerId, cardIdx) {
+  const card = state.hands[playerId][cardIdx];
+  if (!card) return 0;
+  const pId = getControlledPlayerId(playerId);
+  let score = 0;
+  if (cardCapturesSomething(playerId, card)) score += 50;
+  if ((card.r === 'A' || card.r === 'K') && canSpawn(pId)) score += 30;
+  if (card.r === 'PHOENIX') { const t = state.pawns[pId].filter(p => p.state === 'TRACK').length; score += t * 4; }
+  if (card.r === 'MANDALA') { const t = state.pawns[pId].filter(p => p.state === 'TRACK').length; score += t * 3; }
+  if (card.r === '7') { for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).includes(7)) { score += 80; break; } }
+  if (card.r === '4') { if (state.pawns[pId].some(p => p.state === 'SAFE' && p.safeIdx >= 2)) score -= 20; }
+  return score;
+}
+function pickBotCardIndex(playerId) {
+  const hand = state.hands[playerId]; if (hand.length === 0) return 0;
+  const playable = hand.map((c, i) => i).filter(i => isCardPlayable(playerId, hand[i]));
+  if (playable.length === 0) return Math.floor(Math.random() * hand.length);
+  const lvl = state.botLevel || 10;
+  const cfg = BOT_LEVELS[lvl] || BOT_LEVELS[10];
+  if (lvl >= 10) return playable[Math.floor(Math.random() * playable.length)];
+  const scored = playable.map(i => ({ i, score: scoreBotCard(playerId, i) }));
+  scored.sort((a,b) => b.score - a.score);
+  if (Math.random() < cfg.noise * 0.7) return playable[Math.floor(Math.random() * playable.length)];
+  return scored[0].i;
+}
 async function botPlay() { if (botPlaying || state.gameOver || !PLAYERS[state.turn].isBot) return; botPlaying = true; try { const playerId = state.turn, hand = state.hands[playerId]; if (state.forcedDiscardFor === playerId) { if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(playerId); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); return; } if (hand.length === 0) { endTurn(); return; } const idx = pickBotCardIndex(playerId); await playCard(playerId, idx); } catch(e) { console.error(e); endTurn(); } finally { botPlaying = false; } }
 function scheduleBot(ms) { clearTimeout(botTimeout); botTimeout = setTimeout(() => { if (!state.gameOver && PLAYERS[state.turn].isBot) botPlay(); }, ms); }
 const BOARD_FILES = ['inerface.jpg', 'inerface1.jpg', 'inerface2.jpg', 'inerface3.jpg', 'inerface4.jpg', 'inerface5.jpg'];
@@ -696,7 +808,7 @@ function initGame(isHost = true) {
   clearInterval(nestTimer); clearInterval(turnTimerInterval);
   fxTimeouts.forEach(clearTimeout); fxTimeouts = [];
   clearPathPreviews();
-  pools.rings.forEach(e => e.style.display = 'none'); pools.embers.forEach(e => e.style.display = 'none');
+  pools.rings.forEach(e => e.style.display = 'none'); pools.embers.forEach(e => e.style.display = 'none'); pools.flames.forEach(e => e.style.display = 'none');
   state.phoenixPlayed = 0; state.mandalaPlayed = 0;
   window.__endGameHandled = false;
   state.pawns = [[],[],[],[]];
@@ -716,16 +828,20 @@ function initGame(isHost = true) {
   renderBoard(); renderHand(); updateTurnUI();
 }
 function startGame(isMulti = false) { applyBoard(); if (!isMulti) myPlayerIndex = 0; setView(myPlayerIndex); lastTimerTurn = -2; timeoutLock = false; if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('game-screen').classList.add('active'); if (isMulti) { resetSync(); startWatchdog(); if (myPlayerIndex === 0) { initGame(true); saveGameState(); } else { initGame(false); } listenToGameState(); } else { initGame(true); } }
+/* === SYNC === */
 let syncSeq = 0, lastAppliedSeq = 0, hasApplied = false, lastRaw = '', pendingAnim = [], animHistory = [], saveTimer = null, applyChain = Promise.resolve(), lastDiscardKey = '';
+let fxHistory = [], seenFx = new Set();
+function pushFx(ev) { ev.id = Date.now().toString(36) + Math.random().toString(36).slice(2, 6); fxHistory = fxHistory.concat([ev]).slice(-20); seenFx.add(ev.id); return ev; }
 let myLastWriteSeq = 0;
 const REMOTE_STEP = 110;
 let lastActivity = Date.now(), syncWatch = null;
 function stopWatchdog() { clearInterval(syncWatch); syncWatch = null; }
 function startWatchdog() { stopWatchdog(); lastActivity = Date.now(); syncWatch = setInterval(() => { if (!currentRoomCode || state.gameOver || myPlayerIndex !== 0) return; const idle = Date.now() - lastActivity, pid = state.turn; if (PLAYERS[pid].isBot) { if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); } } else if (pid !== myPlayerIndex && idle > 45000) { lastActivity = Date.now(); const hand = state.hands[pid]; if (hand.length) { const card = hand.splice(Math.floor(Math.random() * hand.length), 1)[0]; state.discard.push(card); showDiscard(card); drawCard(pid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); endTurn(); } }, 2000); }
-function resetSync() { lastActivity = Date.now(); syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = ''; pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = ''; myLastWriteSeq = 0; clearTimeout(saveTimer); saveTimer = null; }
+function resetSync() { lastActivity = Date.now(); syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = ''; pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = ''; myLastWriteSeq = 0; fxHistory = []; seenFx = new Set(); clearTimeout(saveTimer); saveTimer = null; }
 function saveGameState() { if (!currentRoomCode || saveTimer) return; saveTimer = setTimeout(flushGameState, 0); }
-function flushGameState() { clearTimeout(saveTimer); saveTimer = null; const code = currentRoomCode; if (!code) return; try { syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1; lastAppliedSeq = syncSeq; myLastWriteSeq = syncSeq; const ready = pendingAnim.filter(a => a.done); pendingAnim = pendingAnim.filter(a => !a.done); ready.forEach(a => { a.q = syncSeq; delete a.done; }); animHistory = animHistory.concat(ready).slice(-12); const syncData = { turn: state.turn, deck: state.deck, discard: state.discard, hands: state.hands, pawns: state.pawns, mandala: state.mandala, phoenixNest: state.phoenixNest, gameOver: state.gameOver, cardPlayedThisTurn: state.cardPlayedThisTurn, pendingSkip: state.pendingSkip, forcedDiscardFor: state.forcedDiscardFor, players: PLAYERS.map(p => ({ name: p.name, avatarFile: p.avatarFile, isBot: p.isBot })), seq: syncSeq, anim: animHistory, lastActionPlayer: myPlayerIndex, uids: roomUids }; lastActivity = Date.now(); window.FB.updateDoc(window.FB.doc(window.FB.db, 'rooms', code), { gameState: JSON.stringify(syncData) }).catch(e => console.error(e)); } catch(e) { console.error(e); } }
+function flushGameState() { clearTimeout(saveTimer); saveTimer = null; const code = currentRoomCode; if (!code) return; try { syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1; lastAppliedSeq = syncSeq; myLastWriteSeq = syncSeq; const ready = pendingAnim.filter(a => a.done); pendingAnim = pendingAnim.filter(a => !a.done); ready.forEach(a => { a.q = syncSeq; delete a.done; }); animHistory = animHistory.concat(ready).slice(-12); const syncData = { turn: state.turn, deck: state.deck, discard: state.discard, hands: state.hands, pawns: state.pawns, mandala: state.mandala, phoenixNest: state.phoenixNest, gameOver: state.gameOver, cardPlayedThisTurn: state.cardPlayedThisTurn, pendingSkip: state.pendingSkip, forcedDiscardFor: state.forcedDiscardFor, players: PLAYERS.map(p => ({ name: p.name, avatarFile: p.avatarFile, isBot: p.isBot })), seq: syncSeq, anim: animHistory, fx: fxHistory, lastActionPlayer: myPlayerIndex, uids: roomUids }; lastActivity = Date.now(); window.FB.updateDoc(window.FB.doc(window.FB.db, 'rooms', code), { gameState: JSON.stringify(syncData) }).catch(e => console.error(e)); } catch(e) { console.error(e); } }
 async function replayPath(a) { const pw = state.pawns[a.p] && state.pawns[a.p][a.i]; if (!pw) return; for (let k = 0; k < a.path.length; k++) { const st = a.path[k]; pw.state = st.s; pw.trackIdx = st.t; pw.safeIdx = st.f; updateSinglePawn(a.p, a.i); beep(400 + k * 20, 0.05); await sleep(REMOTE_STEP); } }
+async function playRemoteFx(f) { if (f.t === 'fire') { playFireFx(f.idx, f.n || 6); await sleep(1800); } else if (f.t === 'swap') { const ea = document.getElementById(`pawn-${f.a.p}-${f.a.i}`), eb = document.getElementById(`pawn-${f.b.p}-${f.b.i}`); if (ea) ea.classList.add('swapping'); if (eb) eb.classList.add('swapping'); beep(400, 0.15); await sleep(350); setTimeout(() => { if (ea) ea.classList.remove('swapping'); if (eb) eb.classList.remove('swapping'); }, 1200); } }
 function leaveGameRemote() { state.gameOver = true; stopWatchdog(); if (gameStateListener) { gameStateListener(); gameStateListener = null; } currentRoomCode = null; roomStarted = false; clearInterval(nestTimer); stopTimer(); clearTimeout(botTimeout); showToast("Un joueur a quitté", 'error'); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('main-menu').classList.add('active'); }
 async function applyRemoteState(parsed, raw, closed) {
   if (raw === lastRaw) return;
@@ -736,6 +852,7 @@ async function applyRemoteState(parsed, raw, closed) {
   try { const u = window.FB.auth.currentUser; if (parsed.uids && u) { const idx = parsed.uids.indexOf(u.uid); if (idx >= 0 && idx !== myPlayerIndex) { myPlayerIndex = idx; setView(idx); renderBoard(); } } } catch(e) {}
   hasApplied = true; lastRaw = raw; lastAppliedSeq = Math.max(lastAppliedSeq, seq);
   if (!first && !own && !document.hidden && Array.isArray(parsed.anim)) { const todo = parsed.anim.filter(a => a.q > prevSeq && a.path && a.path.length); for (const a of todo) await replayPath(a); }
+  if (Array.isArray(parsed.fx)) { const fresh = parsed.fx.filter(f => f && f.id && !seenFx.has(f.id)); fresh.forEach(f => seenFx.add(f.id)); if (!first && !own && !document.hidden) for (const f of fresh) { try { await playRemoteFx(f); } catch(e) {} } }
   const wasOver = state.gameOver;
   state.turn = parsed.turn; state.deck = parsed.deck; state.discard = parsed.discard; state.hands = parsed.hands;
   const prevNest = state.phoenixNest;
@@ -754,16 +871,16 @@ function getWinnerTeam(pawns) { const A = [...pawns[0], ...pawns[2]].every(p => 
 function listenToGameState() { if (gameStateListener) gameStateListener(); gameStateListener = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'rooms', currentRoomCode), (docSnap) => { if (!docSnap.exists()) return; const data = docSnap.data(); if (!data.gameState) return; let parsed; try { parsed = JSON.parse(data.gameState); } catch(e) { return; } const closed = data.status === 'closed', raw = data.gameState; applyChain = applyChain.then(() => applyRemoteState(parsed, raw, closed)).catch(e => console.error(e)); }, (err) => { console.error(err); }); }
 window.openBotDifficulty = function() { buildBoardPickers(); document.getElementById('bot-difficulty-modal').classList.add('show'); };
 window.closeBotDifficulty = function() { document.getElementById('bot-difficulty-modal').classList.remove('show'); };
-/* StartGameWithBots : utilise la difficulté fournie OU celle de la division */
-window.startGameWithBots = async function(diff) {
-  const div = divOf(LG.L.xp).l;
-  const finalDiff = diff || diffOf(div);
-  state.botDifficulty = finalDiff;
+window.startGameWithBots = async function(level) {
+  const lvl = (typeof level === 'number' && level >= 1 && level <= 10) ? level : 10;
+  state.botLevel = lvl;
+  state.botDifficulty = lvl >= 8 ? 'easy' : (lvl >= 4 ? 'medium' : 'expert');
   closeBotDifficulty();
   currentRoomCode = null; roomStarted = false;
-  const stake = getStakeForDivision(div);
+  const div = divOf(LG.L.xp).l;
+  const stake = (typeof level === 'number' && level >= 1 && level <= 10) ? 0 : getStakeForDivision(div); // free mode via modal, or league pays
   const id = 'match-solo-' + Date.now();
-  try { await walletReserveMatch(stake, id); } catch(e) { showToast(e.message || 'Impossible de réserver la mise', 'error'); return; }
+  if (stake) { try { await walletReserveMatch(stake, id); } catch(e) { showToast(e.message || 'Impossible de réserver la mise', 'error'); return; } }
   currentMatchStake = stake;
   currentMatchId = id;
   currentGameKind = 'solo';
@@ -824,6 +941,8 @@ async function launchFromRoom() {
   const div = divOf(LG.L.xp).l;
   const stake = lastRoomData.kind === 'mm' || lastRoomData.kind === 'coop' ? getStakeForDivision(div) : Number(lastRoomData.stake !== undefined ? lastRoomData.stake : 0);
   currentGameKind = lastRoomData.kind || 'priv';
+  // level = div pour les bots
+  state.botLevel = div;
   if (stake > 0) {
     const id = 'match-' + currentRoomCode + '-' + Date.now();
     try { await walletReserveMatch(stake, id); currentMatchId = id; currentMatchStake = stake; }
@@ -854,19 +973,125 @@ const diffOf = l => l >= 8 ? 'easy' : l >= 4 ? 'medium' : 'expert';
 const diffLabel = d => d === 'easy' ? 'Nul' : d === 'medium' ? 'Moyen' : 'Expert';
 const DAILY = [{k:'win',n:1,t:'Gagner 1 partie',xp:100,g:5},{k:'mandala',n:2,t:'Activer 2 Mandalas',xp:120,g:5},{k:'phoenix',n:3,t:'Jouer 3 cartes Phénix',xp:150,g:8}];
 const WEEKLY = [{k:'streak',n:3,t:'Gagner 3 parties consécutives',xp:500,g:25},{k:'play',n:10,t:'Jouer 10 parties',xp:350,g:15},{k:'win',n:5,t:'Gagner 5 parties',xp:450,g:20}];
-const TROPHIES = [
-  {i:'🥇',n:'Première victoire',d:'Gagne 1 partie',v:() => (LG.L.st?.all?.w)||0,m:1},{i:'🔥',n:'En feu',d:'Série de 5',v:() => LG.L.best||0,m:5},
-  {i:'⚔️',n:'Vétéran',d:'Joue 50 parties',v:() => (LG.L.st?.all?.p)||0,m:50},{i:'🏆',n:'Champion',d:'Gagne 25 parties',v:() => (LG.L.st?.all?.w)||0,m:25},
-  {i:'💥',n:'Chasseur',d:'Mange 50 pions',v:() => LG.L.ate||0,m:50},{i:'🌐',n:'Roi multi',d:'10 parties multi',v:() => (LG.L.st?.mm?.p)||0,m:10},
-  {i:'🤖',n:'Briseur bots',d:'Gagne 20 bots',v:() => (LG.L.st?.bots?.w)||0,m:20},{i:'🦅',n:'Phénix Légendaire',d:'Division 1',v:() => LG.L.xp||0,m:90000}
-];
-const LG = {
-  L: {xp:0, ws:0, ls:0, best:0, dp:{}, wp:{}, hi:0, st:{}, ate:0, eaten:0, bx:0, sh:0, dl:'', dd:0, t:0, tr:{}},
-  S: {friends:[], inbox:[], rd:0}, FS: {}, FL: {},
-  T: 'home', ST: 'stats', activeLeagueTab: 'initiation',
-  rbTabPions: 'day', rbTabWins: 'day', selectedCoinStake: 100,
-  initSocial: false, open: false
-};
+/* === 100+ TROPHÉES === */
+const TROPHIES = (() => {
+  const base = [
+    {i:'🥇',n:'Première victoire',d:'Gagne 1 partie',v:() => (LG.L.st?.all?.w)||0,m:1},
+    {i:'🔥',n:'En feu',d:'Série de 5',v:() => LG.L.best||0,m:5},
+    {i:'⚔️',n:'Vétéran',d:'Joue 50 parties',v:() => (LG.L.st?.all?.p)||0,m:50},
+    {i:'🏆',n:'Champion',d:'Gagne 25 parties',v:() => (LG.L.st?.all?.w)||0,m:25},
+    {i:'💥',n:'Chasseur',d:'Mange 50 pions',v:() => LG.L.ate||0,m:50},
+    {i:'🌐',n:'Roi multi',d:'10 parties multi',v:() => (LG.L.st?.mm?.p)||0,m:10},
+    {i:'🤖',n:'Briseur bots',d:'Gagne 20 bots',v:() => (LG.L.st?.bots?.w)||0,m:20},
+    {i:'🦅',n:'Phénix Légendaire',d:'Division 1',v:() => LG.L.xp||0,m:90000}
+  ];
+  const more = [];
+  // Multi
+  for (const n of [3,5,10,25,50,75,100,200]) more.push({i:'🌐',n:`Multi ×${n}`,d:`Gagne ${n} parties multi`,v:() => (LG.L.st?.mm?.w)||0,m:n});
+  // Solo
+  for (const n of [3,5,10,25,50,75,100,200]) more.push({i:'🤖',n:`Solo ×${n}`,d:`Gagne ${n} parties solo`,v:() => (LG.L.st?.bots?.w)||0,m:n});
+  // Co-op
+  for (const n of [1,5,10,25,50]) more.push({i:'🤝',n:`Co-op ×${n}`,d:`Gagne ${n} parties co-op`,v:() => (LG.L.st?.coop?.w)||0,m:n});
+  // Pions
+  for (const n of [10,25,100,250,500,1000]) more.push({i:'💥',n:`Boucher ×${n}`,d:`Mange ${n} pions`,v:() => LG.L.ate||0,m:n});
+  // Séries
+  for (const n of [3,7,10,15,20,30]) more.push({i:'🔥',n:`Série ×${n}`,d:`Série de ${n} victoires`,v:() => LG.L.best||0,m:n});
+  // Phénix
+  for (const n of [5,10,25,50,100,250]) more.push({i:'🔥',n:`Phénix ×${n}`,d:`Joue ${n} cartes Phénix`,v:() => LG.L.dp?.phoenix||0,m:n});
+  // Mandala
+  for (const n of [5,10,25,50,100,250]) more.push({i:'☸️',n:`Mandala ×${n}`,d:`Active ${n} Mandalas`,v:() => LG.L.dp?.mandala||0,m:n});
+  // Fun
+  more.push({i:'🤡',n:'Le Bouffon',d:'Perds 3 parties d\'affilée',v:() => (LG.L.ls||0),m:3});
+  more.push({i:'🧊',n:'Glacé',d:'Perds 5 parties d\'affilée',v:() => (LG.L.ls||0),m:5});
+  more.push({i:'🎪',n:'Le Pitre',d:'Fais exprès de perdre 10 fois',v:() => (LG.L.ls||0),m:10});
+  more.push({i:'🐌',n:'Escargot',d:'Joue 100 parties',v:() => (LG.L.st?.all?.p)||0,m:100});
+  more.push({i:'🚀',n:'Fusée',d:'Gagne une partie en moins de 5 tours',v:() => 0,m:1});
+  more.push({i:'🎩',n:'Magicien',d:'Joue 50 Jokers',v:() => 0,m:50});
+  more.push({i:'🏹',n:'Sniper',d:'Capture un pion avec un As +11',v:() => 0,m:1});
+  more.push({i:'🌪️',n:'Ouragan',d:'Capture 4 pions en une partie',v:() => 0,m:1});
+  more.push({i:'🎯',n:'Perfect',d:'Gagne 4-0',v:() => 0,m:1});
+  more.push({i:'🧠',n:'Cerveau',d:'Bats le bot Légende',v:() => 0,m:1});
+  more.push({i:'👑',n:'Roi des Rois',d:'Atteins Division 1',v:() => LG.L.xp||0,m:90000});
+  more.push({i:'💎',n:'Diamant',d:'Atteins Division 3',v:() => LG.L.xp||0,m:45000});
+  more.push({i:'🌟',n:'Étoile',d:'Atteins Division 5',v:() => LG.L.xp||0,m:20000});
+  more.push({i:'🍀',n:'Chanceux',d:'Gagne 10 parties d\'affilée',v:() => LG.L.best||0,m:10});
+  more.push({i:'🎭',n:'Acteur',d:'Joue 25 parties multi',v:() => (LG.L.st?.mm?.p)||0,m:25});
+  more.push({i:'🌙',n:'Nocturne',d:'Joue entre minuit et 4h',v:() => 0,m:1});
+  more.push({i:'☀️',n:'Matinal',d:'Joue entre 5h et 8h',v:() => 0,m:1});
+  more.push({i:'🍕',n:'Pizza',d:'Joue pendant l\'heure du repas',v:() => 0,m:1});
+  more.push({i:'🎮',n:'Hardcore Gamer',d:'Joue 500 parties',v:() => (LG.L.st?.all?.p)||0,m:500});
+  more.push({i:'🛡️',n:'Bouclier',d:'Utilise un bouclier de série',v:() => LG.L.sh||0,m:1});
+  more.push({i:'⚡',n:'Éclair',d:'Utilise un boost XP',v:() => LG.L.bx||0,m:1});
+  more.push({i:'👑',n:'Roi Magique',d:'Achète 1 Roi Magique',v:() => (playerProfile.inventory?.king||0),m:1});
+  more.push({i:'🗡️',n:'Assassin',d:'Capture 100 pions',v:() => LG.L.ate||0,m:100});
+  more.push({i:'🏰',n:'Forteresse',d:'Termine 20 pions SAFE',v:() => 0,m:20});
+  more.push({i:'🎲',n:'Dés Pipés',d:'Gagne 3 parties d\'affilée',v:() => LG.L.best||0,m:3});
+  more.push({i:'🧙',n:'Sorcier',d:'Utilise 100 cartes',v:() => 0,m:100});
+  more.push({i:'🎪',n:'Cirque',d:'Joue 3 Jokers en une partie',v:() => 0,m:1});
+  more.push({i:'🦁',n:'Lion',d:'Gagne 100 parties',v:() => (LG.L.st?.all?.w)||0,m:100});
+  more.push({i:'🐯',n:'Tigre',d:'Gagne 50 parties',v:() => (LG.L.st?.all?.w)||0,m:50});
+  more.push({i:'🦊',n:'Renard',d:'Gagne 15 parties',v:() => (LG.L.st?.all?.w)||0,m:15});
+  more.push({i:'🐺',n:'Loup',d:'Gagne 10 parties d\'affilée',v:() => LG.L.best||0,m:10});
+  more.push({i:'🐻',n:'Ours',d:'Joue 200 parties',v:() => (LG.L.st?.all?.p)||0,m:200});
+  more.push({i:'🐼',n:'Panda',d:'Joue 20 parties solo',v:() => (LG.L.st?.bots?.p)||0,m:20});
+  more.push({i:'🐨',n:'Koala',d:'Joue 30 parties',v:() => (LG.L.st?.all?.p)||0,m:30});
+  more.push({i:'🦄',n:'Licorne',d:'Gagne 5 parties d\'affilée',v:() => LG.L.best||0,m:5});
+  more.push({i:'🐲',n:'Dragon',d:'Atteins Division 2',v:() => LG.L.xp||0,m:65000});
+  more.push({i:'🦅',n:'Aigle',d:'Atteins Division 4',v:() => LG.L.xp||0,m:30000});
+  more.push({i:'🦉',n:'Hibou',d:'Atteins Division 6',v:() => LG.L.xp||0,m:12000});
+  more.push({i:'🦇',n:'Chauve-Souris',d:'Atteins Division 8',v:() => LG.L.xp||0,m:3000});
+  more.push({i:'🐢',n:'Tortue',d:'Perds 1 partie (ça arrive)',v:() => (LG.L.st?.all?.l)||0,m:1});
+  more.push({i:'🐙',n:'Poulpe',d:'Joue 8 parties en une journée',v:() => (LG.L.dp?.play||0),m:8});
+  more.push({i:'🦑',n:'Calmar',d:'Joue 15 parties en une journée',v:() => (LG.L.dp?.play||0),m:15});
+  more.push({i:'🦞',n:'Homard',d:'Gagne 10 parties en une journée',v:() => (LG.L.dp?.win||0),m:10});
+  more.push({i:'🦀',n:'Crabe',d:'Perds 5 parties en une journée',v:() => 0,m:5});
+  more.push({i:'🐡',n:'Poisson',d:'Joue 100 cartes Phénix',v:() => LG.L.dp?.phoenix||0,m:100});
+  more.push({i:'🐠',n:'Poisson-Clown',d:'Joue 10 cartes Phénix en un jour',v:() => 0,m:10});
+  more.push({i:'🐟',n:'Petit Poisson',d:'Joue 5 cartes Phénix',v:() => LG.L.dp?.phoenix||0,m:5});
+  more.push({i:'🐬',n:'Dauphin',d:'Gagne 5 parties avec un Mandala actif',v:() => 0,m:5});
+  more.push({i:'🐳',n:'Baleine',d:'Gagne 50 parties avec Phénix joué',v:() => 0,m:50});
+  more.push({i:'🦈',n:'Requin',d:'Capture 10 pions en une partie',v:() => 0,m:1});
+  more.push({i:'🐊',n:'Crocodile',d:'Enchaîne 3 victoires multi',v:() => 0,m:3});
+  more.push({i:'🐍',n:'Serpent',d:'Joue 20 cartes en un jour',v:() => 0,m:20});
+  more.push({i:'🦎',n:'Lézard',d:'Joue 100 cartes en un jour',v:() => 0,m:100});
+  more.push({i:'🐸',n:'Grenouille',d:'Perds 3 parties avec 1 pion SAFE',v:() => 0,m:3});
+  more.push({i:'🐵',n:'Singe',d:'Fais 5 erreurs (défaites rapides)',v:() => 0,m:5});
+  more.push({i:'🦍',n:'Gorille',d:'Joue 3 parties en 1 heure',v:() => 0,m:3});
+  more.push({i:'🐘',n:'Éléphant',d:'Mémoire d\'éléphant : gagne 20 parties',v:() => (LG.L.st?.all?.w)||0,m:20});
+  more.push({i:'🦏',n:'Rhinocéros',d:'Capture 5 pions en une partie',v:() => 0,m:1});
+  more.push({i:'🐪',n:'Chameau',d:'Joue 2 parties dos à dos',v:() => 0,m:2});
+  more.push({i:'🐫',n:'Dromadaire',d:'Joue 5 parties dos à dos',v:() => 0,m:5});
+  more.push({i:'🦒',n:'Girafe',d:'Gagne avec 5 pions SAFE',v:() => 0,m:1});
+  more.push({i:'🦓',n:'Zèbre',d:'Gagne une partie avec un Joker',v:() => 0,m:1});
+  more.push({i:'🐎',n:'Cheval',d:'Joue 30 parties solo',v:() => (LG.L.st?.bots?.p)||0,m:30});
+  more.push({i:'🐖',n:'Cochon',d:'Joue 10 parties en perdant 10',v:() => 0,m:10});
+  more.push({i:'🐑',n:'Mouton',d:'Gagne 10 parties avec l\'équipe A',v:() => 0,m:10});
+  more.push({i:'🐐',n:'Chèvre',d:'Gagne 10 parties avec l\'équipe B',v:() => 0,m:10});
+  more.push({i:'🐕',n:'Chien',d:'Gagne 25 parties solo',v:() => (LG.L.st?.bots?.w)||0,m:25});
+  more.push({i:'🐈',n:'Chat',d:'Joue 50 parties solo',v:() => (LG.L.st?.bots?.p)||0,m:50});
+  more.push({i:'🐓',n:'Coq',d:'Gagne à 4h du matin',v:() => 0,m:1});
+  more.push({i:'🦃',n:'Dinde',d:'Gagne le jour de Noël',v:() => 0,m:1});
+  more.push({i:'🦚',n:'Paon',d:'Change 5 fois d\'avatar',v:() => 0,m:5});
+  more.push({i:'🦜',n:'Perroquet',d:'Copie un ami (rejoint un salon)',v:() => 0,m:1});
+  more.push({i:'🦢',n:'Cygne',d:'Gagne 3 parties co-op',v:() => (LG.L.st?.coop?.w)||0,m:3});
+  more.push({i:'🕊️',n:'Colombe',d:'Joue 5 parties co-op',v:() => (LG.L.st?.coop?.p)||0,m:5});
+  more.push({i:'🐇',n:'Lapin',d:'Joue 3 parties en 30 minutes',v:() => 0,m:3});
+  more.push({i:'🦔',n:'Hérisson',d:'Joue 100 parties au total',v:() => (LG.L.st?.all?.p)||0,m:100});
+  more.push({i:'🦦',n:'Loutre',d:'Joue dans 3 modes différents',v:() => 0,m:3});
+  more.push({i:'🦥',n:'Paresseux',d:'Joue 1 partie par jour pendant 7 jours',v:() => 0,m:7});
+  more.push({i:'🐿️',n:'Écureuil',d:'Amasse 5000 pièces',v:() => playerProfile.gold||0,m:5000});
+  more.push({i:'🦔',n:'Hérisson Doré',d:'Amasse 10000 pièces',v:() => playerProfile.gold||0,m:10000});
+  more.push({i:'🦇',n:'Chauve-Souris Noire',d:'Amasse 100 gemmes',v:() => playerProfile.gems||0,m:100});
+  more.push({i:'🕷️',n:'Araignée',d:'Utilise 10 Rois Magiques',v:() => (playerProfile.inventory?.king||0),m:10});
+  more.push({i:'🦂',n:'Scorpion',d:'Termine 3 parties sans perdre un pion',v:() => 0,m:3});
+  more.push({i:'🐛',n:'Chenille',d:'Joue 7 jours d\'affilée',v:() => 0,m:7});
+  more.push({i:'🦋',n:'Papillon',d:'Joue 30 jours d\'affilée',v:() => 0,m:30});
+  more.push({i:'🐜',n:'Fourmi',d:'Joue 100 parties solo',v:() => (LG.L.st?.bots?.p)||0,m:100});
+  more.push({i:'🐝',n:'Abeille',d:'Gagne 50 parties solo',v:() => (LG.L.st?.bots?.w)||0,m:50});
+  more.push({i:'🎯',n:'Tireur d\'Élite',d:'Capture 500 pions',v:() => LG.L.ate||0,m:500});
+  return [...base, ...more];
+})();
+const LG = { L: {xp:0, ws:0, ls:0, best:0, dp:{}, wp:{}, hi:0, st:{}, ate:0, eaten:0, bx:0, sh:0, dl:'', dd:0, t:0, tr:{}}, S: {friends:[], inbox:[], rd:0}, FS: {}, FL: {}, T: 'home', ST: 'stats', activeLeagueTab: 'initiation', rbTabPions: 'day', rbTabWins: 'day', selectedCoinStake: 100, initSocial: false, open: false };
 function me() { return window.FB && window.FB.auth.currentUser; }
 function uref() { return window.FB.doc(window.FB.db, 'users', me().uid); }
 function sref(id) { return window.FB.doc(window.FB.db, 'social', id); }
@@ -879,9 +1104,9 @@ function balNow() { return Number((playerProfile.wallet && playerProfile.wallet.
 function rollLG() { if (!LG.L.dp || LG.L.dp.day !== dayKey()) LG.L.dp = {day: dayKey(), cl: []}; if (!LG.L.wp || LG.L.wp.week !== weekKey()) LG.L.wp = {week: weekKey(), cl: []}; }
 function bumpLG(k, v) { rollLG(); LG.L.dp[k] = (LG.L.dp[k] || 0) + (v || 1); LG.L.wp[k] = k === 'streak' ? Math.max(LG.L.wp[k] || 0, v) : (LG.L.wp[k] || 0) + (v || 1); }
 function saveLG() { LG.L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(LG.L)); } catch(e) {} try { window.FB.updateDoc(uref(), {league: LG.L}).catch(()=>{}); } catch(e) {} }
-async function pushProfile() { saveProfile(); updateCurrencyUI(); try { window.FB.updateDoc(uref(), {gold: playerProfile.gold, gems: playerProfile.gems}).catch(()=>{}); } catch(e) {} }
+async function pushProfile() { saveProfile(); updateCurrencyUI(); try { window.FB.updateDoc(uref(), {gold: playerProfile.gold, gems: playerProfile.gems, inventory: playerProfile.inventory}).catch(()=>{}); } catch(e) {} }
 async function loadLG() { const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) Object.assign(LG.L, l); } catch(e) {} try { const s = await window.FB.getDoc(uref()); const rl = s.exists() && s.data().league; if (rl && (rl.t||0) > (LG.L.t||0)) Object.assign(LG.L, rl); } catch(e) {} rollLG(); }
-async function walletRefresh() { try { const s = await window.FB.getDoc(uref()); if (s.exists()) { const d = s.data(); playerProfile.gold = d.gold; if (d.wallet) playerProfile.wallet = d.wallet; saveProfile(); updateCurrencyUI(); } } catch(e){} }
+async function walletRefresh() { try { const s = await window.FB.getDoc(uref()); if (s.exists()) { const d = s.data(); playerProfile.gold = d.gold; if (d.wallet) playerProfile.wallet = d.wallet; if (d.inventory) playerProfile.inventory = d.inventory; saveProfile(); updateCurrencyUI(); } } catch(e){} }
 async function walletReserveMatch(stake, id) {
   if (!stake) return;
   let reserved = false;
@@ -917,7 +1142,7 @@ async function walletRecordMatch(win, free, id) {
 }
 window.walletReserveMatch = walletReserveMatch;
 window.walletRecordMatch = walletRecordMatch;
-window.PhoenixWallet = {initForUser: async (uid) => { try { const s = await window.FB.getDoc(window.FB.doc(window.FB.db,'users',uid)); if(s.exists()){ const d = s.data(); playerProfile.gold = d.gold; if(d.wallet) playerProfile.wallet = d.wallet; saveProfile(); updateCurrencyUI(); } } catch(e){} }};
+window.PhoenixWallet = {initForUser: async (uid) => { try { const s = await window.FB.getDoc(window.FB.doc(window.FB.db,'users',uid)); if(s.exists()){ const d = s.data(); playerProfile.gold = d.gold; if(d.wallet) playerProfile.wallet = d.wallet; if(d.inventory) playerProfile.inventory = d.inventory; saveProfile(); updateCurrencyUI(); } } catch(e){} }};
 window.openPhoenixWallet = () => { try { openLG(); LG.T='coins'; renderLG(); } catch(e) { showToast('Portefeuille : '+e.message, 'error'); } };
 async function sendInbox(uid, m) { m.id = mk(); m.ts = Date.now(); try { await window.FB.setDoc(sref(uid), {inbox: window.FB.arrayUnion(m)}, {merge:true}); } catch(e) { return false; } return true; }
 const online = uid => Date.now() - (LG.FS[uid] || 0) < 65000;
@@ -937,10 +1162,10 @@ async function launchLeagueMatch(mode) {
   const div = divOf(LG.L.xp).l;
   const stake = getStakeForDivision(div);
   currentGameKind = mode;
+  state.botLevel = div;
   if (mode === 'solo') {
-    // FIX : la difficulté est imposée par la division
     state.botDifficulty = diffOf(div);
-    setTimeout(() => startGameWithBots(diffOf(div)), 100);
+    setTimeout(() => startGameWithBots(div), 100);
   } else if (mode === 'online') {
     setTimeout(() => createPrivateRoom(stake, 'mm'), 100);
   } else if (mode === 'coop') {
@@ -980,172 +1205,29 @@ function V_home(d) {
   const online = st.mm || {p:0,w:0,l:0};
   const bots = st.bots || {p:0,w:0,l:0};
   const coop = st.coop || {p:0,w:0,l:0};
-  return `
-    <div style="border:1.5px solid var(--gold);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(70,50,8,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(230,195,92,.25);margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:16px">
-        <div style="width:78px;height:78px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2em;font-weight:900;border:3px solid ${DIV_COLOR[d.l]};background:radial-gradient(circle,rgba(255,255,255,.15),rgba(4,16,48,.94) 70%);color:#fff;box-shadow:0 0 24px ${DIV_COLOR[d.l]}66">${d.l}</div>
-        <div style="flex:1;min-width:0">
-          <small style="color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.7em">Ta division</small>
-          <div style="color:var(--gold-2);font-size:1.5em;font-weight:900">${escapeHTML(d.n)}</div>
-          <div style="font-size:.85em;color:#cfe2ff">Mise actuelle : <b style="color:var(--gold)">🪙 ${coinFmt(curStake)}</b></div>
-        </div>
-      </div>
-      <div style="margin-top:12px">${gaugeHTML(d)}</div>
-    </div>
-    <div style="font-size:.8em;color:#9fc3ea;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;font-weight:800">Trois modes de compétition</div>
-    <div class="mode-card online" data-lg="goto" data-v="leagues_online">
-      <div class="mode-card-icon">🌐</div>
-      <div class="mode-card-body"><div class="mode-card-title">Ligue en ligne</div><div class="mode-card-sub">Affronte des joueurs · 🪙 ${coinFmt(curStake)}</div></div>
-      <div class="mode-card-arrow">›</div>
-    </div>
-    <div class="mode-card bot" data-lg="goto" data-v="leagues_bot">
-      <div class="mode-card-icon">🤖</div>
-      <div class="mode-card-body"><div class="mode-card-title">Ligue Solo vs Bot</div><div class="mode-card-sub">Bot ${BOTS[d.l]} · 🪙 ${coinFmt(curStake)}</div></div>
-      <div class="mode-card-arrow">›</div>
-    </div>
-    <div class="mode-card coop" data-lg="goto" data-v="leagues_coop">
-      <div class="mode-card-icon">🤝</div>
-      <div class="mode-card-body"><div class="mode-card-title">Ligue Co-op</div><div class="mode-card-sub">2 vs 2 · 🪙 ${coinFmt(curStake)}</div></div>
-      <div class="mode-card-arrow">›</div>
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-top:4px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📊 Aperçu par mode</h3>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px">
-        <div style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🌐</div><b style="display:block;color:#fff">${online.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${online.w||0}V · ${online.l||0}D</small></div>
-        <div style="background:rgba(176,79,214,.1);border:1px solid rgba(176,79,214,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🤖</div><b style="display:block;color:#fff">${bots.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${bots.w||0}V · ${bots.l||0}D</small></div>
-        <div style="background:rgba(230,195,92,.1);border:1px solid rgba(230,195,92,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🤝</div><b style="display:block;color:#fff">${coop.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${coop.w||0}V · ${coop.l||0}D</small></div>
-      </div>
-    </div>
-  `;
+  return `<div style="border:1.5px solid var(--gold);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(70,50,8,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(230,195,92,.25);margin-bottom:14px"><div style="display:flex;align-items:center;gap:16px"><div style="width:78px;height:78px;flex:none;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:2.2em;font-weight:900;border:3px solid ${DIV_COLOR[d.l]};background:radial-gradient(circle,rgba(255,255,255,.15),rgba(4,16,48,.94) 70%);color:#fff;box-shadow:0 0 24px ${DIV_COLOR[d.l]}66">${d.l}</div><div style="flex:1;min-width:0"><small style="color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.7em">Ta division</small><div style="color:var(--gold-2);font-size:1.5em;font-weight:900">${escapeHTML(d.n)}</div><div style="font-size:.85em;color:#cfe2ff">Mise actuelle : <b style="color:var(--gold)">🪙 ${coinFmt(curStake)}</b></div></div></div><div style="margin-top:12px">${gaugeHTML(d)}</div></div><div style="font-size:.8em;color:#9fc3ea;text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;font-weight:800">Trois modes de compétition</div><div class="mode-card online" data-lg="goto" data-v="leagues_online"><div class="mode-card-icon">🌐</div><div class="mode-card-body"><div class="mode-card-title">Ligue en ligne</div><div class="mode-card-sub">Affronte des joueurs · 🪙 ${coinFmt(curStake)}</div></div><div class="mode-card-arrow">›</div></div><div class="mode-card bot" data-lg="goto" data-v="leagues_bot"><div class="mode-card-icon">🤖</div><div class="mode-card-body"><div class="mode-card-title">Ligue Solo vs Bot</div><div class="mode-card-sub">Bot ${BOTS[d.l]} · 🪙 ${coinFmt(curStake)}</div></div><div class="mode-card-arrow">›</div></div><div class="mode-card coop" data-lg="goto" data-v="leagues_coop"><div class="mode-card-icon">🤝</div><div class="mode-card-body"><div class="mode-card-title">Ligue Co-op</div><div class="mode-card-sub">2 vs 2 · 🪙 ${coinFmt(curStake)}</div></div><div class="mode-card-arrow">›</div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-top:4px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📊 Aperçu par mode</h3><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px"><div style="background:rgba(0,229,255,.1);border:1px solid rgba(0,229,255,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🌐</div><b style="display:block;color:#fff">${online.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${online.w||0}V · ${online.l||0}D</small></div><div style="background:rgba(176,79,214,.1);border:1px solid rgba(176,79,214,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🤖</div><b style="display:block;color:#fff">${bots.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${bots.w||0}V · ${bots.l||0}D</small></div><div style="background:rgba(230,195,92,.1);border:1px solid rgba(230,195,92,.3);border-radius:12px;padding:10px;text-align:center"><div style="font-size:1.3em">🤝</div><b style="display:block;color:#fff">${coop.p||0}</b><small style="color:#9fc3ea;font-size:.75em">${coop.w||0}V · ${coop.l||0}D</small></div></div></div>`;
 }
 function V_leagues_online(d) {
   const curStake = getStakeForDivision(d.l);
   const nx = DV.find(x => x.l === d.l - 1);
   const st = (LG.L.st || {}).mm || {p:0,w:0,l:0};
   const wr = st.p ? Math.round(st.w/st.p*100) : 0;
-  return `
-    <div style="border:1.5px solid var(--cyan);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(0,60,120,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(0,229,255,.25);margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
-        <button data-lg="goto" data-v="home" style="background:rgba(0,229,255,.15);border:1.5px solid var(--cyan);color:var(--cyan);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button>
-        <div style="font-size:1.6em">🌐</div>
-        <div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue en ligne</div><small style="color:#9fc3ea">Division ${d.l} · ${escapeHTML(d.n)}</small></div>
-      </div>
-      ${gaugeHTML(d)}
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${LG.L.ws||0}</b><small style="color:#9fc3ea;font-size:.7em">Série 🔥</small></div>
-      </div>
-    </div>
-    <div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎯 Prêt à jouer ?</h3>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)">
-        <span style="color:#cfe2ff">Mise requise (Div. ${d.l})</span>
-        <b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b>
-      </div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)">
-        <span style="color:#cfe2ff">Gain en cas de victoire</span>
-        <b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b>
-      </div>
-      <button data-lg="launch" data-v="online" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#00e5ff,#0090a8);color:#001;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(0,229,255,.4)">🌐 Chercher une partie · ${coinFmt(curStake)} 🪙</button>
-      <button data-lg="launchFree" data-v="online" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #9fc3ea;background:rgba(4,16,48,.6);color:#9fc3ea;font-weight:700;font-size:.85em;cursor:pointer">Partie gratuite (hors ligue)</button>
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>
-      ${stakeTableHTML(d.l)}
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📈 Prochain palier</h3>
-      ${nx ? `<div style="color:#cfe2ff;font-size:.9em;margin-bottom:8px">Encore <b style="color:#fff">${(d.b - LG.L.xp).toLocaleString('fr-FR')} XP</b> pour atteindre « ${escapeHTML(nx.n)} » (Div. ${nx.l})</div><div style="height:10px;background:rgba(0,0,0,.55);border-radius:8px;overflow:hidden"><div style="height:100%;width:${Math.min(100,(LG.L.xp-d.a)/(d.b-d.a)*100)}%;background:linear-gradient(90deg,var(--cyan),var(--gold))"></div></div>` : '<div style="color:#fff1b8">👑 Division maximale atteinte !</div>'}
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">🏅 Top 5 de ta division</h3><button data-lg="tab" data-v="rankings" style="padding:4px 10px;border:1px solid var(--cyan);border-radius:8px;background:rgba(0,229,255,.1);color:var(--cyan);font-size:.7em;font-weight:800;cursor:pointer">Voir tout</button></div>
-      <div id="lg-lb-div" style="color:#9fc3ea;font-size:.85em;text-align:center;padding:10px">Chargement…</div>
-    </div>
-  `;
+  return `<div style="border:1.5px solid var(--cyan);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(0,60,120,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(0,229,255,.25);margin-bottom:14px"><div style="display:flex;align-items:center;gap:14px;margin-bottom:12px"><button data-lg="goto" data-v="home" style="background:rgba(0,229,255,.15);border:1.5px solid var(--cyan);color:var(--cyan);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button><div style="font-size:1.6em">🌐</div><div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue en ligne</div><small style="color:#9fc3ea">Division ${d.l} · ${escapeHTML(d.n)}</small></div></div>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${LG.L.ws||0}</b><small style="color:#9fc3ea;font-size:.7em">Série 🔥</small></div></div></div><div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎯 Prêt à jouer ?</h3><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise requise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div><button data-lg="launch" data-v="online" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#00e5ff,#0090a8);color:#001;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(0,229,255,.4)">🌐 Chercher une partie · ${coinFmt(curStake)} 🪙</button></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>${stakeTableHTML(d.l)}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📈 Prochain palier</h3>${nx ? `<div style="color:#cfe2ff;font-size:.9em;margin-bottom:8px">Encore <b style="color:#fff">${(d.b - LG.L.xp).toLocaleString('fr-FR')} XP</b> pour atteindre « ${escapeHTML(nx.n)} » (Div. ${nx.l})</div><div style="height:10px;background:rgba(0,0,0,.55);border-radius:8px;overflow:hidden"><div style="height:100%;width:${Math.min(100,(LG.L.xp-d.a)/(d.b-d.a)*100)}%;background:linear-gradient(90deg,var(--cyan),var(--gold))"></div></div>` : '<div style="color:#fff1b8">👑 Division maximale atteinte !</div>'}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">🏅 Top 5 de ta division</h3><button data-lg="tab" data-v="rankings" style="padding:4px 10px;border:1px solid var(--cyan);border-radius:8px;background:rgba(0,229,255,.1);color:var(--cyan);font-size:.7em;font-weight:800;cursor:pointer">Voir tout</button></div><div id="lg-lb-div" style="color:#9fc3ea;font-size:.85em;text-align:center;padding:10px">Chargement…</div></div>`;
 }
-/* FIX : V_leagues_bot — plus de sélecteur, difficulté imposée par la division */
 function V_leagues_bot(d) {
   const curStake = getStakeForDivision(d.l);
   const st = (LG.L.st || {}).bots || {p:0,w:0,l:0};
   const wr = st.p ? Math.round(st.w/st.p*100) : 0;
-  const diff = diffOf(d.l);
-  const diffLabelFr = diffLabel(diff);
-  return `
-    <div style="border:1.5px solid var(--purple);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(90,20,120,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(176,79,214,.25);margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
-        <button data-lg="goto" data-v="home" style="background:rgba(176,79,214,.15);border:1.5px solid var(--purple);color:var(--purple);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button>
-        <div style="font-size:1.6em">🤖</div>
-        <div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue Solo vs Bot</div><small style="color:#9fc3ea">Division ${d.l} · ${escapeHTML(d.n)}</small></div>
-      </div>
-      ${gaugeHTML(d)}
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.w}</b><small style="color:#9fc3ea;font-size:.7em">Victoires</small></div>
-      </div>
-    </div>
-    <div style="border:1.5px solid var(--purple);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,20,90,.35),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🤖 Ton adversaire</h3>
-      <div class="bot-imposed">
-        <div class="bot-imposed-icon">🤖</div>
-        <div class="bot-imposed-body">
-          <div class="bot-imposed-title">${BOTS[d.l]}</div>
-          <div class="bot-imposed-sub">Niveau du bot imposé par ta division ${d.l}</div>
-        </div>
-        <span class="diff-tag ${diff}">${diffLabelFr}</span>
-      </div>
-      <div style="color:#9fc3ea;font-size:.8em;margin-top:8px;line-height:1.5">ℹ️ Plus tu montes de division, plus ton adversaire est fort. Tu ne peux pas choisir la difficulté en ligue.</div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div>
-      <button data-lg="launch" data-v="solo" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#b04fd6,#6a2090);color:#fff;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(176,79,214,.4)">🤖 Jouer vs ${BOTS[d.l]} · ${coinFmt(curStake)} 🪙</button>
-      <button data-lg="launchFree" data-v="solo" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #9fc3ea;background:rgba(4,16,48,.6);color:#9fc3ea;font-weight:700;font-size:.85em;cursor:pointer">Entraînement gratuit (hors ligue)</button>
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>
-      ${stakeTableHTML(d.l)}
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🏅 Top 5 — Victoires vs Bots</h3>
-      <div id="lg-lb-bots" style="color:#9fc3ea;font-size:.85em;text-align:center;padding:10px">Chargement…</div>
-    </div>
-  `;
+  const level = d.l;
+  const cfg = BOT_LEVELS[level] || BOT_LEVELS[10];
+  const diff = diffOf(level);
+  return `<div style="border:1.5px solid var(--purple);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(90,20,120,.55),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(176,79,214,.25);margin-bottom:14px"><div style="display:flex;align-items:center;gap:14px;margin-bottom:12px"><button data-lg="goto" data-v="home" style="background:rgba(176,79,214,.15);border:1.5px solid var(--purple);color:var(--purple);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button><div style="font-size:1.6em">🤖</div><div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue Solo vs Bot</div><small style="color:#9fc3ea">Division ${d.l} · ${escapeHTML(d.n)}</small></div></div>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.w}</b><small style="color:#9fc3ea;font-size:.7em">Victoires</small></div></div></div><div style="border:1.5px solid var(--purple);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,20,90,.35),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🤖 Ton adversaire</h3><div class="bot-imposed"><div class="bot-imposed-icon">🤖</div><div class="bot-imposed-body"><div class="bot-imposed-title">${BOTS[level]}</div><div class="bot-imposed-sub">Niveau ${level}/10 · ${level === 1 ? 'Légendaire' : level <= 3 ? 'Très fort' : level <= 6 ? 'Fort' : level <= 8 ? 'Moyen' : 'Faible'}</div></div><span class="diff-tag ${diff}">${diffLabel(diff)}</span></div><div style="color:#9fc3ea;font-size:.8em;margin-top:8px;line-height:1.5">ℹ️ Chaque division a son propre niveau d'IA (10 = Débutant, 1 = Légende). Impossible de changer.</div><div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div><div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div><button data-lg="launch" data-v="solo" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#b04fd6,#6a2090);color:#fff;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(176,79,214,.4)">🤖 Jouer vs ${BOTS[level]} · ${coinFmt(curStake)} 🪙</button></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🧠 Les 10 niveaux d'IA</h3>${[10,9,8,7,6,5,4,3,2,1].map(n => `<div style="display:flex;align-items:center;gap:10px;padding:6px 10px;border-radius:10px;background:${n===level?'rgba(176,79,214,.25)':'rgba(0,0,0,.25)'};border:${n===level?'1.5px solid var(--purple)':'1px solid transparent'};margin-bottom:4px"><span style="width:26px;text-align:center;font-weight:900;color:${DIV_COLOR[n]}">${n}</span><b style="flex:1;font-size:.85em">${BOTS[n]}</b><span style="font-size:.7em;color:#9fc3ea">${n===level?'← toi':''}</span></div>`).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>${stakeTableHTML(d.l)}</div>`;
 }
 function V_leagues_coop(d) {
   const curStake = getStakeForDivision(d.l);
   const st = (LG.L.st || {}).coop || {p:0,w:0,l:0};
   const wr = st.p ? Math.round(st.w/st.p*100) : 0;
-  return `
-    <div style="border:1.5px solid var(--gold);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(120,90,20,.5),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(230,195,92,.25);margin-bottom:14px">
-      <div style="display:flex;align-items:center;gap:14px;margin-bottom:12px">
-        <button data-lg="goto" data-v="home" style="background:rgba(230,195,92,.15);border:1.5px solid var(--gold);color:var(--gold);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button>
-        <div style="font-size:1.6em">🤝</div>
-        <div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue Co-op</div><small style="color:#9fc3ea">Division ${d.l} · 2 vs 2</small></div>
-      </div>
-      ${gaugeHTML(d)}
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px">
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div>
-        <div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.w}</b><small style="color:#9fc3ea;font-size:.7em">Victoires</small></div>
-      </div>
-    </div>
-    <div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🤝 Jouer à deux</h3>
-      <p style="color:#cfe2ff;font-size:.9em;margin-bottom:10px">Crée un salon Co-op et invite un ami. Vous affronterez deux bots ensemble.</p>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div>
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div>
-      <button data-lg="launch" data-v="coop" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#fff1b8,#b8860b);color:#2a1c02;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(230,195,92,.4)">🤝 Créer un salon Co-op · ${coinFmt(curStake)} 🪙</button>
-      <button data-lg="tab" data-v="friends" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #00e5ff;background:rgba(0,229,255,.1);color:#00e5ff;font-weight:700;font-size:.85em;cursor:pointer">👥 Inviter un ami (Amis)</button>
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>
-      ${stakeTableHTML(d.l)}
-    </div>
-    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px">
-      <h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🏅 Top 5 — Victoires Co-op</h3>
-      <div id="lg-lb-coop" style="color:#9fc3ea;font-size:.85em;text-align:center;padding:10px">Chargement…</div>
-    </div>
-  `;
+  return `<div style="border:1.5px solid var(--gold);border-radius:20px;padding:20px;background:linear-gradient(135deg,rgba(120,90,20,.5),rgba(4,16,48,.95));box-shadow:0 0 24px rgba(230,195,92,.25);margin-bottom:14px"><div style="display:flex;align-items:center;gap:14px;margin-bottom:12px"><button data-lg="goto" data-v="home" style="background:rgba(230,195,92,.15);border:1.5px solid var(--gold);color:var(--gold);border-radius:50%;width:38px;height:38px;font-size:1.2em;cursor:pointer;flex:none">←</button><div style="font-size:1.6em">🤝</div><div style="flex:1"><div style="color:var(--gold-2);font-size:1.4em;font-weight:900">Ligue Co-op</div><small style="color:#9fc3ea">Division ${d.l} · 2 vs 2</small></div></div>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:12px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.p}</b><small style="color:#9fc3ea;font-size:.7em">Parties</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.3em">${wr}%</b><small style="color:#9fc3ea;font-size:.7em">Winrate</small></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff;font-size:1.3em">${st.w}</b><small style="color:#9fc3ea;font-size:.7em">Victoires</small></div></div></div><div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🤝 Jouer à deux</h3><p style="color:#cfe2ff;font-size:.9em;margin-bottom:10px">Crée un salon Co-op et invite un ami. Vous affronterez deux bots niveau ${d.l}/10 ensemble.</p><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div><button data-lg="launch" data-v="coop" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#fff1b8,#b8860b);color:#2a1c02;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(230,195,92,.4)">🤝 Créer un salon Co-op · ${coinFmt(curStake)} 🪙</button><button data-lg="tab" data-v="friends" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #00e5ff;background:rgba(0,229,255,.1);color:#00e5ff;font-weight:700;font-size:.85em;cursor:pointer">👥 Inviter un ami (Amis)</button></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">💰 Barème des mises par division</h3>${stakeTableHTML(d.l)}</div>`;
 }
 function loadModeLeaderboard(mode) {
   if (!me()) return;
@@ -1161,21 +1243,12 @@ function loadModeLeaderboard(mode) {
       const el = document.getElementById(mode === 'online' ? 'lg-lb-div' : mode === 'bot' ? 'lg-lb-bots' : 'lg-lb-coop');
       if (!el) return;
       if (!filtered.length) { el.innerHTML = '<p style="color:#6a87b3">Aucune donnée pour le moment.</p>'; return; }
-      el.innerHTML = filtered.map((p, i) => {
-        const elId = 'lb-' + mode + '-' + i;
-        setTimeout(() => { const e = document.getElementById(elId); if (e) fillAv(e, p.av, p.pseudo); }, 20);
-        const val = mode === 'bot' ? (p.pionsTotal || 0) : (p.xp || 0);
-        const unit = mode === 'bot' ? ' 💥' : ' XP';
-        return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:6px;text-align:left"><div style="width:26px;text-align:center;font-weight:900;flex:none">${['🥇','🥈','🥉','4','5'][i]}</div><div style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="${elId}"></div><div style="flex:1;min-width:0"><b>${escapeHTML(p.pseudo || 'Joueur')}</b><small style="display:block;color:#9fc3ea">Div ${p.division || '?'} · ${escapeHTML(p.divisionName || '')}</small></div><b style="color:var(--gold);flex:none;font-size:.9em">${val.toLocaleString('fr-FR')}${unit}</b></div>`;
-      }).join('');
+      el.innerHTML = filtered.map((p, i) => { const elId = 'lb-' + mode + '-' + i; setTimeout(() => { const e = document.getElementById(elId); if (e) fillAv(e, p.av, p.pseudo); }, 20); const val = mode === 'bot' ? (p.pionsTotal || 0) : (p.xp || 0); const unit = mode === 'bot' ? ' 💥' : ' XP'; return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:6px;text-align:left"><div style="width:26px;text-align:center;font-weight:900;flex:none">${['🥇','🥈','🥉','4','5'][i]}</div><div style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="${elId}"></div><div style="flex:1;min-width:0"><b>${escapeHTML(p.pseudo || 'Joueur')}</b><small style="display:block;color:#9fc3ea">Div ${p.division || '?'} · ${escapeHTML(p.divisionName || '')}</small></div><b style="color:var(--gold);flex:none;font-size:.9em">${val.toLocaleString('fr-FR')}${unit}</b></div>`; }).join('');
     } catch(e) { console.warn(e); }
   })();
 }
 const V = {
-  home: V_home,
-  leagues_online: V_leagues_online,
-  leagues_bot: V_leagues_bot,
-  leagues_coop: V_leagues_coop,
+  home: V_home, leagues_online: V_leagues_online, leagues_bot: V_leagues_bot, leagues_coop: V_leagues_coop,
   career: d => {
     rollLG();
     const dp = LG.L.dp, wp = LG.L.wp;
@@ -1183,18 +1256,22 @@ const V = {
     const weeklyDone = WEEKLY.filter(m => (wp[m.k] || 0) >= m.n).length;
     const icons = {win:'🏆', play:'🎮', streak:'🔥', mandala:'☸', phoenix:'🔥'};
     const missionCard = (m, i, type) => { const b = type === 'd' ? dp : wp; const val = Math.min(b[m.k] || 0, m.n); const claimed = (b.cl || []).includes(type + i); const done = val >= m.n; return `<div style="border:1.5px solid ${done ? 'var(--gold)' : 'rgba(0,229,255,.25)'};border-radius:14px;padding:12px;background:rgba(0,0,0,.3);margin-bottom:8px"><div style="display:flex;gap:10px;align-items:center;margin-bottom:8px"><div style="font-size:1.6em">${icons[m.k] || '🎯'}</div><div style="flex:1"><b style="display:block">${escapeHTML(m.t)}</b><small style="color:#9fc3ea">+${m.xp} XP · +${m.g} 💎</small></div></div><div style="height:8px;background:rgba(255,255,255,.12);border-radius:20px;overflow:hidden;margin-bottom:6px"><div style="height:100%;width:${Math.min(100, val/m.n*100)}%;background:linear-gradient(90deg,var(--cyan),var(--gold))"></div></div><div style="display:flex;justify-content:space-between;align-items:center"><span style="color:#9fc3ea;font-size:.8em">${val} / ${m.n}</span>${done && !claimed ? `<button data-lg="claim" data-v="${type + i}" style="padding:6px 12px;border:1.5px solid #00ffa8;border-radius:10px;background:rgba(0,255,168,.15);color:#00ffa8;font-weight:800;cursor:pointer;font-size:.8em">Réclamer</button>` : claimed ? '<span style="color:#00ffa8;font-size:.8em">✔ Réclamé</span>' : ''}</div></div>`; };
-    return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:20px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px"><div style="width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);position:relative;overflow:hidden;flex:none" id="career-av"></div><div style="flex:1"><small style="color:#9fc3ea;letter-spacing:1.5px;text-transform:uppercase;font-size:.7em">Progression</small><div style="color:var(--gold-2);font-weight:900;font-size:1.3em">${escapeHTML(playerProfile.pseudo)}</div><div style="font-size:.9em;color:#cfe2ff">Div. ${d.l} · ${escapeHTML(d.n)} · ${LG.L.xp.toLocaleString('fr-FR')} XP</div></div></div><div style="height:24px;background:rgba(0,0,0,.6);border:1.5px solid var(--cyan);border-radius:14px;overflow:hidden;position:relative"><div style="height:100%;width:${Math.min(100, (LG.L.xp - d.a)/(d.b - d.a)*100)}%;background:linear-gradient(90deg,var(--cyan),var(--gold));"></div><span style="position:absolute;inset:0;text-align:center;line-height:24px;font-size:12px;font-weight:700;text-shadow:0 0 4px #000">${LG.L.xp.toLocaleString('fr-FR')} / ${d.b>1e8?'∞':d.b.toLocaleString('fr-FR')} XP</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.ws||0}</div><div style="color:#9fc3ea;font-size:.7em">Série</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.best||0}</div><div style="color:#9fc3ea;font-size:.7em">Record</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.ate||0}</div><div style="color:#9fc3ea;font-size:.7em">Pions 💥</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${(LG.L.st?.all?.p)||0}</div><div style="color:#9fc3ea;font-size:.7em">Parties</div></div></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">🎯 Missions quotidiennes</h3><span style="color:#9fc3ea;font-size:.85em">${dailyDone}/${DAILY.length}</span></div>${DAILY.map((m, i) => missionCard(m, i, 'd')).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">📅 Missions hebdo</h3><span style="color:#9fc3ea;font-size:.85em">${weeklyDone}/${WEEKLY.length}</span></div>${WEEKLY.map((m, i) => missionCard(m, i, 'w')).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🏆 Trophées</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">${TROPHIES.map(t => { const v = t.v(), p = Math.min(100, v/t.m*100), unlocked = v >= t.m; return `<div style="background:rgba(0,0,0,.4);border-radius:12px;padding:10px;text-align:center;${unlocked?'border:1.5px solid var(--gold);background:rgba(230,195,92,.1)':''}"><div style="font-size:2em">${t.i}</div><b style="font-size:.9em">${t.n}</b><div style="font-size:.7em;color:#9fc3ea;margin:4px 0">${t.d}</div><div style="height:8px;background:rgba(255,255,255,.12);border-radius:20px;overflow:hidden;margin-top:6px"><div style="height:100%;width:${p}%;background:linear-gradient(90deg,var(--cyan),var(--gold))"></div></div><div style="font-size:.65em;color:#9fc3ea;margin-top:4px">${Math.min(v,t.m).toLocaleString('fr-FR')} / ${t.m.toLocaleString('fr-FR')}</div></div>`; }).join('')}</div></div>`;
+    const unlocked = TROPHIES.filter(t => t.v() >= t.m).length;
+    return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:20px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;gap:14px;align-items:center;margin-bottom:14px"><div style="width:64px;height:64px;border-radius:50%;border:3px solid var(--gold);position:relative;overflow:hidden;flex:none" id="career-av"></div><div style="flex:1"><small style="color:#9fc3ea;letter-spacing:1.5px;text-transform:uppercase;font-size:.7em">Progression</small><div style="color:var(--gold-2);font-weight:900;font-size:1.3em">${escapeHTML(playerProfile.pseudo)}</div><div style="font-size:.9em;color:#cfe2ff">Div. ${d.l} · ${escapeHTML(d.n)} · ${LG.L.xp.toLocaleString('fr-FR')} XP</div></div></div><div style="height:24px;background:rgba(0,0,0,.6);border:1.5px solid var(--cyan);border-radius:14px;overflow:hidden;position:relative"><div style="height:100%;width:${Math.min(100, (LG.L.xp - d.a)/(d.b - d.a)*100)}%;background:linear-gradient(90deg,var(--cyan),var(--gold));"></div><span style="position:absolute;inset:0;text-align:center;line-height:24px;font-size:12px;font-weight:700;text-shadow:0 0 4px #000">${LG.L.xp.toLocaleString('fr-FR')} / ${d.b>1e8?'∞':d.b.toLocaleString('fr-FR')} XP</span></div><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.ws||0}</div><div style="color:#9fc3ea;font-size:.7em">Série</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.best||0}</div><div style="color:#9fc3ea;font-size:.7em">Record</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${LG.L.ate||0}</div><div style="color:#9fc3ea;font-size:.7em">Pions 💥</div></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><div style="font-size:1.3em;font-weight:900;color:#fff">${(LG.L.st?.all?.p)||0}</div><div style="color:#9fc3ea;font-size:.7em">Parties</div></div></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">🎯 Missions quotidiennes</h3><span style="color:#9fc3ea;font-size:.85em">${dailyDone}/${DAILY.length}</span></div>${DAILY.map((m, i) => missionCard(m, i, 'd')).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">📅 Missions hebdo</h3><span style="color:#9fc3ea;font-size:.85em">${weeklyDone}/${WEEKLY.length}</span></div>${WEEKLY.map((m, i) => missionCard(m, i, 'w')).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px"><h3 style="color:var(--gold);text-transform:uppercase">🏆 Trophées (${unlocked}/${TROPHIES.length})</h3></div><div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(70px,1fr));gap:6px;max-height:400px;overflow-y:auto">${TROPHIES.map(t => { const v = t.v(), p = Math.min(100, v/t.m*100), isUnlocked = v >= t.m; return `<div title="${escapeHTML(t.n)} — ${escapeHTML(t.d)}" style="background:rgba(0,0,0,.4);border-radius:10px;padding:6px;text-align:center;${isUnlocked?'border:1.5px solid var(--gold);background:rgba(230,195,92,.15)':''}"><div style="font-size:1.6em">${t.i}</div><div style="font-size:.6em;color:#9fc3ea;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;margin-top:2px">${escapeHTML(t.n)}</div><div style="height:4px;background:rgba(255,255,255,.12);border-radius:10px;overflow:hidden;margin-top:4px"><div style="height:100%;width:${p}%;background:linear-gradient(90deg,var(--cyan),var(--gold))"></div></div></div>`; }).join('')}</div></div>`;
   },
-  stats: () => {
-    const st = LG.L.st || {}, a = st.all || {p:0,w:0,l:0}, pc = o => o && o.p ? Math.round(o.w/o.p*100) : 0;
-    const row = (icon, name, o) => `<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.3);margin-bottom:8px"><div style="font-size:1.5em">${icon}</div><div style="flex:1"><b>${name}</b><small style="display:block;color:#9fc3ea">${o.p||0} parties · ${o.w||0} V · ${o.l||0} D</small></div><b style="color:var(--gold);font-size:1.1em">${pc(o)}%</b></div>`;
-    return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📊 Mes statistiques</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.p}</b><span style="color:#9fc3ea;font-size:.75em">Parties</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.5em">${pc(a)}%</b><span style="color:#9fc3ea;font-size:.75em">Winrate</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.w}</b><span style="color:#9fc3ea;font-size:.75em">Victoires</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#ff8a80;font-size:1.5em">${a.l}</b><span style="color:#9fc3ea;font-size:.75em">Défaites</span></div></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📈 Détail par mode</h3>${row('🌐','Ligue en ligne', st.mm||{})}${row('🤖','Ligue Solo Bot', st.bots||{})}${row('🤝','Ligue Co-op', st.coop||{})}${row('🔒','Salon privé', st.priv||{})}</div>`;
-  },
+  stats: () => { const st = LG.L.st || {}, a = st.all || {p:0,w:0,l:0}, pc = o => o && o.p ? Math.round(o.w/o.p*100) : 0; const row = (icon, name, o) => `<div style="display:flex;align-items:center;gap:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.3);margin-bottom:8px"><div style="font-size:1.5em">${icon}</div><div style="flex:1"><b>${name}</b><small style="display:block;color:#9fc3ea">${o.p||0} parties · ${o.w||0} V · ${o.l||0} D</small></div><b style="color:var(--gold);font-size:1.1em">${pc(o)}%</b></div>`; return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📊 Mes statistiques</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.p}</b><span style="color:#9fc3ea;font-size:.75em">Parties</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.5em">${pc(a)}%</b><span style="color:#9fc3ea;font-size:.75em">Winrate</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.w}</b><span style="color:#9fc3ea;font-size:.75em">Victoires</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#ff8a80;font-size:1.5em">${a.l}</b><span style="color:#9fc3ea;font-size:.75em">Défaites</span></div></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📈 Détail par mode</h3>${row('🌐','Ligue en ligne', st.mm||{})}${row('🤖','Ligue Solo Bot', st.bots||{})}${row('🤝','Ligue Co-op', st.coop||{})}${row('🔒','Salon privé', st.priv||{})}</div>`; },
   rankings: () => `<div id="rankings-root"></div>`,
-  coins: () => `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:24px;background:linear-gradient(160deg,rgba(70,50,8,.35),rgba(4,16,48,.9));text-align:center"><small style="color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.75em">Solde disponible</small><div style="font-size:2.6em;font-weight:900;color:var(--gold-2);margin:6px 0">🪙 ${coinFmt(balNow())}</div></div>`,
+  coins: () => {
+    const inventory = playerProfile.inventory || {};
+    return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:24px;background:linear-gradient(160deg,rgba(70,50,8,.35),rgba(4,16,48,.9));text-align:center;margin-bottom:12px"><small style="color:#9fc3ea;letter-spacing:2px;text-transform:uppercase;font-size:.75em">Solde disponible</small><div style="font-size:2.6em;font-weight:900;color:var(--gold-2);margin:6px 0">🪙 ${coinFmt(balNow())}</div></div>
+    <div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🛒 Boutique</h3>
+    <div style="border:1.5px solid var(--gold);border-radius:14px;padding:12px;background:rgba(230,195,92,.08);margin-bottom:10px"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:2.2em;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(230,195,92,.2);border:1px solid var(--gold);flex-shrink:0">👑</div><div style="flex:1"><b style="color:var(--gold)">Roi Magique</b><p style="margin:4px 0;font-size:.82em;color:#cfe2ff">Remplace une carte de ta main par un Roi. Utilisable en partie via le sac 🎒.</p><small style="color:#9fc3ea">En stock : ${inventory.king || 0}</small></div></div><button data-lg="buy" data-v="king" style="width:100%;margin-top:10px;padding:10px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.4),rgba(40,28,4,.85));color:#fff;font-weight:900;cursor:pointer">Acheter · 🪙 1000</button></div>
+    <div style="border:1px solid rgba(0,229,255,.2);border-radius:14px;padding:12px;background:rgba(0,0,0,.3);margin-bottom:10px"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:2em;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(0,229,255,.2);border:1px solid var(--cyan);flex-shrink:0">⚡</div><div style="flex:1"><b style="color:var(--cyan)">Boost XP ×2</b><p style="margin:4px 0;font-size:.82em;color:#cfe2ff">Double XP sur 3 prochaines victoires</p><small style="color:#9fc3ea">En stock : ${LG.L.bx || 0}</small></div></div><button data-lg="buy" data-v="bx" style="width:100%;margin-top:10px;padding:10px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:900;cursor:pointer">Acheter · 💎 25</button></div>
+    <div style="border:1px solid rgba(0,229,255,.2);border-radius:14px;padding:12px;background:rgba(0,0,0,.3)"><div style="display:flex;align-items:center;gap:12px"><div style="font-size:2em;width:48px;height:48px;display:flex;align-items:center;justify-content:center;border-radius:12px;background:rgba(255,255,255,.1);border:1px solid #fff;flex-shrink:0">🛡️</div><div style="flex:1"><b style="color:#fff">Bouclier de série</b><p style="margin:4px 0;font-size:.82em;color:#cfe2ff">Protège ta série une fois</p><small style="color:#9fc3ea">En stock : ${LG.L.sh || 0}</small></div></div><button data-lg="buy" data-v="sh" style="width:100%;margin-top:10px;padding:10px;border:1.5px solid #fff;border-radius:10px;background:rgba(255,255,255,.1);color:#fff;font-weight:900;cursor:pointer">Acheter · 🪙 800</button></div></div>`;
+  },
   friends: () => `<div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">👥 Mes amis (${LG.S.friends.length})</h3>${LG.S.friends.length?LG.S.friends.map(f => `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:8px"><div style="width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="lg-fr-${f.uid}"></div><div style="flex:1"><b>${escapeHTML(f.pseudo)}</b><small style="display:block;color:#9fc3ea">${online(f.uid)?'🟢 En ligne':'⚫ Hors ligne'}</small></div>${online(f.uid) ? `<button data-lg="invite" data-v="${f.uid}" style="padding:6px 12px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.8em">Inviter</button>` : ''}</div>`).join(''):'<p style="color:#6a87b3">Pas encore d’amis.</p>'}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">🔍 Ajouter un ami</h3><input id="lg-friend-input" placeholder="Code ami (UID)" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:14px;margin-bottom:8px"><button data-lg="addfriend" style="padding:10px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85));color:#fff;font-weight:800;cursor:pointer;width:100%">Envoyer la demande</button></div>`,
   inbox: () => { const l = LG.S.inbox.slice().sort((a,b)=>b.ts-a.ts); return `<div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">✉️ Messagerie</h3>${l.length?l.map((m,idx) => `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:8px"><div style="flex:1"><b>${m.type==='fr'?escapeHTML(m.name)+' veut être ton ami':m.type==='inv'?escapeHTML(m.name)+' t’invite':'Info'}</b><small style="display:block;color:#9fc3ea">${m.type==='info'?escapeHTML(m.text):m.type==='inv'?'Salon '+escapeHTML(m.code):''}</small></div>${m.type==='fr'?`<button data-lg="accept" data-v="${idx}" style="padding:6px 10px;border:1.5px solid #00ffa8;border-radius:10px;background:rgba(0,255,168,.15);color:#00ffa8;font-weight:800;cursor:pointer;font-size:.8em">✔</button>`:''}${m.type==='inv'?`<button data-lg="joininv" data-v="${idx}" style="padding:6px 10px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.8em">Rejoindre</button>`:''}<button data-lg="del" data-v="${idx}" style="padding:6px 10px;border:1.5px solid #ff5252;border-radius:10px;background:rgba(255,82,82,.15);color:#ff8a80;font-weight:800;cursor:pointer;font-size:.8em">✕</button></div>`).join(''):'<p style="color:#6a87b3">Aucun message.</p>'}</div>`; },
-  profile: d => `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(70,50,8,.35),rgba(4,16,48,.9));text-align:center;margin-bottom:12px"><div style="width:96px;height:96px;border-radius:50%;border:3px solid var(--gold);position:relative;overflow:hidden;margin:0 auto 10px;cursor:pointer" id="lg-pr-av" data-lg="avs"></div><button data-lg="avs" style="padding:8px 12px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.85em">🖼️ Changer d’avatar</button><div style="display:flex;gap:8px;margin-top:12px"><input id="lg-pseudo-input" value="${escapeHTML(playerProfile.pseudo)}" maxlength="16" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:14px"><button data-lg="savepseudo" style="padding:8px 12px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85));color:#fff;font-weight:800;cursor:pointer;font-size:.85em">OK</button></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎨 Mon plateau</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${BOARD_FILES.map((f, i) => `<button data-lg="board" data-v="${i}" style="padding:6px;border:2px solid ${boardChoice === i ? 'var(--gold)' : 'rgba(255,255,255,.18)'};border-radius:12px;background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="display:block;width:100%;aspect-ratio:1;border-radius:8px;background:url('${f}') center/cover #0a1a3a"></span><b style="font-size:.75em">Plateau ${i+1}</b></button>`).join('')}</div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">Division ${d.l} · ${escapeHTML(d.n)}</h3>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.ws||0}</b><span style="color:#9fc3ea;font-size:.75em">Série</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.best||0}</b><span style="color:#9fc3ea;font-size:.75em">Record</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">×${d.m}</b><span style="color:#9fc3ea;font-size:.75em">Multi</span></div></div></div><button data-lg="logout" style="padding:12px;border:1.5px solid #ff5252;border-radius:12px;background:rgba(255,82,82,.15);color:#ff8a80;font-weight:800;cursor:pointer;width:100%;text-transform:uppercase">Se déconnecter</button>`
+  profile: d => { const inv = playerProfile.inventory || {}; return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(70,50,8,.35),rgba(4,16,48,.9));text-align:center;margin-bottom:12px"><div style="width:96px;height:96px;border-radius:50%;border:3px solid var(--gold);position:relative;overflow:hidden;margin:0 auto 10px;cursor:pointer" id="lg-pr-av" data-lg="avs"></div><button data-lg="avs" style="padding:8px 12px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.85em">🖼️ Changer d’avatar</button><div style="display:flex;gap:8px;margin-top:12px"><input id="lg-pseudo-input" value="${escapeHTML(playerProfile.pseudo)}" maxlength="16" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:14px"><button data-lg="savepseudo" style="padding:8px 12px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85));color:#fff;font-weight:800;cursor:pointer;font-size:.85em">OK</button></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎨 Mon plateau</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${BOARD_FILES.map((f, i) => `<button data-lg="board" data-v="${i}" style="padding:6px;border:2px solid ${boardChoice === i ? 'var(--gold)' : 'rgba(255,255,255,.18)'};border-radius:12px;background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="display:block;width:100%;aspect-ratio:1;border-radius:8px;background:url('${f}') center/cover #0a1a3a"></span><b style="font-size:.75em">Plateau ${i+1}</b></button>`).join('')}</div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎒 Inventaire</h3><div style="display:flex;justify-content:space-between;align-items:center;padding:10px;border-radius:10px;background:rgba(0,0,0,.3)"><span>👑 Rois Magiques</span><b style="color:var(--gold-2)">${inv.king || 0}</b></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">Division ${d.l} · ${escapeHTML(d.n)}</h3>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.ws||0}</b><span style="color:#9fc3ea;font-size:.75em">Série</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.best||0}</b><span style="color:#9fc3ea;font-size:.75em">Record</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">×${d.m}</b><span style="color:#9fc3ea;font-size:.75em">Multi</span></div></div></div><button data-lg="logout" style="padding:12px;border:1.5px solid #ff5252;border-radius:12px;background:rgba(255,82,82,.15);color:#ff8a80;font-weight:800;cursor:pointer;width:100%;text-transform:uppercase">Se déconnecter</button>`; }
 };
 async function loadRankingsView() {
   LG_MAIN.innerHTML = '<div style="text-align:center;padding:20px;color:#9fc3ea">Chargement…</div>';
@@ -1205,19 +1282,45 @@ async function loadRankingsView() {
     const topXp = players.slice().sort((a,b)=>(b.xp||0)-(a.xp||0)).slice(0,5);
     topXp.forEach((p,i)=>{p.__rank=['🥇','🥈','🥉','4','5'][i];});
     const byDiv = {}; players.forEach(p => { const d=p.division||0; (byDiv[d] = byDiv[d]||[]).push(p); });
-    const sec = (title, icon, fn, val, suff) => {
-      const arr = players.filter(fn).map(p=>({...p, __v: val(p)})).sort((a,b)=>b.__v-a.__v).slice(0,5);
-      arr.forEach((p,i)=>{p.__rank=['🥇','🥈','🥉','4','5'][i];});
-      return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${icon} ${title}</h3>${arr.length?arr.map(p=>renderLeaderboardRow(p,()=>p.__v,suff)).join(''):'<p style="text-align:center;color:#6a87b3">Aucune donnée.</p>'}</div>`;
-    };
+    const sec = (title, icon, fn, val, suff) => { const arr = players.filter(fn).map(p=>({...p, __v: val(p)})).sort((a,b)=>b.__v-a.__v).slice(0,5); arr.forEach((p,i)=>{p.__rank=['🥇','🥈','🥉','4','5'][i];}); return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">${icon} ${title}</h3>${arr.length?arr.map(p=>renderLeaderboardRow(p,()=>p.__v,suff)).join(''):'<p style="text-align:center;color:#6a87b3">Aucune donnée.</p>'}</div>`; };
     const periodBtns = (kind, cur) => ['day','week','month'].map(t => `<button data-lg="rb" data-v="${kind}:${t}" style="flex:1;padding:8px 4px;border-radius:10px;border:1.5px solid ${cur===t?'var(--gold)':'rgba(0,229,255,.35)'};background:${cur===t?'linear-gradient(180deg,rgba(230,195,92,.35),rgba(40,28,4,.85))':'rgba(0,0,0,.4)'};color:${cur===t?'var(--gold-2)':'#9fc3ea'};font-weight:800;font-size:.8em;cursor:pointer">${t==='day'?'Jour':t==='week'?'Semaine':'Mois'}</button>`).join('');
     LG_MAIN.innerHTML = `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">👑 Top 5 — Général (XP)</h3>${topXp.length?topXp.map(p=>renderLeaderboardRow(p,()=>p.xp||0,' XP')).join(''):'<p style="text-align:center;color:#6a87b3">Aucun joueur.</p>'}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">🏛️ Top 5 — Par division</h3>${DV.map(d => { const t = (byDiv[d.l]||[]).sort((a,b)=>(b.xp||0)-(a.xp||0)).slice(0,5); if (!t.length) return ''; t.forEach((p,i)=>{p.__rank=['🥇','🥈','🥉','4','5'][i];}); return `<div style="margin-bottom:10px"><div style="color:var(--gold-2);font-weight:800;margin-bottom:6px;font-size:.9em">Division ${d.l} — ${escapeHTML(d.n)}</div>${t.map(p=>renderLeaderboardRow(p,()=>p.xp||0,' XP')).join('')}</div>`; }).join('')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">💥 Top 5 — Pions mangés</h3><div style="display:flex;gap:6px;margin-bottom:10px">${periodBtns('pions', LG.rbTabPions)}</div>${sec('Pions — ' + (LG.rbTabPions==='day'?'Aujourd\'hui':LG.rbTabPions==='week'?'Semaine':'Mois'), '💥', p => (p[LG.rbTabPions] && ((LG.rbTabPions==='day'&&p[LG.rbTabPions].d===day) || (LG.rbTabPions==='week'&&p[LG.rbTabPions].w===week) || (LG.rbTabPions==='month'&&p[LG.rbTabPions].m===month))), p => (p[LG.rbTabPions] && p[LG.rbTabPions].pions) || 0, ' 💥')}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">🏆 Top 5 — Victoires</h3><div style="display:flex;gap:6px;margin-bottom:10px">${periodBtns('wins', LG.rbTabWins)}</div>${sec('Victoires — ' + (LG.rbTabWins==='day'?'Aujourd\'hui':LG.rbTabWins==='week'?'Semaine':'Mois'), '🏆', p => (p[LG.rbTabWins] && ((LG.rbTabWins==='day'&&p[LG.rbTabWins].d===day) || (LG.rbTabWins==='week'&&p[LG.rbTabWins].w===week) || (LG.rbTabWins==='month'&&p[LG.rbTabWins].m===month))), p => (p[LG.rbTabWins] && p[LG.rbTabWins].wins) || 0, ' 🏆')}</div><button data-lg="refresh-rb" style="padding:12px;border:1.5px solid var(--cyan);border-radius:12px;background:linear-gradient(180deg,rgba(0,229,255,.22),rgba(4,16,48,.85));color:#fff;font-weight:800;cursor:pointer;text-transform:uppercase;font-size:.9em;width:100%;margin-bottom:8px">🔄 Actualiser</button><button data-lg="tab" data-v="home" style="padding:12px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-weight:800;cursor:pointer;text-transform:uppercase;font-size:.9em;width:100%">⬅ Retour</button>`;
   } catch(e) { console.error(e); LG_MAIN.innerHTML = `<div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold)">⚠️ Classements</h3><p>${escapeHTML(e.message||'')}</p><button data-lg="tab" data-v="home" style="padding:12px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-weight:800;cursor:pointer;width:100%">⬅ Retour</button></div>`; }
 }
-function renderLeaderboardRow(p, valFn, suffix) {
-  const elId = 'lb-av-' + (p.uid || Math.random().toString(36).slice(2,8));
-  setTimeout(() => { const el = document.getElementById(elId); if (el) fillAv(el, p.av || p.avatarFile, p.pseudo); }, 20);
-  return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:6px"><div style="width:26px;text-align:center;font-weight:900;flex:none">${p.__rank}</div><div style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="${elId}"></div><div style="flex:1;min-width:0"><b>${escapeHTML(p.pseudo || 'Joueur')}</b><small style="display:block;color:#9fc3ea">Div ${p.division || '?'} · ${escapeHTML(p.divisionName || '')}</small></div><b style="color:var(--gold);flex:none;font-size:.95em">${(valFn(p)||0).toLocaleString('fr-FR')}${suffix||''}</b></div>`;
+function renderLeaderboardRow(p, valFn, suffix) { const elId = 'lb-av-' + (p.uid || Math.random().toString(36).slice(2,8)); setTimeout(() => { const el = document.getElementById(elId); if (el) fillAv(el, p.av || p.avatarFile, p.pseudo); }, 20); return `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:6px"><div style="width:26px;text-align:center;font-weight:900;flex:none">${p.__rank}</div><div style="width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="${elId}"></div><div style="flex:1;min-width:0"><b>${escapeHTML(p.pseudo || 'Joueur')}</b><small style="display:block;color:#9fc3ea">Div ${p.division || '?'} · ${escapeHTML(p.divisionName || '')}</small></div><b style="color:var(--gold);flex:none;font-size:.95em">${(valFn(p)||0).toLocaleString('fr-FR')}${suffix||''}</b></div>`; }
+async function buyItem(id) {
+  if (id === 'king') {
+    if (balNow() < 1000) return showToast('Il te manque ' + (1000 - balNow()) + ' pièces', 'error');
+    if (!confirm('Acheter un Roi Magique pour 1000 pièces ?')) return;
+    try {
+      const ref = uref();
+      await window.FB.runTransaction(window.FB.db, async tx => {
+        const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
+        const d = snap.data(); const w = d.wallet || {coins: Number(d.gold||0)};
+        if (w.coins < 1000) throw new Error('Solde insuffisant');
+        w.coins -= 1000;
+        w.ledger = (w.ledger||[]);
+        w.ledger.unshift({id:'buy-king-'+Date.now(), t:Date.now(), label:'Achat Roi Magique', delta:-1000, balance:w.coins});
+        w.ledger = w.ledger.slice(0,100);
+        const inv = d.inventory || {};
+        inv.king = (inv.king || 0) + 1;
+        tx.update(ref, {gold: w.coins, wallet: w, inventory: inv});
+      });
+      await walletRefresh();
+      showToast('👑 Roi Magique acheté !', 'success');
+      renderLG();
+    } catch(e) { showToast(e.message || 'Erreur achat', 'error'); }
+    return;
+  }
+  const items = [{id:'bx',c:'gems',p:25},{id:'sh',c:'gold',p:800}];
+  const x = items.find(i => i.id === id); if (!x) return;
+  const cur = x.c; const ic = cur === 'gems' ? '💎' : '🪙';
+  if ((playerProfile[cur] || 0) < x.p) return showToast('Fonds insuffisants', 'error');
+  if (!confirm(`Acheter pour ${ic} ${x.p} ?`)) return;
+  playerProfile[cur] -= x.p;
+  if (id === 'bx') LG.L.bx = (LG.L.bx || 0) + 3;
+  else LG.L.sh = (LG.L.sh || 0) + 1;
+  saveLG(); await pushProfile(); showToast('Achat réussi', 'success'); renderLG();
 }
 const LGActions = {
   close: () => closeLG(),
@@ -1228,19 +1331,8 @@ const LGActions = {
   claim: e => claimMission(e.dataset.v),
   board: e => { const i = +e.dataset.v; selectBoard(i); showToast('Plateau ' + (i+1) + ' sélectionné', 'success'); renderLG(); },
   launch: e => launchLeagueMatch(e.dataset.v),
-  launchFree: async e => {
-    const mode = e.dataset.v;
-    closeLG();
-    currentMatchStake = 0; currentMatchId = 'match-free-'+Date.now(); currentGameKind = mode;
-    if (mode === 'solo') { state.botDifficulty = diffOf(divOf(LG.L.xp).l); setTimeout(() => { currentMatchStake = 0; currentMatchId = 'match-free-'+Date.now(); currentGameKind = 'solo'; state.botDifficulty = diffOf(divOf(LG.L.xp).l); startGame(false); }, 100); }
-    else if (mode === 'online') { setTimeout(() => createPrivateRoom(0, 'free'), 100); }
-  },
-  avs: () => {
-    const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,20,.88);backdrop-filter:blur(8px)';
-    o.innerHTML = `<div style="width:100%;max-width:420px;border:2px solid var(--cyan);border-radius:20px;padding:18px;background:linear-gradient(160deg,rgba(10,35,85,.96),rgba(4,16,48,.98))"><h2 style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;text-align:center">Choisis ton avatar</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${AVATAR_FILES.map(f => `<div data-f="${f}" style="width:100%;aspect-ratio:1;cursor:pointer;position:relative;overflow:hidden;border:2px solid ${playerProfile.avatarFile===f?'var(--gold)':'transparent'};border-radius:10px;background:#1e5fa8"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;z-index:0">${f.slice(0,1).toUpperCase()}</span><div style="position:absolute;inset:0;background:url('avatar/${f}.jpg') center/cover;z-index:1"></div></div>`).join('')}</div><button style="margin-top:12px;padding:12px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-weight:800;cursor:pointer;width:100%">Fermer</button></div>`;
-    o.onclick = async e => { const f = e.target.closest('[data-f]')?.dataset.f; if (f) { playerProfile.avatarFile = f; saveProfile(); applyProfileUI(); o.remove(); try { await window.FB.updateDoc(uref(), {avatarFile:f}); } catch(x){} showToast('Avatar mis à jour', 'success'); renderLG(); } else if (e.target.tagName === 'BUTTON') o.remove(); };
-    document.body.appendChild(o);
-  },
+  buy: e => buyItem(e.dataset.v),
+  avs: () => { const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,20,.88);backdrop-filter:blur(8px)'; o.innerHTML = `<div style="width:100%;max-width:420px;border:2px solid var(--cyan);border-radius:20px;padding:18px;background:linear-gradient(160deg,rgba(10,35,85,.96),rgba(4,16,48,.98))"><h2 style="color:var(--gold);text-transform:uppercase;letter-spacing:2px;margin-bottom:12px;text-align:center">Choisis ton avatar</h2><div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px">${AVATAR_FILES.map(f => `<div data-f="${f}" style="width:100%;aspect-ratio:1;cursor:pointer;position:relative;overflow:hidden;border:2px solid ${playerProfile.avatarFile===f?'var(--gold)':'transparent'};border-radius:10px;background:#1e5fa8"><span style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;color:#fff;font-size:18px;z-index:0">${f.slice(0,1).toUpperCase()}</span><div style="position:absolute;inset:0;background:url('avatar/${f}.jpg') center/cover;z-index:1"></div></div>`).join('')}</div><button style="margin-top:12px;padding:12px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.4);color:#fff;font-weight:800;cursor:pointer;width:100%">Fermer</button></div>`; o.onclick = async e => { const f = e.target.closest('[data-f]')?.dataset.f; if (f) { playerProfile.avatarFile = f; saveProfile(); applyProfileUI(); o.remove(); try { await window.FB.updateDoc(uref(), {avatarFile:f}); } catch(x){} showToast('Avatar mis à jour', 'success'); renderLG(); } else if (e.target.tagName === 'BUTTON') o.remove(); }; document.body.appendChild(o); },
   savepseudo: async () => { const v = (document.getElementById('lg-pseudo-input').value||'').trim(); if (v.length < 3) return showToast('Pseudo trop court', 'error'); playerProfile.pseudo = v; saveProfile(); applyProfileUI(); try { await window.FB.updateDoc(uref(), {pseudo:v}); } catch(e){} showToast('Pseudo enregistré', 'success'); renderLG(); },
   logout: async () => { if (confirm('Se déconnecter ?')) { await window.FB.signOut(window.FB.auth); location.reload(); } },
   addfriend: async () => { const id = (document.getElementById('lg-friend-input').value||'').trim(); if (id.length < 10) return showToast('Code invalide', 'error'); if (id === me().uid) return showToast('Impossible', 'error'); const s = await window.FB.getDoc(sref(id)).catch(()=>null); const pseudo = (s && s.exists() && s.data().pseudo) || 'ce joueur'; const ok = await sendInbox(id, {type:'fr', from: me().uid, name: playerProfile.pseudo, av: playerProfile.avatarFile}); if (ok) showToast(`Demande envoyée à ${pseudo}`, 'success'); else showToast('Erreur envoi', 'error'); },
@@ -1253,6 +1345,39 @@ lgRoot.addEventListener('click', e => { const t = e.target.closest('[data-lg]');
 function openLG() { if (!me()) return showToast('Connecte-toi d’abord !', 'error'); LG.open = true; lgRoot.style.display = 'flex'; initSocial(); renderLG(); requestAnimationFrame(() => { const c = lgRoot.querySelector('canvas'); if (c) { c.width = lgRoot.clientWidth; c.height = lgRoot.clientHeight; } }); }
 function closeLG() { LG.open = false; lgRoot.style.display = 'none'; }
 window.openLeagueView = function(tab) { openLG(); if (tab) { LG.T = tab === 'home' ? 'home' : tab; renderLG(); } };
+/* === IN-GAME BAG MODAL === */
+function openBag() {
+  if (!state || !state.hands) { showToast('Lance une partie pour utiliser le sac', 'error'); return; }
+  const inv = playerProfile.inventory || {};
+  const kings = inv.king || 0;
+  const body = document.getElementById('bag-body');
+  body.innerHTML = `<div class="bag-item ${kings <= 0 ? 'disabled' : ''}" data-bag-item="king"><div class="bag-item-icon">👑</div><div class="bag-item-body"><div class="bag-item-title">Roi Magique</div><div class="bag-item-desc">Clique pour remplacer une carte de ta main par un Roi.</div></div><div class="bag-item-count">×${kings}</div></div>${kings <= 0 ? '<p style="text-align:center;color:#9fc3ea;font-size:.85em;margin-top:12px">Achète un Roi Magique dans la boutique (1000 pièces).</p>' : ''}`;
+  body.querySelectorAll('[data-bag-item]').forEach(el => { el.onclick = () => useKingItem(); });
+  document.getElementById('bag-modal').classList.add('show');
+}
+function closeBag() { document.getElementById('bag-modal').classList.remove('show'); }
+async function useKingItem() {
+  if (!state || state.gameOver) { showToast('Partie terminée', 'error'); return; }
+  if (state.turn !== myPlayerIndex) { showToast('Ce n\'est pas ton tour', 'error'); return; }
+  if (state.mode || state.pendingSelection || state.cardPlayedThisTurn) { showToast('Action en cours', 'error'); return; }
+  const inv = playerProfile.inventory || {};
+  if ((inv.king || 0) <= 0) { showToast('Aucun Roi Magique', 'error'); return; }
+  const myHand = state.hands[myPlayerIndex] || [];
+  if (myHand.length === 0) { showToast('Main vide', 'error'); return; }
+  // Replace first card with a King
+  const old = myHand[0];
+  myHand[0] = {r:'K', s:'♠', magic:true};
+  inv.king = (inv.king || 0) - 1;
+  playerProfile.inventory = inv;
+  saveProfile();
+  try { await window.FB.updateDoc(uref(), {inventory: inv}).catch(()=>{}); } catch(e) {}
+  closeBag();
+  renderHand();
+  showToast('👑 Carte remplacée par un Roi !', 'success');
+  if (currentRoomCode) saveGameState();
+}
+window.openBag = openBag;
+window.closeBag = closeBag;
 window.openDistributionLab = function() { const modal = document.createElement('div'); modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,15,.94);z-index:900;display:flex;flex-direction:column;padding:20px'; modal.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="flex:1;font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff1b8,#00e5ff,#fff1b8);-webkit-background-clip:text;background-clip:text;color:transparent">🎴 Labo distribution</div><button id="labo-close" style="padding:8px 14px;background:rgba(255,82,82,.15);border:1.5px solid #ff5252;color:#ff8a80;border-radius:10px;font-weight:800;cursor:pointer">✕ Fermer</button></div><div style="flex:1;color:#dbe9ff;font-size:14px;line-height:1.6">Le laboratoire d'analyse des distributions sera disponible prochainement.</div>`; document.body.appendChild(modal); document.getElementById('labo-close').onclick = () => modal.remove(); };
 window.onload = () => { try { applyProfileUI(); buildRegAvatarPicker(); } catch(e) { console.error(e); } applyBoard(); buildBoardPickers(); initPools(); const fill = document.getElementById('loader-fill'), pctEl = document.getElementById('loader-pct'), msgEl = document.getElementById('loader-msg'), loader = document.getElementById('loader'); let p = 0; const iv = setInterval(() => { p += 10; fill.style.width = p+'%'; pctEl.textContent = p+'%'; msgEl.textContent = p<40?'Allumage…':p<80?'Chargement…':'Prêt !'; if(p>=100){clearInterval(iv);setTimeout(()=>{loader.classList.add('done');setTimeout(()=>loader.style.display='none',700);},400);} }, 60); };
 </script>
