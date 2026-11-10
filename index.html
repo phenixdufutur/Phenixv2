@@ -44,7 +44,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .loader-fill { height: 100%; width: 0%; background: linear-gradient(90deg, var(--cyan), var(--gold-2), #ff9800); transition: width .25s ease; }
 .loader-pct { font-size: clamp(16px, 5cqw, 26px); font-weight: bold; color: var(--gold-2); }
 .loader-msg { font-size: clamp(11px, 3.2cqw, 15px); color: #9fc3ea; }
-#toast { position: absolute; left: 50%; top: calc(var(--safe-top) + 14px); transform: translate(-50%, -30px); z-index: 600; padding: 10px 18px; border-radius: 14px; max-width: 90%; text-align: center; font-size: 14px; background: linear-gradient(180deg, rgba(14,40,92,.97), rgba(4,16,48,.98)); border: 1.5px solid var(--cyan); box-shadow: 0 0 16px rgba(0,229,255,.5); color: #fff; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
+#toast { position: fixed; left: 50%; top: calc(var(--safe-top) + 14px); transform: translate(-50%, -30px); z-index: 3000; padding: 10px 18px; border-radius: 14px; max-width: 90%; text-align: center; font-size: 14px; background: linear-gradient(180deg, rgba(14,40,92,.97), rgba(4,16,48,.98)); border: 1.5px solid var(--cyan); box-shadow: 0 0 16px rgba(0,229,255,.5); color: #fff; opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; }
 #toast.show { opacity: 1; transform: translate(-50%, 0); }
 #toast.error { border-color: #ff5252; }
 #toast.success { border-color: #00ffa8; }
@@ -199,6 +199,8 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .discard-card { position: absolute; inset: 0; background-color: #fff; border-radius: 2cqw; box-shadow: -2px 4px 14px rgba(0,0,0,0.8); border: 1px solid #333; background-size: cover; background-position: center; }
 #force-banner { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 60; display: none; text-align: center; padding: 3cqw 6cqw; border-radius: 4cqw; background: linear-gradient(160deg, rgba(130,12,12,.96), rgba(50,0,0,.97)); border: 3px solid #ff5a3c; pointer-events: none; }
 #force-banner.show { display: block; }
+#stuck-hint { position: absolute; left: 50%; bottom: calc(var(--banner-height) + 10px + var(--safe-bottom) + 25cqw); transform: translateX(-50%); z-index: 43; display: none; padding: 2cqw 4cqw; border-radius: 3cqw; background: rgba(4,16,48,.93); border: 1.5px solid var(--gold); color: var(--gold-2); font-weight: 800; font-size: 3.4cqw; text-align: center; pointer-events: none; max-width: 86%; }
+#stuck-hint.show { display: block; }
 #force-banner b { display: block; font-size: clamp(20px, 7cqw, 34px); color: var(--gold-2); text-transform: uppercase; }
 #force-banner span { display: block; margin-top: 1cqw; color: #fff; }
 #kill-banner { position: absolute; left: 50%; top: 44%; transform: translate(-50%, -50%); z-index: 60; display: none; text-align: center; padding: 2cqw 5cqw; border-radius: 3cqw; background: linear-gradient(160deg, rgba(10,35,85,.97), rgba(4,16,48,.98)); border: 2px solid var(--cyan); box-shadow: 0 0 30px rgba(0,229,255,.6); pointer-events: none; }
@@ -247,7 +249,6 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .stake-row.active { background: linear-gradient(90deg, rgba(230,195,92,.25), rgba(230,195,92,.08)); border: 1.5px solid var(--gold); }
 .stake-row .div-badge { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 900; font-size: .9em; flex-shrink: 0; }
 .stake-row.active .div-badge { box-shadow: 0 0 12px currentColor; }
-/* Badge bot imposé */
 .bot-imposed { display: flex; align-items: center; gap: 12px; padding: 14px; border-radius: 14px; background: linear-gradient(135deg, rgba(176,79,214,.18), rgba(4,16,48,.9)); border: 1.5px solid var(--purple); margin-bottom: 12px; }
 .bot-imposed-icon { font-size: 2.2em; flex-shrink: 0; }
 .bot-imposed-body { flex: 1; min-width: 0; }
@@ -259,7 +260,7 @@ body { font-family: 'Segoe UI', -apple-system, sans-serif; color: #fff; user-sel
 .bot-imposed .diff-tag.expert { background: rgba(255,82,82,.18); color: #ff8a80; border: 1px solid #ff5252; }
 
 /* ==========================================================
-   ✦ THEME PREMIUM — menus, boutique, ligue (le plateau, les cartes, les pions et leurs animations ne sont pas touchés)
+   ✦ THEME PREMIUM
    ========================================================== */
 input, select, textarea { -webkit-user-select: text; user-select: text; }
 :root { --glass: linear-gradient(160deg, rgba(22,60,136,.58), rgba(4,14,42,.86)); --edge: rgba(0,229,255,.4); --gold-grad: linear-gradient(135deg, #fff1b8 0%, #e6c35c 45%, #b8860b 100%); }
@@ -365,7 +366,6 @@ input, select, textarea { -webkit-user-select: text; user-select: text; }
 .reward-pop .rp-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; max-width: 340px; }
 .reward-pop .rp-item { padding: 10px 16px; border-radius: 14px; font-weight: 900; background: rgba(0,0,0,.45); border: 1.5px solid var(--gold); color: var(--gold-2); animation: popIn .5s both; }
 .reward-pop .rp-tap { margin-top: 24px; color: #7f9cc7; font-size: 12px; letter-spacing: 2px; text-transform: uppercase; }
-/* Sac d'objets (en partie) */
 #bag-modal { position: absolute; inset: 0; background: rgba(0,0,0,.9); display: none; justify-content: center; align-items: center; z-index: 200; padding: 16px; backdrop-filter: blur(8px); }
 #bag-modal.show { display: flex; }
 .bag-content { background: linear-gradient(160deg, rgba(10,35,85,.95), rgba(4,16,48,.98)); border: 2px solid var(--cyan); border-radius: 20px; padding: 16px; width: min(94vw, 440px); max-height: 88dvh; display: flex; flex-direction: column; gap: 10px; box-shadow: 0 18px 50px rgba(0,0,0,.6); }
@@ -382,6 +382,116 @@ input, select, textarea { -webkit-user-select: text; user-select: text; }
 #btn-mic.live { border-color: #43d17a !important; background: rgba(67,209,122,.25) !important; box-shadow: 0 0 12px rgba(67,209,122,.6); }
 #btn-mic.off { opacity: .85; }
 #settings-buttons #btn-bag { margin-left: auto; border-color: var(--gold); background: rgba(230,195,92,.15); }
+
+/* ===== NOUVEAU : mode débutant ===== */
+#btn-beginner.active {
+  border-color: #ffd54a !important;
+  background: rgba(230,195,92,.3) !important;
+  box-shadow: 0 0 12px rgba(230,195,92,.75);
+}
+#beginner-help {
+  display: none;
+  position: absolute;
+  left: 0; right: 0;
+  bottom: max(calc(var(--sc-size) + 3.4cqh), var(--strip-min, 9%));
+  padding: 8px 14px;
+  font-size: 3.2cqw;
+  line-height: 1.4;
+  color: #dbe9ff;
+  text-align: center;
+  text-shadow: 0 1px 3px #000;
+  background: linear-gradient(180deg, rgba(4,16,48,.92), rgba(4,16,48,.98));
+  border-top: 1px solid rgba(0,229,255,.35);
+  border-bottom: 1px solid rgba(0,229,255,.35);
+  z-index: 43;
+  pointer-events: none;
+  min-height: 8cqw;
+}
+#stage.beginner #beginner-help { display: block; }
+#beginner-help b { color: var(--gold-2); }
+
+/* ===== NOUVEAU : croix de kill ===== */
+.kill-cross {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 11;
+  color: #ff2d2d;
+  font-size: 5.2cqw;
+  font-weight: 900;
+  text-shadow: 0 0 10px #ff0000, 0 0 2px #000;
+  pointer-events: none;
+  animation: killCrossPop .35s ease-out;
+}
+@keyframes killCrossPop {
+  from { transform: translate(-50%, -50%) scale(.2) rotate(-25deg); opacity: 0; }
+  to   { transform: translate(-50%, -50%) scale(1) rotate(0); opacity: 1; }
+}
+
+/* ===== NOUVEAU : partie rapide ===== */
+.quick-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(0,0,0,.32);
+  border: 1.5px solid rgba(0,229,255,.35);
+  color: #dbe9ff;
+  font-size: .88em;
+  font-weight: 700;
+  cursor: pointer;
+  margin: 8px 0;
+}
+.quick-row input { width: 18px; height: 18px; accent-color: #00e5ff; flex-shrink: 0; }
+
+/* ===== NOUVEAU : modales thème stylées ===== */
+.theme-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  background: radial-gradient(circle at 50% 35%, rgba(20,60,130,.72), rgba(0,0,0,.92));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+.theme-modal.show { display: flex; }
+.theme-modal-box {
+  width: min(92vw, 430px);
+  border: 2px solid var(--cyan);
+  border-radius: 22px;
+  padding: 18px;
+  background: linear-gradient(160deg, rgba(10,35,85,.97), rgba(4,16,48,.99));
+  box-shadow: 0 20px 60px rgba(0,0,0,.7), 0 0 30px rgba(0,229,255,.25), inset 0 1px 0 rgba(255,255,255,.12);
+  animation: popIn .35s both;
+}
+.theme-modal-box h2 {
+  text-align: center;
+  color: var(--gold-2);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  font-size: 1.15em;
+  margin-bottom: 14px;
+}
+.theme-modal-body { color: #dbe9ff; font-size: .95em; line-height: 1.5; }
+.theme-modal-actions { display: flex; gap: 10px; margin-top: 16px; }
+.theme-modal-actions button { flex: 1; }
+.promo-code-display {
+  margin: 14px 0;
+  padding: 14px;
+  text-align: center;
+  font-size: 1.45em;
+  font-weight: 900;
+  letter-spacing: 3px;
+  color: var(--gold-2);
+  background: rgba(0,0,0,.55);
+  border: 2px dashed var(--gold);
+  border-radius: 14px;
+  box-shadow: 0 0 20px rgba(230,195,92,.25);
+}
+
 @media (prefers-reduced-motion: reduce) { .embers i, .hex-btn-container::after, .shop-btn::after, .wallet-hero::after, .shop-card-icon { animation: none !important; } }
 </style>
 </head>
@@ -408,7 +518,14 @@ input, select, textarea { -webkit-user-select: text; user-select: text; }
     </div>
     <div id="lobby-room-view" style="display: none; flex-direction: column; gap: 12px;">
       <div class="lobby-card gold"><div style="text-align:center;"><div style="font-size:3cqw;letter-spacing:3px;color:#9fc3ea;">CODE DU SALON</div><div style="font-size:14cqw;font-weight:800;color:var(--gold-2);letter-spacing:.25em;" id="span-room-code">----</div><button class="btn ghost" onclick="copyRoomCode()">📋 Copier</button></div></div>
-      <div class="lobby-card"><div class="room-slots" id="room-players-list"></div><label class="switch-row"><span>🤖 Compléter avec des Bots</span><span class="switch"><input type="checkbox" id="check-bots" checked onchange="renderRoomSlots()"><i></i></span></label><div class="input-group" id="room-bot-difficulty-wrap"><label>Difficulté des bots</label><select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()"><option value="easy">Nul</option><option value="medium" selected>Moyen</option><option value="expert">Expert</option></select></div><div class="input-group" id="room-stake-wrap"><label>Mise de la partie (🪙)</label><select id="room-stake" onchange="saveRoomStake()" style="padding:2.5cqw;border-radius:2cqw;border:1px solid #4a6fa5;background:rgba(0,0,0,0.5);color:var(--gold-2);font-weight:900;text-align:center;"><option value="0">Gratuit</option><option value="100">100 🪙</option><option value="200">200 🪙</option><option value="500">500 🪙</option><option value="1000">1000 🪙</option></select></div><div style="display:flex;gap:8px;"><button class="btn block" id="btn-ready" onclick="toggleReadyState()">Je suis prêt !</button><button class="btn gold block" id="btn-start-multi" style="display: none;" onclick="startMultiplayerGame()">▶ Lancer</button></div></div>
+      <div class="lobby-card">
+        <div class="room-slots" id="room-players-list"></div>
+        <label class="switch-row"><span>🤖 Compléter avec des Bots</span><span class="switch"><input type="checkbox" id="check-bots" checked onchange="renderRoomSlots()"><i></i></span></label>
+        <label class="switch-row"><span>⚡ Partie rapide (2 pions · récompenses ÷2)</span><span class="switch"><input type="checkbox" id="check-quick" onchange="saveRoomQuick()"><i></i></span></label>
+        <div class="input-group" id="room-bot-difficulty-wrap"><label>Difficulté des bots</label><select id="room-bot-difficulty" onchange="saveRoomBotDifficulty()"><option value="easy">Nul</option><option value="medium" selected>Moyen</option><option value="expert">Expert</option></select></div>
+        <div class="input-group" id="room-stake-wrap"><label>Mise de la partie (🪙)</label><select id="room-stake" onchange="saveRoomStake()" style="padding:2.5cqw;border-radius:2cqw;border:1px solid #4a6fa5;background:rgba(0,0,0,0.5);color:var(--gold-2);font-weight:900;text-align:center;"><option value="0">Gratuit</option><option value="100">100 🪙</option><option value="200">200 🪙</option><option value="500">500 🪙</option><option value="1000">1000 🪙</option></select></div>
+        <div style="display:flex;gap:8px;"><button class="btn block" id="btn-ready" onclick="toggleReadyState()">Je suis prêt !</button><button class="btn gold block" id="btn-start-multi" style="display: none;" onclick="startMultiplayerGame()">▶ Lancer</button></div>
+      </div>
     </div>
     <button class="btn ghost block" onclick="backToMainMenuFromLobby()">Retour au menu</button>
   </div>
@@ -457,8 +574,17 @@ input, select, textarea { -webkit-user-select: text; user-select: text; }
     <div class="player-container pos-p3"><div id="avatar-game-p3" class="in-game-avatar"></div><div id="name-game-p3" class="game-pseudo">Vert</div><div class="turn-timer" id="timer-p3">20</div></div>
     <div class="player-container pos-p0"><div id="avatar-game-p0" class="in-game-avatar"></div><div id="name-game-p0" class="game-pseudo">Vous</div><div class="turn-timer" id="timer-p0">20</div></div>
     <div id="bottom-strip"></div>
-    <div id="settings-buttons"><button id="btn-mute" onclick="toggleSound()">🔊</button><button id="btn-anims" onclick="toggleAnimations()">✨</button><button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button><button id="btn-bag" onclick="openBag()">🎒</button><button id="btn-mic" onclick="toggleMic()">🎙️</button></div>
+    <div id="beginner-help"></div>
+    <div id="settings-buttons">
+      <button id="btn-mute" onclick="toggleSound()">🔊</button>
+      <button id="btn-anims" onclick="toggleAnimations()">✨</button>
+      <button id="btn-fullscreen" onclick="toggleFullscreen()">⛶</button>
+      <button id="btn-beginner" onclick="toggleBeginnerMode()" title="Mode débutant">🎓</button>
+      <button id="btn-bag" onclick="openBag()">🎒</button>
+      <button id="btn-mic" onclick="toggleMic()">🎙️</button>
+    </div>
     <div id="hand"></div>
+    <div id="stuck-hint">Aucune carte jouable · touche une carte pour la défausser</div>
     <div id="force-banner"><b>⚠️ Abandonnez une carte</b><span>Un 10 a été joué avant vous</span></div>
     <div id="kill-banner"><b id="kill-banner-text"></b></div>
     <button id="btn-menu" onclick="backToMenu()">Menu</button>
@@ -469,10 +595,11 @@ input, select, textarea { -webkit-user-select: text; user-select: text; }
 </div>
 <script>
 /* ============================================================
-   PHOENIX JACKAROO — Bot lié à la division (pas de choix en ligue)
+   PHOENIX JACKAROO — Version complète avec améliorations
    ============================================================ */
 function escapeHTML(s) { return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
 let toastTimer = null;
+(function(){ const t = document.getElementById('toast'); if (t && t.parentNode !== document.body) document.body.appendChild(t); })();
 function showToast(msg, type) { const t = document.getElementById('toast'); if (!t) return; t.textContent = msg; t.className = 'show' + (type ? ' ' + type : ''); clearTimeout(toastTimer); toastTimer = setTimeout(() => { t.classList.remove('show'); }, 3000); }
 function authErrorMsg(err) { const map = { 'auth/email-already-in-use': "Cet email est déjà utilisé.", 'auth/invalid-email': "Adresse email invalide.", 'auth/weak-password': "Mot de passe trop court.", 'auth/invalid-credential': "Email ou mot de passe incorrect.", 'auth/user-not-found': "Aucun compte.", 'auth/wrong-password': "Mot de passe incorrect.", 'auth/too-many-requests': "Trop d'essais.", 'auth/network-request-failed': "Problème de connexion.", 'permission-denied': "Accès refusé.", 'unavailable': "Serveur injoignable." }; return (err && map[err.code]) || (err && err.message) || "Une erreur est survenue."; }
 function fillAv(el, file, pseudo) {
@@ -494,9 +621,10 @@ const PROMO_CODES = {
   MAGIK5:      { items: { king: 2, seven: 2, five: 2, phoenix: 2 } },
   BELVEDPHENIX:{ coins: 10000, unlimited: true }
 };
-let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, boardChoice: 0, inventory: { ...DEFAULT_INVENTORY } };
+let playerProfile = { pseudo: 'Joueur1', email: '', avatarFile: 'az', avatarShape: 'square', gold: 1000, gems: 45, boardChoice: 0, inventory: { ...DEFAULT_INVENTORY }, promoCodes: [] };
 if(localStorage.getItem('phoenix_profile')) { try { playerProfile = Object.assign(playerProfile, JSON.parse(localStorage.getItem('phoenix_profile'))); } catch(e){} }
 playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, playerProfile.inventory || {});
+if (!Array.isArray(playerProfile.promoCodes)) playerProfile.promoCodes = [];
 const AVATAR_FILES = ['az','ay','ax','aw','av','au','at','as','ar','aq','ap','ao','an','am','al','ak','aj','ai','ah','ag','af','ae','ad','ac'];
 let currentRoomCode = null, roomListener = null, roomStarted = false, authMode = 'login', regAvatar = 'az', lastRoomData = null;
 let hostSeat = 0;
@@ -505,6 +633,110 @@ let myPlayerIndex = 0, gameStateListener = null, botTimeout = null, roomUids = n
 let currentMatchStake = 0;
 let currentMatchId = null;
 let currentGameKind = null;
+
+/* ===== QUICK GAME / MODE DÉBUTANT / CODES PROMO ===== */
+let currentQuickGame = false;
+const quickOptions = { online:false, solo:false, coop:false, private:false };
+try { Object.assign(quickOptions, JSON.parse(localStorage.getItem('phoenix_quick_options') || '{}')); } catch(e) {}
+
+function setQuickOption(key, val) {
+  quickOptions[key] = !!val;
+  try { localStorage.setItem('phoenix_quick_options', JSON.stringify(quickOptions)); } catch(e) {}
+}
+window.setQuickOption = setQuickOption;
+
+let beginnerMode = false;
+try { beginnerMode = localStorage.getItem('phoenix_beginner') === '1'; } catch(e) {}
+
+const CARD_HELP = {
+  A:       { title: 'As', action: 'Sortir un pion de la base, ou avancer un pion de 1 ou 11 cases.' },
+  K:       { title: 'Roi', action: 'Sortir un pion de la base, ou avancer un pion de 13 cases.' },
+  '2':     { title: '2', action: 'Avancer un pion de 2 cases.' },
+  '3':     { title: '3', action: 'Avancer un pion de 3 cases.' },
+  '4':     { title: '4', action: 'Reculer un pion de 4 cases.' },
+  '5':     { title: '5', action: 'Déplacer n’importe quel pion de 5 cases.' },
+  '6':     { title: '6', action: 'Avancer un pion de 6 cases.' },
+  '7':     { title: '7', action: 'Avancer un pion, puis répartir le reste sur un autre pion.' },
+  '8':     { title: '8', action: 'Avancer un pion de 8 cases.' },
+  '9':     { title: '9', action: 'Avancer un pion de 9 cases.' },
+  '10':    { title: '10', action: 'Avancer un pion de 10 cases, ou passer ton tour.' },
+  J:       { title: 'Valet', action: 'Échanger deux pions sur le plateau.' },
+  Q:       { title: 'Dame', action: 'Avancer un pion de 12 cases.' },
+  PHOENIX: { title: 'Phénix', action: 'Souffler sur 6 cases, téléporter un pion au nid, ou diviser le souffle.' },
+  MANDALA: { title: 'Mandala', action: 'Protéger toute ton équipe pendant 2 tours.' },
+  JOKER:   { title: 'Joker', action: 'Choisir entre deux cartes proposées.' }
+};
+
+let beginnerLastHelp = '';
+
+function applyBeginnerMode() {
+  const b = document.getElementById('btn-beginner');
+  if (b) b.classList.toggle('active', beginnerMode);
+  const st = document.getElementById('stage');
+  if (st) st.classList.toggle('beginner', beginnerMode);
+  refreshBeginnerHelp(true);
+}
+
+function toggleBeginnerMode() {
+  beginnerMode = !beginnerMode;
+  try { localStorage.setItem('phoenix_beginner', beginnerMode ? '1' : '0'); } catch(e) {}
+  applyBeginnerMode();
+  showToast(beginnerMode ? '🎓 Mode débutant activé' : 'Mode débutant désactivé', 'success');
+}
+window.toggleBeginnerMode = toggleBeginnerMode;
+
+function refreshBeginnerHelp(force) {
+  if (!beginnerMode) return;
+  const el = document.getElementById('beginner-help');
+  if (!el) return;
+  const gameActive = document.getElementById('game-screen')?.classList.contains('active');
+  let html = '';
+
+  if (!gameActive) {
+    html = '';
+  } else if (state.gameOver) {
+    html = '<b>Partie terminée.</b> Touche « Menu » pour revenir.';
+  } else if (state.forcedDiscardFor === myPlayerIndex) {
+    html = '<b>⚠️ Tu dois défausser une carte.</b> Touche une carte de ta main.';
+  } else if (state.turn !== myPlayerIndex) {
+    html = `Tour de <b>${escapeHTML(PLAYERS[state.turn]?.name || '')}</b>. Observe le plateau.`;
+  } else if (state.previewCardIdx !== null) {
+    const card = state.hands[myPlayerIndex]?.[state.previewCardIdx];
+    const h = card ? CARD_HELP[card.r] : null;
+    html = h
+      ? `<b>${h.title} :</b> ${h.action} Touche un pion clignotant pour jouer.`
+      : '<b>Carte sélectionnée :</b> touche un pion clignotant pour jouer.';
+  } else if (state.mode === 'move5') {
+    html = '<b>Carte 5 :</b> touche n’importe quel pion clignotant pour le déplacer de 5 cases.';
+  } else if (state.mode === 'as_select') {
+    html = '<b>As :</b> touche un pion clignotant. Tu pourras choisir +1 ou +11.';
+  } else if (state.mode === 'k_select') {
+    html = '<b>Roi :</b> touche un pion clignotant pour sortir un pion ou avancer de 13.';
+  } else if (state.mode === 'seven_first') {
+    html = '<b>7 :</b> touche un pion, puis choisis comment répartir les 7 cases.';
+  } else if (state.mode === 'seven_second') {
+    html = '<b>7 :</b> touche le deuxième pion pour utiliser le reste du déplacement.';
+  } else if (state.mode === 'phoenix_select') {
+    html = '<b>Phénix :</b> touche un pion, puis choisis Souffle, Téléportation ou Diviser.';
+  } else if (state.mode === 'swapAlly') {
+    html = '<b>Valet :</b> touche d’abord ton pion à échanger.';
+  } else if (state.mode === 'swapEnemy') {
+    html = '<b>Valet :</b> touche maintenant le pion adverse à échanger.';
+  } else if (state.pendingSelection) {
+    html = '<b>Choisis un pion clignotant</b> pour effectuer le déplacement.';
+  } else if (document.getElementById('actions')?.children.length) {
+    html = '<b>Choisis une option</b> dans le bandeau d’actions.';
+  } else {
+    html = '<b>1️⃣ Choisis une carte</b> dans ta main. Les cartes grisées ne sont pas jouables. <b>2️⃣</b> Touche ensuite un pion clignotant.';
+  }
+
+  if (force || html !== beginnerLastHelp) {
+    beginnerLastHelp = html;
+    el.innerHTML = html;
+  }
+}
+setInterval(() => { if (beginnerMode) refreshBeginnerHelp(); }, 500);
+
 function saveProfile() { try { localStorage.setItem('phoenix_profile', JSON.stringify(playerProfile)); } catch(e){} }
 function updateCurrencyUI() { try { document.getElementById('menu-gold').textContent = `🪙 ${(playerProfile.gold||0).toLocaleString('fr-FR')}`; document.getElementById('menu-gems').textContent = `💎 ${(playerProfile.gems||0).toLocaleString('fr-FR')}`; } catch(e) {} }
 function applyProfileUI() {
@@ -525,7 +757,7 @@ window.registerUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; playerProfile.gold = 1000; playerProfile.inventory = { ...DEFAULT_INVENTORY }; playerProfile.wallet = {coins:1000, initialized:true, promos:[], loginDate:'', missions:{date:'',played:0,won:0,claimed:[]}, ledger:[{id:'welcome-'+res.user.uid,t:Date.now(),label:'Bonus de bienvenue',delta:1000,balance:1000}]}; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); showToast('🎁 Bienvenue ! 1 000 pièces.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.createUserWithEmailAndPassword(window.FB.auth, email, pass); playerProfile.pseudo = pseudo; playerProfile.avatarFile = regAvatar; playerProfile.email = email; playerProfile.gold = 1000; playerProfile.inventory = { ...DEFAULT_INVENTORY }; playerProfile.promoCodes = []; playerProfile.wallet = {coins:1000, initialized:true, promos:[], loginDate:'', missions:{date:'',played:0,won:0,claimed:[]}, ledger:[{id:'welcome-'+res.user.uid,t:Date.now(),label:'Bonus de bienvenue',delta:1000,balance:1000}]}; saveProfile(); await window.FB.setDoc(window.FB.doc(window.FB.db, 'users', res.user.uid), playerProfile); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); showToast('🎁 Bienvenue ! 1 000 pièces.', 'success'); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 window.loginUser = async function() {
@@ -533,7 +765,7 @@ window.loginUser = async function() {
   if (!email || !pass) { showToast("Remplis l'email et le mot de passe", 'error'); return; }
   if (!window.FB) { showToast("Connexion au serveur en cours", 'error'); return; }
   const btn = document.getElementById('auth-submit'); btn.disabled = true;
-  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); if(docSnap.exists()) { playerProfile = Object.assign(playerProfile, docSnap.data()); } playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, playerProfile.inventory || {}); saveProfile(); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); if(window.applySavedBoard) window.applySavedBoard(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
+  try { const res = await window.FB.signInWithEmailAndPassword(window.FB.auth, email, pass); const docSnap = await window.FB.getDoc(window.FB.doc(window.FB.db, 'users', res.user.uid)); const dd = docSnap.exists() ? docSnap.data() : {}; if (docSnap.exists()) { playerProfile = Object.assign(playerProfile, dd); } playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, dd.inventory || {}); if (!Array.isArray(playerProfile.promoCodes)) playerProfile.promoCodes = []; if (!dd.wallet) delete playerProfile.wallet; saveProfile(); document.getElementById('auth-screen').classList.remove('active'); document.getElementById('main-menu').classList.add('active'); applyProfileUI(); if(window.applySavedBoard) window.applySavedBoard(); } catch(err) { showToast(authErrorMsg(err), 'error'); }
   btn.disabled = false;
 };
 const RULES_PAGES = [
@@ -584,13 +816,25 @@ function beep(freq, dur, type='sine') { if (muted) return; try { if (!audioCtx) 
 function playSound(type) { if (muted) return; try { if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)(); const osc = audioCtx.createOscillator(), gain = audioCtx.createGain(); if (type === 'spawn') { osc.type='sine'; osc.frequency.setValueAtTime(200, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime+0.2); gain.gain.setValueAtTime(0.1, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.3); } else if (type === 'kill') { osc.type='sawtooth'; osc.frequency.setValueAtTime(150, audioCtx.currentTime); osc.frequency.exponentialRampToValueAtTime(40, audioCtx.currentTime+0.3); gain.gain.setValueAtTime(0.2, audioCtx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime+0.4); } osc.connect(gain); gain.connect(audioCtx.destination); osc.start(); osc.stop(audioCtx.currentTime+0.4); } catch(e){} }
 function setPos(el, pos) { el.style.setProperty('--x', pos.x); el.style.setProperty('--y', pos.y); }
 function getControlledPlayerId(playerId) { const myPawns = state.pawns[playerId]; if (myPawns.every(p => p.state === 'SAFE')) { const team = PLAYERS[playerId].team; if (team === 0) return playerId === 0 ? 2 : 0; if (team === 1) return playerId === 1 ? 3 : 1; } return playerId; }
+let lastMoveAt = Date.now();
 const TURN_DURATION = 20;
 let turnTimerInterval = null, timeLeft = TURN_DURATION, lastTimerTurn = -2, timeoutLock = false;
-function updateTimerDisplay() { for (let i = 0; i < 4; i++) { const el = document.getElementById(`timer-p${i}`); if (el) el.classList.remove('active'); } const active = document.getElementById(`timer-p${state.turn}`); if (active) { active.classList.add('active'); active.textContent = timeLeft; } }
+function updateTimerDisplay() { for (let i = 0; i < 4; i++) { const el = document.getElementById(`timer-p${i}`); if (el) el.classList.remove('active'); } const active = document.getElementById(`timer-p${state.turn}`); if (active) { active.classList.add('active'); active.textContent = timeLeft; } try { if (!state.gameOver && state.turn === myPlayerIndex) ensureHandInteractive(); } catch(e) {} }
 function startTimer() { clearInterval(turnTimerInterval); timeLeft = TURN_DURATION; updateTimerDisplay(); turnTimerInterval = setInterval(() => { timeLeft--; if (timeLeft < 0) timeLeft = 0; updateTimerDisplay(); if (timeLeft <= 0) { clearInterval(turnTimerInterval); timeoutAction(); } }, 1000); }
 function stopTimer() { clearInterval(turnTimerInterval); document.querySelectorAll('.turn-timer').forEach(el => el.classList.remove('active')); }
 function updateTurnUI() { document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn')); const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`); if (activeAvatar) activeAvatar.classList.add('active-turn'); const isHost = !currentRoomCode || isHostClient(); const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot; const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost) || (!currentRoomCode && PLAYERS[state.turn].isBot); if (!shouldRunTimer) { stopTimer(); return; } if (lastTimerTurn === state.turn) { updateTimerDisplay(); return; } startTimer(); lastTimerTurn = state.turn; }
-function timeoutAction() { if (state.gameOver || timeoutLock) return; const playerId = state.turn; const isHost = !currentRoomCode || isHostClient(); if (!isHost) return; if (!currentRoomCode && playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; timeoutLock = true; setTimeout(() => { timeoutLock = false; if (state.gameOver) return; if (state.turn !== playerId) return; applyTimeoutAction(playerId); }, 500); }
+function timeoutAction() {
+  if (state.gameOver || timeoutLock) return;
+  const playerId = state.turn, solo = !currentRoomCode;
+  const mine = playerId === myPlayerIndex && !PLAYERS[playerId].isBot;
+  const hostFallback = !solo && isHostClient() && !mine;
+  if (solo) { if (!isHostClient()) return; if (playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; }
+  else if (!mine && !hostFallback) return;
+  timeoutLock = true;
+  const seqAtStart = lastAppliedSeq;
+  const grace = (hostFallback && !PLAYERS[playerId].isBot) ? 9000 : 500;
+  setTimeout(() => { timeoutLock = false; if (state.gameOver || state.turn !== playerId) return; if (grace > 500 && lastAppliedSeq !== seqAtStart) return; applyTimeoutAction(playerId); }, grace);
+}
 function applyTimeoutAction(playerId) { clearSelection(); clearActions(); clearPathPreviews(); state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; state.forcedDiscardFor = null; state.pendingSkip = null; const hand = state.hands[playerId] || []; const hadPlayed = state.cardPlayedThisTurn; if (hadPlayed) { state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); return; } if (hand.length > 0) { const randIdx = Math.floor(Math.random() * hand.length); const card = hand.splice(randIdx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(playerId); } state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 500); }
 const pools = { rings: [], embers: [] };
 function initPools() { const board = document.getElementById('board'); for (let i = 0; i < 15; i++) { const el = document.createElement('div'); el.className = 'fx-ring'; board.appendChild(el); pools.rings.push(el); } for (let i = 0; i < 40; i++) { const el = document.createElement('div'); el.className = 'ember'; board.appendChild(el); pools.embers.push(el); } }
@@ -601,6 +845,16 @@ function fxEmbers(pct, n = 4, essential = false) { if (!animationsEnabled && !es
 function fxMandala() { const c = { x: 50, y: 42 }; fxRing(c, '#00ffa8', 34); setTimeout(() => fxRing(c, '#fff1b8', 24), 170); setTimeout(() => fxRing(c, '#00e5ff', 16), 340); fxEmbers(c, 6, true); }
 function flyHome(el) { if (!el) return; el.style.transition = 'transform .7s cubic-bezier(.5,0,.2,1), filter .3s'; setTimeout(() => { el.style.transition = ''; }, 900); }
 function showKillBanner(killer, victim) { const b = document.getElementById('kill-banner'); const t = document.getElementById('kill-banner-text'); if (!b || !t) return; t.innerHTML = `<b>${escapeHTML(killer)}</b> <span class="sword">⚔️</span> <b style="color:#ff8a80">${escapeHTML(victim)}</b>`; b.classList.add('show'); setTimeout(() => b.classList.remove('show'), 2000); }
+function addKillCross(pct) {
+  const board = document.getElementById('board');
+  if (!board) return;
+  const c = document.createElement('div');
+  c.className = 'kill-cross';
+  c.textContent = '✕';
+  c.style.left = pct.x + '%';
+  c.style.top = pct.y + '%';
+  board.appendChild(c);
+}
 let previewElements = [];
 function clearPathPreviews() { previewElements.forEach(el => el.remove()); previewElements = []; }
 function computeDestination(sourcePlayerId, pawnIdx, steps, isFive = false) { const pawn = state.pawns[sourcePlayerId][pawnIdx]; if (!pawn || pawn.state === 'HOME') return null; const isEnemyPush = isFive && PLAYERS[sourcePlayerId].team !== PLAYERS[state.turn].team; if (pawn.state === 'SAFE') { const target = pawn.safeIdx + steps; if (target < 0 || target > 3) return null; return { state: 'SAFE', idx: target, trackPath: [] }; } if (pawn.state === 'TRACK') { const entry = PLAYERS[sourcePlayerId].safeEntry; let cur = pawn.trackIdx; const trackPath = []; if (steps < 0) { for (let i = 0; i < Math.abs(steps); i++) { cur = (cur - 1 + TRACK.length) % TRACK.length; trackPath.push(cur); } return { state: 'TRACK', idx: cur, trackPath }; } for (let i = 1; i <= steps; i++) { if (cur === entry && !isEnemyPush) { const safeIdx = steps - i; if (safeIdx < 0 || safeIdx > 3) return null; return { state: 'SAFE', idx: safeIdx, trackPath }; } cur = (cur + 1) % TRACK.length; if (i < steps) trackPath.push(cur); } return { state: 'TRACK', idx: cur, trackPath }; } return null; }
@@ -651,37 +905,152 @@ function isProtected(owner, pawnIdx) { const pawn = state.pawns[owner][pawnIdx];
 function shuffleArr(a) { for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; }
 function createDeck() { const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K']; const suits = ['♠','♥','♦','♣']; const d = []; for (const s of suits) for (const r of ranks) d.push({r, s}); d.push({r:'JOKER', s:null}); d.push({r:'PHOENIX', s:null}); d.push({r:'MANDALA', s:null}); return shuffleArr(d); }
 function dealHands() { for (let i = 0; i < 4; i++) { state.hands[i] = []; for (let j = 0; j < 4; j++) if (state.deck.length > 0) state.hands[i].push(state.deck.pop()); } }
-function drawCard(playerId) { if (state.hands[playerId].length >= 4) return; if (state.deck.length === 0) { if (state.discard.length === 0) return; state.deck = shuffleArr(state.discard.splice(0)); } if (state.deck.length > 0) { state.hands[playerId].push(state.deck.pop()); if (playerId === myPlayerIndex) state.freshCard = true; } }
+function drawCard(playerId) { if (state.hands[playerId].length >= 4) return; if (state.deck.length === 0) { if (state.discard.length === 0) return; state.deck = shuffleArr(state.discard.splice(0).filter(c => !c.magic)); } if (state.deck.length > 0) { state.hands[playerId].push(state.deck.pop()); if (playerId === myPlayerIndex) state.freshCard = true; } }
 let nestTimer = null;
 function startNestTimer() { clearInterval(nestTimer); if (state.phoenixNest < 0 || state.gameOver || !animationsEnabled) return; nestTimer = setInterval(() => { if (!document.hidden && document.getElementById('game-screen').classList.contains('active')) fxEmbers(trackPct(state.phoenixNest), 1, false); }, 2500); }
 function trackRibbonSVG() { const f = n => n.toFixed(2); const pts = TRACK.map(coordToPct); const d = pts.map((p, i) => `${i ? 'L' : 'M'}${f(p.x)} ${f(p.y)}`).join(' ') + ' Z'; let lanes = ''; for (let p = 0; p < 4; p++) { const q = seatOf(p); const e = coordToPct(TRACK[PLAYERS[q].safeEntry]); const s = SAFE_ZONES[q].map(coordToPct); const ld = `M${f(e.x)} ${f(e.y)} ` + s.map(q => `L${f(q.x)} ${f(q.y)}`).join(' '); lanes += `<path d="${ld}" class="lane-glow" style="stroke:${PLAYERS[p].color}"/><path d="${ld}" class="lane-line" style="stroke:${PLAYERS[p].color}"/>`; } return `<svg id="track-svg" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}" class="ribbon-glow"/><path d="${d}" class="ribbon-line"/>${lanes}</svg>` + `<svg id="track-svg-flow" viewBox="0 0 100 100" preserveAspectRatio="none"><path d="${d}" class="ribbon-flow"/></svg>`; }
 function renderBoard() {
   const board = document.getElementById('board');
-  board.querySelectorAll('.hole, .pawn, .nest, #track-svg, #track-svg-flow, .mandala-aura, .path-dot, .dest-preview').forEach(e => e.remove());
+  board.querySelectorAll('.hole, .pawn, .nest, #track-svg, #track-svg-flow, .mandala-aura, .path-dot, .dest-preview, .kill-cross').forEach(e => e.remove());
   board.insertAdjacentHTML('afterbegin', trackRibbonSVG());
   if (state.phoenixNest >= 0) { const pct = trackPct(state.phoenixNest); const n = document.createElement('div'); n.className = 'nest'; n.style.left = pct.x+'%'; n.style.top = pct.y+'%'; n.innerHTML = '<div class="nest-glow"></div><div class="nest-ring"></div><div class="nest-ring r2"></div><div class="nest-core"></div><div class="nest-fire"><i class="tongue"></i><i class="tongue"></i><i class="tongue"></i></div>'; board.appendChild(n); }
   startNestTimer();
   TRACK.forEach((pt, i) => { const pct = coordToPct(pt); const h = document.createElement('div'); h.className = 'hole'; const baseSeat = PLAYERS.findIndex(p => p.baseIdx === i); if (baseSeat >= 0) { h.classList.add('base'); h.style.color = PLAYERS[(baseSeat + viewShift) % 4].color; } h.style.left = pct.x+'%'; h.style.top = pct.y+'%'; board.appendChild(h); });
   for (let p = 0; p < 4; p++) SAFE_ZONES[seatOf(p)].forEach((slot, k) => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole safe' + (k === 3 ? ' goal' : ''); h.style.color = PLAYERS[p].color; h.style.left = pct.x+'%'; h.style.top = pct.y+'%'; board.appendChild(h); });
   for (let p = 0; p < 4; p++) { const corner = PLAYER_HOME_CORNER[seatOf(p)]; HOMES[corner].forEach(slot => { const pct = coordToPct(slot); const h = document.createElement('div'); h.className = 'hole home'; h.style.color = PLAYERS[p].color; h.style.left = pct.x+'%'; h.style.top = pct.y+'%'; board.appendChild(h); }); }
-  for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const el = document.createElement('div'); el.className = 'pawn'; el.id = `pawn-${p}-${i}`; el.style.setProperty('--c', PLAYERS[p].color); el.style.setProperty('--c3', PLAYERS[p].c3); el.onclick = () => onPawnClick(p, i); board.appendChild(el); }
+  for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) {
+    const el = document.createElement('div');
+    el.className = 'pawn';
+    el.id = `pawn-${p}-${i}`;
+    if (currentQuickGame && i >= 2) el.style.display = 'none';
+    el.style.setProperty('--c', PLAYERS[p].color);
+    el.style.setProperty('--c3', PLAYERS[p].c3);
+    el.onclick = () => onPawnClick(p, i);
+    board.appendChild(el);
+  }
   updatePawnPositions();
 }
 function getPawnPos(playerId, pawnIdx) { const pawn = state.pawns[playerId] ? state.pawns[playerId][pawnIdx] : null; if (!pawn) return { x: 50, y: 50 }; if (pawn.state === 'HOME') return coordToPct(HOMES[PLAYER_HOME_CORNER[seatOf(playerId)]][pawn.homeSlot]); if (pawn.state === 'TRACK') return trackPct(pawn.trackIdx); if (pawn.state === 'SAFE') return coordToPct(SAFE_ZONES[seatOf(playerId)][pawn.safeIdx]); return { x: 50, y: 50 }; }
 function updateAuraForPawn(p, i) { const id = `aura-${p}-${i}`; let a = document.getElementById(id); const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (active) { const pos = getPawnPos(p, i); if (!pos) { if (a) a.remove(); return; } if (!a) { a = document.createElement('div'); a.id = id; a.className = 'mandala-aura'; a.innerHTML = '<i></i>'; document.getElementById('board').appendChild(a); } setPos(a, pos); } else if (a) a.remove(); }
-function updateSinglePawn(playerId, pawnIdx) { const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`); if (!el) return; const pos = getPawnPos(playerId, pawnIdx); if (pos) setPos(el, pos); updateAuraForPawn(playerId, pawnIdx); }
-function updatePawnPositions() { for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const el = document.getElementById(`pawn-${p}-${i}`); if (!el) continue; const pos = getPawnPos(p, i); if (pos) setPos(el, pos); updateAuraForPawn(p, i); } document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); }); }
+function updateSinglePawn(playerId, pawnIdx) { const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`); if (!el) return; if (el.style.display === 'none') return; const pos = getPawnPos(playerId, pawnIdx); if (pos) setPos(el, pos); updateAuraForPawn(playerId, pawnIdx); }
+function updatePawnPositions() { for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const el = document.getElementById(`pawn-${p}-${i}`); if (!el) continue; if (el.style.display === 'none') continue; const pos = getPawnPos(p, i); if (pos) setPos(el, pos); updateAuraForPawn(p, i); } document.querySelectorAll('.mandala-aura').forEach(a => { const m = a.id.match(/^aura-(\d)-(\d)$/); if (!m) { a.remove(); return; } const p = +m[1], i = +m[2]; const active = state.mandala && PLAYERS[p].team === state.mandala.team && state.pawns[p] && state.pawns[p][i] && state.pawns[p][i].state === 'TRACK'; if (!active) a.remove(); }); }
 function isCardPlayable(playerId, card) { const rank = card.r, pId = getControlledPlayerId(playerId); if (rank === 'MANDALA' || rank === 'JOKER' || rank === '10') return true; if (rank === 'PHOENIX') return state.pawns[pId].some(p => p.state === 'TRACK'); if (rank === 'A') { if (canSpawn(pId)) return true; for (let i = 0; i < 4; i++) if (canMove(pId, i, 1) || canMove(pId, i, 11)) return true; return false; } if (rank === 'K') { if (canSpawn(pId)) return true; for (let i = 0; i < 4; i++) if (canMove(pId, i, 13)) return true; return false; } if (rank === '5') { for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; return true; } return false; } if (rank === '7') { for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).length > 0) return true; return false; } if (rank === 'J') return hasValidSwap(pId); let steps = rank === '4' ? -4 : (rank === 'Q' ? 12 : parseInt(rank)); for (let i = 0; i < 4; i++) if (canMove(pId, i, steps)) return true; return false; }
-function renderHand() { const hand = document.getElementById('hand'); hand.innerHTML = ''; if (!state.hands || !state.hands[myPlayerIndex]) return; const isForced = state.forcedDiscardFor === myPlayerIndex; const fb = document.getElementById('force-banner'); if (fb) fb.classList.toggle('show', !!isForced && !state.gameOver); const myHand = state.hands[myPlayerIndex] || []; const allUnplayable = myHand.every(card => !isCardPlayable(myPlayerIndex, card)); const isMyTurn = state.turn === myPlayerIndex && !state.mode && !state.pendingSelection && !state.gameOver && !state.cardPlayedThisTurn && !isForced; myHand.forEach((card, idx) => { if (!card || !card.r) return; const el = document.createElement('div'); el.className = 'card'; applyCardFace(el, card.r); if (card.magic) el.classList.add('magic-card'); if (state.previewCardIdx === idx) el.classList.add('selected-for-play'); if (isForced) { el.style.filter = 'grayscale(100%) brightness(0.5)'; el.onclick = () => handleForcedDiscard(idx); } else { const playable = isCardPlayable(myPlayerIndex, card); if (!playable) { el.classList.add('unplayable'); if (allUnplayable && isMyTurn) { el.style.filter = 'grayscale(100%) brightness(0.5)'; el.onclick = () => discardStuckCard(myPlayerIndex, idx); } } else { if (isMyTurn) el.onclick = () => onCardClick(myPlayerIndex, idx); } } hand.appendChild(el); }); state.freshCard = false; }
+function renderHand() {
+  const hand = document.getElementById('hand'); hand.innerHTML = '';
+  const fb = document.getElementById('force-banner'), sh = document.getElementById('stuck-hint');
+  if (!state.hands || !state.hands[myPlayerIndex]) { if (sh) sh.classList.remove('show'); return; }
+  const isForced = state.forcedDiscardFor === myPlayerIndex && !state.gameOver;
+  if (fb) fb.classList.toggle('show', isForced);
+  const myHand = state.hands[myPlayerIndex] || [];
+  const myTurn = state.turn === myPlayerIndex && !state.gameOver;
+  const allUnplayable = myHand.length > 0 && myHand.every(c => !c || !c.r || !isCardPlayable(myPlayerIndex, c));
+  const canAct = myTurn && !state.mode && !state.pendingSelection && !state.cardPlayedThisTurn && !isForced;
+  if (sh) sh.classList.toggle('show', canAct && allUnplayable);
+  myHand.forEach((card, idx) => {
+    if (!card || !card.r) return;
+    const el = document.createElement('div'); el.className = 'card'; applyCardFace(el, card.r);
+    if (card.magic) el.classList.add('magic-card');
+    if (state.previewCardIdx === idx) el.classList.add('selected-for-play');
+    if (isForced) { el.style.filter = 'grayscale(100%) brightness(0.5)'; }
+    else if (!isCardPlayable(myPlayerIndex, card)) {
+      el.classList.add('unplayable');
+      if (canAct && allUnplayable) { el.style.filter = 'grayscale(100%) brightness(0.55)'; el.style.opacity = '1'; el.style.borderColor = 'var(--gold-2)'; }
+    }
+    if (myTurn) el.onclick = () => handCardTap(idx);
+    hand.appendChild(el);
+  });
+  state.freshCard = false;
+}
+function unstickIfNeeded() {
+  if (!state.cardPlayedThisTurn || state.gameOver || state.turn !== myPlayerIndex || botPlaying) return false;
+  if (Date.now() - lastMoveAt < 6000) return false;
+  if (document.querySelector('.pawn.selectable') || document.getElementById('actions').children.length) return false;
+  endTurn(); return true;
+}
+function handCardTap(cardIdx) {
+  if (state.gameOver || state.turn !== myPlayerIndex) return;
+  if (state.forcedDiscardFor === myPlayerIndex) { handleForcedDiscard(cardIdx); return; }
+  if (state.mode || state.pendingSelection || state.cardPlayedThisTurn) { if (!unstickIfNeeded()) beep(200, 0.1, 'square'); return; }
+  const hand = state.hands[myPlayerIndex] || [], card = hand[cardIdx]; if (!card) return;
+  if (hand.every(c => !isCardPlayable(myPlayerIndex, c))) { discardStuckCard(myPlayerIndex, cardIdx); return; }
+  onCardClick(myPlayerIndex, cardIdx);
+}
+function ensureHandInteractive() {
+  const h = document.getElementById('hand'); if (!h) return;
+  const n = ((state.hands && state.hands[myPlayerIndex]) || []).length;
+  if (h.children.length !== n || (n && state.turn === myPlayerIndex && !h.children[0].onclick)) renderHand();
+}
 function handleForcedDiscard(cardIdx) { if (state.forcedDiscardFor !== myPlayerIndex) return; const card = state.hands[myPlayerIndex][cardIdx]; if (!card) return; state.forcedDiscardFor = null; state.hands[myPlayerIndex].splice(cardIdx, 1); state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(myPlayerIndex); renderHand(); clearActions(); clearSelection(); clearPathPreviews(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); }
 function discardStuckCard(playerId, cardIdx) { if (state.turn !== playerId || state.gameOver || state.mode || state.pendingSelection) return; if (state.cardPlayedThisTurn) return; state.cardPlayedThisTurn = true; const card = state.hands[playerId][cardIdx]; if (!card) return; state.hands[playerId].splice(cardIdx, 1); state.discard.push(card); showDiscard(card); beep(400, 0.1); drawCard(playerId); renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); }
 function showDiscard(card) { const pile = document.getElementById('discard-pile'); const el = document.createElement('div'); el.className = 'discard-card'; applyCardFace(el, card.r); el.style.transform = `rotate(${Math.random()*20-10}deg)`; pile.innerHTML = ''; pile.appendChild(el); }
-function canMove(playerId, pawnIdx, steps, isFive = false) { const pawn = state.pawns[playerId][pawnIdx]; if (pawn.state === 'HOME') return false; const isEnemyPush = isFive && PLAYERS[playerId].team !== PLAYERS[state.turn].team; if (pawn.state === 'SAFE') { if (steps <= 0) return false; const target = pawn.safeIdx + steps; if (target > 3) return false; for (let s = pawn.safeIdx+1; s <= target; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; } if (steps < 0) { let cur = pawn.trackIdx; for (let i = 0; i < Math.abs(steps); i++) { const next = (cur - 1 + TRACK.length) % TRACK.length; { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; } if (isPawnOnOwnBaseAt(next)) return false; if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false; if (i === Math.abs(steps) - 1) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } } cur = next; } return true; } const entry = PLAYERS[playerId].safeEntry; let cur = pawn.trackIdx; for (let i = 1; i <= steps; i++) { if (cur === entry && !isEnemyPush) { const finalSafeIdx = steps - i; if (finalSafeIdx > 3) return false; for (let s = 0; s <= finalSafeIdx; s++) if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s)) return false; return true; } const next = (cur + 1) % TRACK.length; { const w = getWallTeamAt(next); if (w >= 0 && w !== PLAYERS[playerId].team) return false; } if (isPawnOnOwnBaseAt(next)) return false; if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false; if (i === steps) { if (hasTeamPawnAt(playerId, next)) return false; for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; } } cur = next; } return true; }
+
+function canMove(playerId, pawnIdx, steps, isFive = false) {
+  const pawn = state.pawns[playerId][pawnIdx];
+  if (!pawn || pawn.state === 'HOME') return false;
+  const isEnemyPush = isFive && PLAYERS[playerId].team !== PLAYERS[state.turn].team;
+  if (pawn.state === 'SAFE') {
+    if (steps <= 0) return false;
+    const target = pawn.safeIdx + steps;
+    if (target > 3) return false;
+    for (let s = pawn.safeIdx+1; s <= target; s++)
+      if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s && !o.hidden)) return false;
+    return true;
+  }
+  if (steps < 0) {
+    let cur = pawn.trackIdx;
+    for (let i = 0; i < Math.abs(steps); i++) {
+      const next = (cur - 1 + TRACK.length) % TRACK.length;
+      const w = getWallTeamAt(next);
+      if (w >= 0 && w !== PLAYERS[playerId].team) return false;
+      if (isPawnOnOwnBaseAt(next)) return false;
+      if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false;
+      // Nouvelle règle : impossible de passer un pion intermédiaire s'il y en a 2+
+      if (i < Math.abs(steps) - 1) {
+        const occ = pawnsAt(next).filter(o => !(o.player === playerId && o.pawn === pawnIdx));
+        if (occ.length > 1) return false;
+      }
+      if (i === Math.abs(steps) - 1) {
+        if (hasTeamPawnAt(playerId, next)) return false;
+        for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; }
+      }
+      cur = next;
+    }
+    return true;
+  }
+  const entry = PLAYERS[playerId].safeEntry;
+  let cur = pawn.trackIdx;
+  for (let i = 1; i <= steps; i++) {
+    if (cur === entry && !isEnemyPush) {
+      const finalSafeIdx = steps - i;
+      if (finalSafeIdx > 3) return false;
+      for (let s = 0; s <= finalSafeIdx; s++)
+        if (state.pawns[playerId].some((o, oi) => oi !== pawnIdx && o.state === 'SAFE' && o.safeIdx === s && !o.hidden)) return false;
+      return true;
+    }
+    const next = (cur + 1) % TRACK.length;
+    const w = getWallTeamAt(next);
+    if (w >= 0 && w !== PLAYERS[playerId].team) return false;
+    if (isPawnOnOwnBaseAt(next)) return false;
+    if (!isEnemyPush && hasOwnPawnAt(playerId, next)) return false;
+    // Nouvelle règle : impossible de passer un pion intermédiaire s'il y en a 2+
+    if (i < steps) {
+      const occ = pawnsAt(next).filter(o => !(o.player === playerId && o.pawn === pawnIdx));
+      if (occ.length > 1) return false;
+    }
+    if (i === steps) {
+      if (hasTeamPawnAt(playerId, next)) return false;
+      for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let pi = 0; pi < 4; pi++) if (state.pawns[p][pi].state === 'TRACK' && state.pawns[p][pi].trackIdx === next && isProtected(p, pi)) return false; }
+    }
+    cur = next;
+  }
+  return true;
+}
 function sevenSecondFeasible(pId, pawnIdx, x) { const dest = computeDestination(pId, pawnIdx, x); if (!dest) return false; const pw = state.pawns[pId][pawnIdx], bak = { s: pw.state, t: pw.trackIdx, f: pw.safeIdx }; if (dest.state === 'SAFE') { pw.state = 'SAFE'; pw.safeIdx = dest.idx; pw.trackIdx = -1; } else { pw.trackIdx = dest.idx; } let ok = false; for (let j = 0; j < 4 && !ok; j++) if (j !== pawnIdx && canMove(pId, j, 7 - x)) ok = true; pw.state = bak.s; pw.trackIdx = bak.t; pw.safeIdx = bak.f; return ok; }
-function sevenOptions(pId, pawnIdx) { const o = []; const otherSafe = state.pawns[pId].filter((p, i) => i !== pawnIdx && p.state === 'SAFE').length; const pawn = state.pawns[pId][pawnIdx]; if (otherSafe === 3 && pawn.state === 'TRACK') { const entry = PLAYERS[pId].safeEntry; let cur = pawn.trackIdx, dist = 0; while (cur !== entry && dist < TRACK.length) { cur = (cur + 1) % TRACK.length; dist++; } const total = dist + 4; if (total >= 1 && total <= 7) o.push(7); } for (let x = 1; x <= 7; x++) { if (o.includes(x)) continue; if (!canMove(pId, pawnIdx, x)) continue; if (x === 7 || sevenSecondFeasible(pId, pawnIdx, x)) o.push(x); } return o; }
+function sevenOptions(pId, pawnIdx) { const o = []; const otherSafe = state.pawns[pId].filter((p, i) => i !== pawnIdx && p.state === 'SAFE' && !p.hidden).length; const pawn = state.pawns[pId][pawnIdx]; if (otherSafe === 3 && pawn.state === 'TRACK') { const entry = PLAYERS[pId].safeEntry; let cur = pawn.trackIdx, dist = 0; while (cur !== entry && dist < TRACK.length) { cur = (cur + 1) % TRACK.length; dist++; } const total = dist + 4; if (total >= 1 && total <= 7) o.push(7); } for (let x = 1; x <= 7; x++) { if (o.includes(x)) continue; if (!canMove(pId, pawnIdx, x)) continue; if (x === 7 || sevenSecondFeasible(pId, pawnIdx, x)) o.push(x); } return o; }
 function somePawnCanMove(playerId, steps) { for (let i = 0; i < 4; i++) if (canMove(playerId, i, steps)) return true; return false; }
 const MOVE_DELAY = 200;
 async function executeMove(playerId, pawnIdx, steps) {
+  lastMoveAt = Date.now();
   clearPathPreviews();
   const pawn = state.pawns[playerId][pawnIdx];
   const isEnemyPush = (steps === 5) && PLAYERS[playerId].team !== PLAYERS[state.turn].team;
@@ -695,7 +1064,7 @@ async function executeMove(playerId, pawnIdx, steps) {
   beep(700, 0.1);
   if (currentRoomCode) saveGameState();
 }
-async function handleCapture(playerId, pawn) { for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let i = 0; i < 4; i++) { const enemy = state.pawns[p][i]; if (enemy.state === 'TRACK' && enemy.trackIdx === pawn.trackIdx && !isProtected(p, i)) { const cellPct = trackPct(pawn.trackIdx); fxRing(cellPct, '#ff3d3d', 13); fxRing(cellPct, '#fff', 8); fxEmbers(cellPct, 6, true); enemy.state = 'HOME'; enemy.trackIdx = -1; enemy.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(()=>el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); updateSinglePawn(p, i); beep(150, 0.3, 'sawtooth'); await sleep(800); } } } }
+async function handleCapture(playerId, pawn) { for (let p = 0; p < 4; p++) { if (p === playerId || PLAYERS[p].team === PLAYERS[playerId].team) continue; for (let i = 0; i < 4; i++) { const enemy = state.pawns[p][i]; if (enemy.state === 'TRACK' && enemy.trackIdx === pawn.trackIdx && !isProtected(p, i)) { const cellPct = trackPct(pawn.trackIdx); fxRing(cellPct, '#ff3d3d', 13); fxRing(cellPct, '#fff', 8); fxEmbers(cellPct, 6, true); addKillCross(cellPct); enemy.state = 'HOME'; enemy.trackIdx = -1; enemy.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(()=>el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); updateSinglePawn(p, i); beep(150, 0.3, 'sawtooth'); await sleep(800); } } } }
 function findFreeHomeSlot(playerId) { const used = state.pawns[playerId].filter(p => p.state === 'HOME').map(p => p.homeSlot); for (let i = 0; i < 4; i++) if (!used.includes(i)) return i; return 0; }
 function canSpawn(playerId) { const b = PLAYERS[playerId].baseIdx; if (hasTeamPawnAt(playerId, b)) return false; for (const e of pawnsAt(b)) if (isProtected(e.player, e.pawn)) return false; return state.pawns[playerId].some(p => p.state === 'HOME'); }
 async function executeSpawn(playerId, pawnIdx) { clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; if (!pawn || pawn.state !== 'HOME') return; if (hasTeamPawnAt(playerId, PLAYERS[playerId].baseIdx)) return; pawn.state = 'TRACK'; pawn.trackIdx = PLAYERS[playerId].baseIdx; pawn.homeSlot = -1; beep(800, 0.15); updateSinglePawn(playerId, pawnIdx); playSound('spawn'); const el = document.getElementById(`pawn-${playerId}-${pawnIdx}`); if (el) { el.classList.add('spawned'); setTimeout(() => el.classList.remove('spawned'), 800); } const pct = trackPct(pawn.trackIdx); fxRing(pct, PLAYERS[playerId].color, 13); fxRing(pct, '#fff', 8); await sleep(250); await handleCapture(playerId, pawn); if (currentRoomCode) saveGameState(); }
@@ -719,7 +1088,7 @@ function onPawnClick(playerId, pawnIdx) {
   const sel = state.pendingSelection; if (!sel || sel.playerId !== playerId || !sel.candidates.includes(pawnIdx)) return; clearSelection(); clearActions(); executeMove(sel.playerId, pawnIdx, sel.steps).then(() => endTurn());
 }
 function onCardClick(playerId, cardIdx) { if (state.turn !== playerId || state.gameOver || state.mode || state.pendingSelection) return; if (state.cardPlayedThisTurn) return; const allUnplayable = state.hands[myPlayerIndex].every(c => !isCardPlayable(myPlayerIndex, c)); const card = state.hands[myPlayerIndex][cardIdx]; if (allUnplayable) { discardStuckCard(myPlayerIndex, cardIdx); return; } if (!isCardPlayable(myPlayerIndex, card)) { beep(200, 0.15, 'square'); return; } if (state.previewCardIdx === cardIdx) { clearPathPreviews(); state.previewCardIdx = null; renderHand(); playCard(playerId, cardIdx); return; } clearSelection(); state.previewCardIdx = cardIdx; renderHand(); showCardPreviews(playerId, card); }
-async function playCard(playerId, cardIdx) { if (state.cardPlayedThisTurn) return; state.cardPlayedThisTurn = true; state.previewCardIdx = null; clearPathPreviews(); const card = state.hands[playerId][cardIdx]; if (!card) { state.cardPlayedThisTurn = false; return; } state.hands[playerId].splice(cardIdx, 1); state.discard.push(card); state.cardsPlayed++; const handBefore = state.hands[playerId].length; showDiscard(card); beep(600, 0.1); drawCard(playerId); state.undo = { playerId, card, cardIdx, drawn: state.hands[playerId].length > handBefore ? state.hands[playerId][state.hands[playerId].length - 1] : null }; renderHand(); if (currentRoomCode) saveGameState(); if (!['A','K','J','5','7','10','JOKER','MANDALA'].includes(card.r)) await sleep(PLAYERS[playerId].isBot ? 700 : 120); await processCard(playerId, card); }
+async function playCard(playerId, cardIdx) { if (state.cardPlayedThisTurn) return; lastMoveAt = Date.now(); state.cardPlayedThisTurn = true; state.previewCardIdx = null; clearPathPreviews(); const card = state.hands[playerId][cardIdx]; if (!card) { state.cardPlayedThisTurn = false; return; } state.hands[playerId].splice(cardIdx, 1); state.discard.push(card); state.cardsPlayed++; const handBefore = state.hands[playerId].length; showDiscard(card); beep(600, 0.1); drawCard(playerId); state.undo = { playerId, card, cardIdx, drawn: state.hands[playerId].length > handBefore ? state.hands[playerId][state.hands[playerId].length - 1] : null }; renderHand(); if (currentRoomCode) saveGameState(); if (!['A','K','J','5','7','10','JOKER','MANDALA'].includes(card.r)) await sleep(PLAYERS[playerId].isBot ? 700 : 120); await processCard(playerId, card); }
 function hasValidSwap(playerId) { const pId = getControlledPlayerId(playerId); let hasSource = false, hasTarget = false; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (state.pawns[p][i].state !== 'TRACK') continue; if (p === pId) hasSource = true; if (!isPawnOnOwnBase(p, i)) hasTarget = true; } return hasSource && hasTarget; }
 function undoPlayedCard() { const u = state.undo; if (!u || state.turn !== u.playerId) return false; const hand = state.hands[u.playerId]; if (u.drawn) { const k = hand.indexOf(u.drawn); if (k >= 0) { hand.splice(k, 1); state.deck.push(u.drawn); } } const di = state.discard.lastIndexOf(u.card); if (di >= 0) state.discard.splice(di, 1); hand.splice(Math.min(u.cardIdx, hand.length), 0, u.card); state.cardsPlayed = Math.max(0, state.cardsPlayed - 1); const pile = document.getElementById('discard-pile'); pile.innerHTML = ''; if (state.discard.length) showDiscard(state.discard[state.discard.length - 1]); state.undo = null; state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; state.cardPlayedThisTurn = false; clearSelection(); clearActions(); clearPathPreviews(); renderHand(); if (currentRoomCode) saveGameState(); return true; }
 async function processCard(playerId, card) {
@@ -727,8 +1096,10 @@ async function processCard(playerId, card) {
   if (rank === 'MANDALA') { state.mandalaPlayed = (state.mandalaPlayed || 0) + 1; state.mandala = { team: PLAYERS[playerId].team, owner: playerId, turnsLeft: 8 }; beep(500, 0.3); updatePawnPositions(); fxMandala(); showToast('☸ Mandala activé'); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 450); return; }
   if (rank === 'PHOENIX') { state.phoenixPlayed = (state.phoenixPlayed || 0) + 1; if (!state.pawns[pId].some(p => p.state === 'TRACK')) { setTimeout(endTurn, 500); return; } if (isBot) { const tp = []; for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') tp.push(i); const pick = tp[Math.floor(Math.random() * tp.length)]; if (Math.random() < 0.5 || state.phoenixNest < 0 || pawnsAt(state.phoenixNest).length > 0) await executePhoenixFire(pId, pick); else await executePhoenixTeleport(pId, pick); return endTurn(); } state.mode = 'phoenix_select'; state.phoenixPlayer = pId; for (let i = 0; i < 4; i++) if (state.pawns[pId][i].state === 'TRACK') document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); return; }
   if (rank === 'JOKER') { const hasTrackPawn = state.pawns[pId].some(p => p.state === 'TRACK'); const canSpawnNow = canSpawn(pId); const noPawnOut = !hasTrackPawn && canSpawnNow; const playablePool = ['A','2','3','4','5','6','7','8','9','10','J','Q','K','PHOENIX','MANDALA'].filter(r => isCardPlayable(playerId, { r })); if (isBot) { if (noPawnOut) return processCard(playerId, {r:'K'}); const pick = playablePool[Math.floor(Math.random() * playablePool.length)]; return processCard(playerId, {r: pick}); } let pick1, pick2; if (noPawnOut) { pick1 = 'K'; pick2 = playablePool[Math.floor(Math.random() * playablePool.length)]; } else { const uniq = [...new Set(playablePool)]; if (uniq.length >= 2) { const sh = shuffleArr(uniq); pick1 = sh[0]; pick2 = sh[1]; } else { pick1 = uniq[0] || 'MANDALA'; pick2 = pick1 === 'MANDALA' ? '10' : 'MANDALA'; } } const btn1 = document.createElement('button'); btn1.style.cssText = `width:12cqw;height:15.5cqw;background:url('${getCardImage(pick1)}') center/contain no-repeat;border:3px solid var(--cyan);border-radius:2cqw;margin:0 1.5cqw;cursor:pointer;`; btn1.onclick = () => { clearActions(); processCard(playerId, {r: pick1}); }; const btn2 = document.createElement('button'); btn2.style.cssText = `width:12cqw;height:15.5cqw;background:url('${getCardImage(pick2)}') center/contain no-repeat;border:3px solid var(--cyan);border-radius:2cqw;margin:0 1.5cqw;cursor:pointer;`; btn2.onclick = () => { clearActions(); processCard(playerId, {r: pick2}); }; document.getElementById('actions').appendChild(btn1); document.getElementById('actions').appendChild(btn2); return; }
-  if (rank === 'A') { const spawnOk = canSpawn(pId); if (isBot) { const sc = state.botDifficulty === 'expert' ? 0.9 : (state.botDifficulty === 'easy' ? 0.35 : 0.5); if (spawnOk && Math.random() < sc) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, state.botDifficulty === 'easy' ? homes[Math.floor(Math.random()*homes.length)] : homes[0]); } else { const m1 = await autoSelectRandom(pId, 1); if (!m1) { if (spawnOk) { const hs = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, hs[0]); } else await autoSelectRandom(pId, 11); } } return endTurn(); } state.mode = 'as_select'; state.asPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || ((pawn.state === 'TRACK' || pawn.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
-  if (rank === 'K') { const spawnOk = canSpawn(pId); if (isBot) { if (spawnOk) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, homes[0]); } else { await autoSelectRandom(pId, 13); } return endTurn(); } state.mode = 'k_select'; state.kPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || (pawn.state === 'TRACK' && canMove(pId, i, 13))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
+  if (rank === 'A') { const spawnOk = canSpawn(pId); if (isBot) { const sc = state.botDifficulty === 'expert' ? 0.9 : (state.botDifficulty === 'easy' ? 0.35 : 0.5); if (spawnOk && Math.random() < sc) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, state.botDifficulty === 'easy' ? homes[Math.floor(Math.random()*homes.length)] : homes[0]); } else { const m1 = await autoSelectRandom(pId, 1); if (!m1) { if (spawnOk) { const hs = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, hs[0]); } else await autoSelectRandom(pId, 11); } } return endTurn(); } { const hi = state.pawns[pId].findIndex(p => p.state === 'HOME'); const canRun = [0,1,2,3].some(i => { const p = state.pawns[pId][i]; return (p.state === 'TRACK' || p.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)); }); if (spawnOk && !canRun && hi >= 0) { await executeSpawn(pId, hi); return endTurn(); } }
+  state.mode = 'as_select'; state.asPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || ((pawn.state === 'TRACK' || pawn.state === 'SAFE') && (canMove(pId, i, 1) || canMove(pId, i, 11)))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } if (!document.querySelector('.pawn.selectable')) { state.mode = null; setTimeout(endTurn, 500); } return; }
+  if (rank === 'K') { const spawnOk = canSpawn(pId); if (isBot) { if (spawnOk) { const homes = state.pawns[pId].map((p,i)=>p.state==='HOME'?i:-1).filter(i=>i>=0); await executeSpawn(pId, homes[0]); } else { await autoSelectRandom(pId, 13); } return endTurn(); } { const hi = state.pawns[pId].findIndex(p => p.state === 'HOME'); const canRun = [0,1,2,3].some(i => state.pawns[pId][i].state === 'TRACK' && canMove(pId, i, 13)); if (spawnOk && !canRun && hi >= 0) { await executeSpawn(pId, hi); return endTurn(); } }
+  state.mode = 'k_select'; state.kPlayer = pId; for (let i = 0; i < 4; i++) { const pawn = state.pawns[pId][i]; if ((pawn.state === 'HOME' && spawnOk) || (pawn.state === 'TRACK' && canMove(pId, i, 13))) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); } return; }
   if (rank === '10') { if (isBot) { const moved = await autoSelectRandom(pId, 10); if (!moved) state.pendingSkip = (state.turn + 1) % 4; return endTurn(); } state.mode = 'ten_choice'; if (somePawnCanMove(pId, 10)) addBtn('Avancer de 10', () => { clearActions(); selectPawn(pId, 10); }); addBtn('Passer le tour', () => { clearActions(); clearPathPreviews(); state.pendingSkip = (state.turn + 1) % 4; setTimeout(endTurn, 500); }, 'danger'); return; }
   if (rank === '5') { if (isBot) { let best = null, bs = -1; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; const dest = computeDestination(p, i, 5, true); const cap = dest && dest.state === 'TRACK' && hasUnprotectedEnemyAt(p, dest.idx) ? 2 : 1; const s = cap + Math.random() * 0.5; if (s > bs) { bs = s; best = { p, i }; } } if (best) await executeMove(best.p, best.i, 5); return endTurn(); } state.mode = 'move5'; let idx = 0; for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (!canMove(p, i, 5, true)) continue; if (p !== pId && isPawnOnOwnBase(p, i)) continue; document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); showPathPreview(p, i, 5, true, TRACE_COLORS[idx++ % TRACE_COLORS.length]); } return; }
   if (rank === '7') { if (isBot) { const moved7 = await autoSelectRandom(pId, 7); if (!moved7) { const opts = []; for (let i = 0; i < 4; i++) for (const x of sevenOptions(pId, i)) if (x < 7) opts.push({ i, x }); if (opts.length) { const o = opts[Math.floor(Math.random() * opts.length)]; await executeMove(pId, o.i, o.x); const js = []; for (let j = 0; j < 4; j++) if (j !== o.i && canMove(pId, j, 7 - o.x)) js.push(j); if (js.length) await executeMove(pId, js[Math.floor(Math.random() * js.length)], 7 - o.x); } } return endTurn(); } state.mode = 'seven_first'; state.sevenPlayer = pId; for (let i = 0; i < 4; i++) if (sevenOptions(pId, i).length) document.getElementById(`pawn-${pId}-${i}`).classList.add('selectable'); if (!document.querySelector('.pawn.selectable')) { state.mode = null; showToast('7 impossible à jouer', 'error'); setTimeout(endTurn, 600); } return; }
@@ -739,11 +1110,11 @@ async function processCard(playerId, card) {
 }
 function playFireFx(startIdx, n = 6) { const origin = trackPct(startIdx); beep(200, 0.4, 'sawtooth'); fxRing(origin, '#ffb300', 18); fxEmbers(origin, 8, true); }
 function isProtectedForFire(owner, idx) { const pw = state.pawns[owner][idx]; if (pw.state !== 'TRACK') return false; if (state.mandala && state.mandala.team === PLAYERS[owner].team) return true; return isProtectedByWall(owner, idx); }
-async function executePhoenixFire(playerId, pawnIdx, len = 6) { clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; const zone = []; for (let k = 1; k <= len; k++) zone.push((pawn.trackIdx + k) % TRACK.length); if (currentRoomCode) saveGameState(); playFireFx(pawn.trackIdx, len); const hitPawns = []; for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i}); } await sleep(1800); for (const {p, i} of hitPawns) { const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); } updatePawnPositions(); if (currentRoomCode) saveGameState(); }
+async function executePhoenixFire(playerId, pawnIdx, len = 6) { clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; const zone = []; for (let k = 1; k <= len; k++) zone.push((pawn.trackIdx + k) % TRACK.length); if (currentRoomCode) saveGameState(); playFireFx(pawn.trackIdx, len); const hitPawns = []; for (const idx of zone) for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { const t = state.pawns[p][i]; if (t.state === 'TRACK' && t.trackIdx === idx && !isProtectedForFire(p, i)) hitPawns.push({p, i, idx}); } await sleep(1800); for (const {p, i, idx} of hitPawns) { addKillCross(trackPct(idx)); const t = state.pawns[p][i]; t.state = 'HOME'; t.trackIdx = -1; t.homeSlot = findFreeHomeSlot(p); const el = document.getElementById(`pawn-${p}-${i}`); if (el) { flyHome(el); el.classList.add('captured'); setTimeout(() => el.classList.remove('captured'), 1300); } playSound('kill'); showKillBanner(PLAYERS[playerId].name, PLAYERS[p].name); } updatePawnPositions(); if (currentRoomCode) saveGameState(); }
 async function executePhoenixTeleport(playerId, pawnIdx) { if (pawnsAt(state.phoenixNest).length > 0) return; clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; pawn.trackIdx = state.phoenixNest; updatePawnPositions(); if (currentRoomCode) saveGameState(); }
 function showSwapEnemyTargets(playerId) { clearActions(); for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (p === playerId && i === state.swapAlly) continue; if (state.pawns[p][i].state === 'TRACK' && !isPawnOnOwnBase(p, i)) document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); } addBtn('Annuler', () => { undoPlayedCard(); }); }
 async function executeSwap(playerA, pawnA, playerB, pawnB) { clearPathPreviews(); const a = state.pawns[playerA][pawnA], b = state.pawns[playerB][pawnB]; beep(400, 0.15); await sleep(350); const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp; updatePawnPositions(); fxRing(trackPct(a.trackIdx), '#b04fd6', 14); fxRing(trackPct(b.trackIdx), '#b04fd6', 14); beep(800, 0.2); await sleep(550); if (currentRoomCode) saveGameState(); }
-function endTurn() { if (state.gameOver) return; stopTimer(); clearSelection(); clearActions(); state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; if (state.mandala) { state.mandala.turnsLeft--; if (state.mandala.turnsLeft <= 0) state.mandala = null; } state.cardPlayedThisTurn = false; updatePawnPositions(); if (checkWin()) return; state.turn = (state.turn + 1) % 4; if (state.pendingSkip === state.turn) { const skipPid = state.turn; state.pendingSkip = null; state.forcedDiscardFor = skipPid; renderHand(); updateTurnUI(); if (currentRoomCode) saveGameState(); if (PLAYERS[skipPid].isBot && (!currentRoomCode || isHostClient())) { setTimeout(() => { const hand = state.hands[skipPid]; if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(skipPid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); }, 1200); } return; } renderHand(); updateTurnUI(); if (isHostClient() && PLAYERS[state.turn].isBot) scheduleBot(1200); if (currentRoomCode) saveGameState(); }
+function endTurn() { if (state.gameOver) return; lastMoveAt = Date.now(); stopTimer(); clearSelection(); clearActions(); state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; if (state.mandala) { state.mandala.turnsLeft--; if (state.mandala.turnsLeft <= 0) state.mandala = null; } state.cardPlayedThisTurn = false; updatePawnPositions(); if (checkWin()) return; state.turn = (state.turn + 1) % 4; if (state.pendingSkip === state.turn) { const skipPid = state.turn; state.pendingSkip = null; state.forcedDiscardFor = skipPid; renderHand(); updateTurnUI(); if (currentRoomCode) saveGameState(); if (PLAYERS[skipPid].isBot && (!currentRoomCode || isHostClient())) { setTimeout(() => { const hand = state.hands[skipPid]; if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(skipPid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); }, 1200); } return; } renderHand(); updateTurnUI(); if (isHostClient() && PLAYERS[state.turn].isBot) scheduleBot(1200); if (currentRoomCode) saveGameState(); }
 function checkWin() { const winA = [...state.pawns[0], ...state.pawns[2]].every(p => p.state === 'SAFE'); const winB = [...state.pawns[1], ...state.pawns[3]].every(p => p.state === 'SAFE'); if (winA || winB) { state.gameOver = true; clearInterval(nestTimer); stopTimer(); if (currentRoomCode) saveGameState(); handleEndGame(winA); return true; } return false; }
 async function handleEndGame(winTeamA) {
   if (window.__endGameHandled) return;
@@ -763,7 +1134,8 @@ async function handleEndGame(winTeamA) {
   LG.L.ws = win ? (LG.L.ws || 0) + 1 : 0;
   LG.L.best = Math.max(LG.L.best || 0, LG.L.ws);
   bumpLG('streak', LG.L.ws);
-  if (win) LG.L.xp = (LG.L.xp || 0) + Math.round(200 * oldDiv.m);
+  const xpGain = Math.round(200 * oldDiv.m * (currentQuickGame ? 0.5 : 1));
+  if (win) LG.L.xp = (LG.L.xp || 0) + xpGain;
   const day = dayKey(), week = weekKey();
   if (!LG.L._ld || LG.L._ld.d !== day) LG.L._ld = {d: day, pions: 0, wins: 0, parties: 0};
   if (!LG.L._lw || LG.L._lw.w !== week) LG.L._lw = {w: week, pions: 0, wins: 0, parties: 0};
@@ -786,13 +1158,13 @@ async function handleEndGame(winTeamA) {
   const ovActions = document.getElementById('ov-actions');
   ovTitle.textContent = win ? '🏆 Victoire !' : '💔 Défaite';
   ovMsg.innerHTML = win
-    ? `Équipe ${winTeamA ? 'A' : 'B'} gagne !<br><span style="color:#9fc3ea;font-size:14px">+${Math.round(200*oldDiv.m)} XP · Série ${LG.L.ws}🔥${currentMatchStake ? ` · +${currentMatchStake*2} 🪙` : ''}</span>`
+    ? `Équipe ${winTeamA ? 'A' : 'B'} gagne !<br><span style="color:#9fc3ea;font-size:14px">+${xpGain} XP · Série ${LG.L.ws}🔥${currentMatchStake ? ` · +${currentMatchStake*2} 🪙` : ''}</span>`
     : `Équipe ${winTeamA ? 'A' : 'B'} gagne !<br><span style="color:#9fc3ea;font-size:14px">${currentMatchStake ? `Mise perdue : ${currentMatchStake} 🪙` : 'La revanche t’attend…'}</span>`;
   ovActions.innerHTML = `<button id="btn-end-menu" style="margin-top:10px;padding:14px 28px;background:linear-gradient(180deg,#fff1b8,#b8860b);color:#2a1c02;border:none;border-radius:14px;font-weight:900;font-size:16px;cursor:pointer;min-width:200px;display:block;margin-left:auto;margin-right:auto">🏠 Retour au menu</button>`;
   overlay.classList.add('show');
   document.getElementById('btn-end-menu').onclick = () => endGameToMenu();
 }
-/* === CHAT VOCAL (WebRTC maillage, signalisation Firestore rooms/{code}/voice) === */
+/* === CHAT VOCAL === */
 const VOICE = { code: null, uid: null, peers: {}, unsubs: [], stream: null, track: null, micOn: false, audios: [] };
 const RTC_CFG = { iceServers: [{ urls: ['stun:stun.l.google.com:19302', 'stun:stun1.l.google.com:19302'] }] };
 function voiceDoc(from, to) { return window.FB.doc(window.FB.db, 'rooms', VOICE.code, 'voice', from + '_' + to); }
@@ -866,7 +1238,7 @@ function endGameToMenu() {
   try { state.gameOver = true; stopWatchdog(); if (gameStateListener) { gameStateListener(); gameStateListener = null; } if (roomListener) { roomListener(); roomListener = null; } clearInterval(nestTimer); stopTimer(); clearTimeout(botTimeout); } catch(e) {}
   const code = currentRoomCode;
   if (code) { try { flushGameState(); window.FB.updateDoc(window.FB.doc(window.FB.db, 'rooms', code), { status: 'closed' }).catch(()=>{}); } catch(e) {} }
-  currentRoomCode = null; roomStarted = false; lastRoomData = null; currentMatchStake = 0; currentMatchId = null;
+  currentRoomCode = null; roomStarted = false; lastRoomData = null; currentMatchStake = 0; currentMatchId = null; currentQuickGame = false;
   window.__goMenu = false;
   const ov = document.getElementById('overlay'); if (ov) ov.classList.remove('show');
   document.querySelectorAll('.screen').forEach(x => x.classList.remove('active'));
@@ -920,6 +1292,7 @@ function applyBoard() { const c = BOARD_CALIB[boardChoice] || { w: 1, h: 1, l: 0
 function buildBoardPickers() { document.querySelectorAll('.board-picker').forEach(c => { c.innerHTML = ''; BOARD_FILES.forEach((f, i) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'bp-item' + (i === boardChoice ? ' selected' : ''); b.innerHTML = `<span class="bp-thumb" style="background-image:url('${f}')"></span><span style="font-size:10px">Plateau ${i + 1}</span>`; b.onclick = () => selectBoard(i); c.appendChild(b); }); }); }
 function selectBoard(i) { boardChoice = i; try { localStorage.setItem('phoenix_board', String(i)); } catch(e) {} playerProfile.boardChoice = i; saveProfile(); applyBoard(); buildBoardPickers(); if (window.FB && window.FB.auth.currentUser) { window.FB.updateDoc(window.FB.doc(window.FB.db,'users',window.FB.auth.currentUser.uid), {boardChoice: i}).catch(()=>{}); } }
 window.applySavedBoard = () => { const v = playerProfile.boardChoice; if (Number.isInteger(v) && v >= 0 && v < BOARD_FILES.length) { boardChoice = v; applyBoard(); } };
+
 function initGame(isHost = true) {
   clearInterval(nestTimer); clearInterval(turnTimerInterval);
   fxTimeouts.forEach(clearTimeout); fxTimeouts = [];
@@ -928,7 +1301,15 @@ function initGame(isHost = true) {
   state.phoenixPlayed = 0; state.mandalaPlayed = 0;
   window.__endGameHandled = false;
   state.pawns = [[],[],[],[]];
-  for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) state.pawns[p].push({ state:'HOME', trackIdx:-1, safeIdx:-1, homeSlot:i });
+  for (let p = 0; p < 4; p++) {
+    for (let i = 0; i < 4; i++) {
+      if (currentQuickGame && i >= 2) {
+        state.pawns[p].push({ state:'SAFE', trackIdx:-1, safeIdx:3, homeSlot:-1, hidden:true });
+      } else {
+        state.pawns[p].push({ state:'HOME', trackIdx:-1, safeIdx:-1, homeSlot:i });
+      }
+    }
+  }
   state.hands = [[],[],[],[]];
   if (isHost) {
     if (currentRoomCode && lastRoomData && lastRoomData.players) { const rp = seatList(lastRoomData.players); PLAYERS[0].name = rp[0] ? rp[0].pseudo : playerProfile.pseudo; PLAYERS[0].avatarFile = rp[0] ? rp[0].avatarFile : playerProfile.avatarFile; PLAYERS[0].isBot = false; for (let k = 1; k < 4; k++) { PLAYERS[k].name = rp[k] ? rp[k].pseudo : getRandom(BOT_NAMES) + "_Bot"; PLAYERS[k].avatarFile = rp[k] ? rp[k].avatarFile : ['an','am','ac'][k-1]; PLAYERS[k].isBot = !rp[k]; } }
@@ -981,11 +1362,12 @@ async function applyRemoteState(parsed, raw, closed) {
   hasApplied = true; lastRaw = raw; lastAppliedSeq = Math.max(lastAppliedSeq, seq);
   if (!first && !own && !document.hidden && Array.isArray(parsed.anim)) { const todo = parsed.anim.filter(a => a.q > prevSeq && a.path && a.path.length); for (const a of todo) await replayPath(a); }
   const wasOver = state.gameOver;
-  state.turn = parsed.turn; state.deck = parsed.deck; state.discard = parsed.discard; state.hands = parsed.hands;
+  const prevTurn = state.turn; state.turn = parsed.turn; state.deck = parsed.deck; state.discard = parsed.discard; state.hands = parsed.hands;
   const prevNest = state.phoenixNest;
   state.pawns = parsed.pawns; state.mandala = parsed.mandala; state.phoenixNest = parsed.phoenixNest;
   if (prevNest !== state.phoenixNest) renderBoard();
   state.gameOver = parsed.gameOver; state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
+  if (!own && parsed.turn === myPlayerIndex && prevTurn !== myPlayerIndex) { state.cardPlayedThisTurn = false; state.undo = null; }
   state.pendingSkip = parsed.pendingSkip; state.forcedDiscardFor = parsed.forcedDiscardFor;
   if (parsed.players) for (let i = 0; i < 4; i++) { PLAYERS[i].name = parsed.players[i].name; PLAYERS[i].avatarFile = parsed.players[i].avatarFile; PLAYERS[i].isBot = parsed.players[i].isBot; } if (parsed.players) refreshPlayerBadges();
   if (!own) { state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; clearSelection(); clearActions(); clearPathPreviews(); }
@@ -998,14 +1380,14 @@ function getWinnerTeam(pawns) { const A = [...pawns[0], ...pawns[2]].every(p => 
 function listenToGameState() { if (gameStateListener) gameStateListener(); gameStateListener = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'rooms', currentRoomCode), (docSnap) => { if (!docSnap.exists()) return; const data = docSnap.data(); if (!data.gameState) return; let parsed; try { parsed = JSON.parse(data.gameState); } catch(e) { return; } const closed = data.status === 'closed', raw = data.gameState; applyChain = applyChain.then(() => applyRemoteState(parsed, raw, closed)).catch(e => console.error(e)); }, (err) => { console.error(err); }); }
 window.openBotDifficulty = function() { buildBoardPickers(); document.getElementById('bot-difficulty-modal').classList.add('show'); };
 window.closeBotDifficulty = function() { document.getElementById('bot-difficulty-modal').classList.remove('show'); };
-/* StartGameWithBots : utilise la difficulté fournie OU celle de la division */
 window.startGameWithBots = async function(diff) {
   const div = divOf(LG.L.xp).l;
   const finalDiff = diff || diffOf(div);
   state.botDifficulty = finalDiff;
   closeBotDifficulty();
   currentRoomCode = null; roomStarted = false;
-  const stake = getStakeForDivision(div);
+  const baseStake = getStakeForDivision(div);
+  const stake = Math.round(baseStake * (currentQuickGame ? 0.5 : 1));
   const id = 'match-solo-' + Date.now();
   try { await walletReserveMatch(stake, id); } catch(e) { showToast(e.message || 'Impossible de réserver la mise', 'error'); return; }
   currentMatchStake = stake;
@@ -1018,7 +1400,7 @@ window.backToMenu = backToMenu;
 window.openLobbyScreen = function() { roomStarted = false; lastRoomData = null; currentRoomCode = null; document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('lobby-screen').classList.add('active'); document.getElementById('lobby-menu-choice').style.display = 'flex'; document.getElementById('lobby-room-view').style.display = 'none'; };
 async function leaveRoomRemote(code) { try { const user = window.FB && window.FB.auth.currentUser; if (!user || !code) return; const roomRef = window.FB.doc(window.FB.db, 'rooms', code); const snap = await window.FB.getDoc(roomRef); if (!snap.exists()) return; const data = snap.data(); if (data.status !== 'waiting') return; const players = (data.players || []).filter(p => p.uid !== user.uid); if (data.host === user.uid || players.length === 0) await window.FB.updateDoc(roomRef, { status: 'closed', players }); else await window.FB.updateDoc(roomRef, { players }); } catch(e) {} }
 window.backToMainMenuFromLobby = function() { const code = currentRoomCode; if(roomListener) { roomListener(); roomListener = null; } currentRoomCode = null; lastRoomData = null; if (code && !roomStarted) leaveRoomRemote(code); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('main-menu').classList.add('active'); };
-window.createPrivateRoom = async function(stakeOverride, mode) {
+window.createPrivateRoom = async function(stakeOverride, mode, quickOverride) {
   const user = window.FB && window.FB.auth.currentUser;
   if(!user) { showToast("Connecte-toi d'abord !", 'error'); return; }
   roomStarted = false;
@@ -1028,7 +1410,7 @@ window.createPrivateRoom = async function(stakeOverride, mode) {
     let code = null;
     for (let i = 0; i < 6 && !code; i++) { const c = Math.floor(1000 + Math.random() * 9000).toString(); const ex = await window.FB.getDoc(window.FB.doc(window.FB.db, 'rooms', c)); if (!ex.exists() || ex.data().status !== 'waiting') code = c; }
     if (!code) { showToast("Impossible de créer un salon", 'error'); return; }
-    const roomData = { host: user.uid, code, stake, kind: mode || 'priv', players: [{ uid: user.uid, pseudo: playerProfile.pseudo, avatarFile: playerProfile.avatarFile, ready: true }], fillBots: true, botDifficulty: 'medium', status: 'waiting', gameState: null };
+    const roomData = { host: user.uid, code, stake, kind: mode || 'priv', quick: !!quickOverride, players: [{ uid: user.uid, pseudo: playerProfile.pseudo, avatarFile: playerProfile.avatarFile, ready: true }], fillBots: true, botDifficulty: 'medium', status: 'waiting', gameState: null };
     await window.FB.setDoc(window.FB.doc(window.FB.db, 'rooms', code), roomData);
     currentRoomCode = code; lastRoomData = roomData;
     showRoomView(code, true); renderRoomSlots(); listenToRoom(code);
@@ -1049,8 +1431,19 @@ function showRoomView(code, isHost) {
   const diff = document.getElementById('room-bot-difficulty'); if (diff) diff.value = (lastRoomData && lastRoomData.botDifficulty) || 'medium';
   const wrap = document.getElementById('room-bot-difficulty-wrap'); if (wrap) wrap.style.display = isHost ? 'flex' : 'none';
   const sw = document.getElementById('room-stake-wrap'); if (sw) sw.style.display = 'flex';
+  const qcb = document.getElementById('check-quick');
+  if (qcb) qcb.checked = !!(lastRoomData && lastRoomData.quick);
   syncRoomStakeUI(lastRoomData, isHost);
 }
+window.saveRoomQuick = async function() {
+  if (!currentRoomCode || !lastRoomData) return;
+  const u = window.FB.auth.currentUser;
+  if (!u || lastRoomData.host !== u.uid) return;
+  const q = !!document.getElementById('check-quick').checked;
+  await window.FB.updateDoc(window.FB.doc(window.FB.db, 'rooms', currentRoomCode), { quick: q });
+  lastRoomData = { ...lastRoomData, quick: q };
+  showToast(q ? '⚡ Partie rapide activée' : 'Partie classique', 'success');
+};
 window.copyRoomCode = function() { const c = currentRoomCode; if (!c) return; if (navigator.clipboard) navigator.clipboard.writeText(c).then(() => showToast("Code copié !", 'success')); else showToast("Code : " + c); };
 function renderRoomSlots() {
   const list = document.getElementById('room-players-list'); if (!list) return;
@@ -1097,6 +1490,7 @@ function seatList(players) { const r = [null, null, null, null], rest = []; (pla
 async function launchFromRoom() {
   if (roomStarted) return;
   roomStarted = true;
+  currentQuickGame = !!(lastRoomData && lastRoomData.quick);
   const user = window.FB.auth.currentUser;
   const players = lastRoomData.players || [];
   const sl = seatList(players);
@@ -1107,8 +1501,10 @@ async function launchFromRoom() {
   if (roomListener) { roomListener(); roomListener = null; }
   currentRoomCode = lastRoomData.code;
   const div = divOf(LG.L.xp).l;
-  const stake = lastRoomData.kind === 'mm' || lastRoomData.kind === 'coop' ? getStakeForDivision(div) : Number(lastRoomData.stake !== undefined ? lastRoomData.stake : 0);
+  const baseStake = lastRoomData.kind === 'mm' || lastRoomData.kind === 'coop' ? getStakeForDivision(div) : Number(lastRoomData.stake !== undefined ? lastRoomData.stake : 0);
+  const stake = currentQuickGame ? Math.round(baseStake / 2) : baseStake;
   currentGameKind = lastRoomData.kind || 'priv';
+  state.botDifficulty = (lastRoomData.kind === 'mm' || lastRoomData.kind === 'coop') ? diffOf(div) : (lastRoomData.botDifficulty || 'medium');
   if (stake > 0) {
     const id = 'match-' + currentRoomCode + '-' + Date.now();
     try { await walletReserveMatch(stake, id); currentMatchId = id; currentMatchStake = stake; }
@@ -1117,7 +1513,7 @@ async function launchFromRoom() {
   startGame(true);
   voiceJoin(currentRoomCode, roomUids);
 }
-function listenToRoom(code) { if(roomListener) roomListener(); roomListener = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'rooms', code), (docSnap) => { if (roomStarted) return; if(!docSnap.exists()) { showToast("Salon introuvable", 'error'); backToMainMenuFromLobby(); return; } const data = docSnap.data(); if (data.status === 'playing') { lastRoomData = data; launchFromRoom(); return; } if (data.status === 'closed') { showToast("Salon fermé", 'error'); backToMainMenuFromLobby(); return; } lastRoomData = data; syncMyRoomCoins(data); const diff = document.getElementById('room-bot-difficulty'); if (diff && document.activeElement !== diff) diff.value = data.botDifficulty || 'medium'; const se = document.getElementById('room-stake'); if (se && document.activeElement !== se) { const u0 = window.FB.auth.currentUser; syncRoomStakeUI(data, !!(u0 && data.host === u0.uid)); } renderRoomSlots(); }, (err) => { showToast(authErrorMsg(err), 'error'); }); }
+function listenToRoom(code) { if(roomListener) roomListener(); roomListener = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'rooms', code), (docSnap) => { if (roomStarted) return; if(!docSnap.exists()) { showToast("Salon introuvable", 'error'); backToMainMenuFromLobby(); return; } const data = docSnap.data(); if (data.status === 'playing') { lastRoomData = data; launchFromRoom(); return; } if (data.status === 'closed') { showToast("Salon fermé", 'error'); backToMainMenuFromLobby(); return; } lastRoomData = data; syncMyRoomCoins(data); const diff = document.getElementById('room-bot-difficulty'); if (diff && document.activeElement !== diff) diff.value = data.botDifficulty || 'medium'; const qcb = document.getElementById('check-quick'); if (qcb) qcb.checked = !!data.quick; const se = document.getElementById('room-stake'); if (se && document.activeElement !== se) { const u0 = window.FB.auth.currentUser; syncRoomStakeUI(data, !!(u0 && data.host === u0.uid)); } renderRoomSlots(); }, (err) => { showToast(authErrorMsg(err), 'error'); }); }
 function syncRoomStakeUI(data, isHost) {
   const st = document.getElementById('room-stake'); if (!st) return;
   const v = String(data && data.stake !== undefined ? data.stake : 0);
@@ -1249,7 +1645,7 @@ function bumpLG(k, v) { rollLG(); LG.L.dp[k] = (LG.L.dp[k] || 0) + (v || 1); LG.
 function saveLG() { LG.L.t = Date.now(); try { localStorage.setItem('lg_' + me().uid, JSON.stringify(LG.L)); } catch(e) {} try { window.FB.updateDoc(uref(), {league: LG.L}).catch(()=>{}); } catch(e) {} }
 async function pushProfile() { saveProfile(); updateCurrencyUI(); try { window.FB.updateDoc(uref(), {gold: playerProfile.gold, gems: playerProfile.gems}).catch(()=>{}); } catch(e) {} }
 async function loadLG() { const u = me(); if (!u) return; try { const l = JSON.parse(localStorage.getItem('lg_' + u.uid) || 'null'); if (l) Object.assign(LG.L, l); } catch(e) {} try { const s = await window.FB.getDoc(uref()); const rl = s.exists() && s.data().league; if (rl && (rl.t||0) > (LG.L.t||0)) Object.assign(LG.L, rl); } catch(e) {} rollLG(); }
-async function walletRefresh() { try { const s = await window.FB.getDoc(uref()); if (s.exists()) { const d = s.data(); playerProfile.gold = d.gold; if (d.wallet) playerProfile.wallet = d.wallet; if (d.inventory) playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory); saveProfile(); updateCurrencyUI(); } } catch(e){} }
+async function walletRefresh() { try { const s = await window.FB.getDoc(uref()); if (s.exists()) { const d = s.data(); playerProfile.gold = d.gold; if (d.wallet) playerProfile.wallet = d.wallet; if (d.inventory) playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory); if (Array.isArray(d.promoCodes)) playerProfile.promoCodes = d.promoCodes; saveProfile(); updateCurrencyUI(); } } catch(e){} }
 async function walletReserveMatch(stake, id) {
   if (!stake) return;
   let reserved = false;
@@ -1285,17 +1681,17 @@ async function walletRecordMatch(win, free, id) {
 }
 window.walletReserveMatch = walletReserveMatch;
 window.walletRecordMatch = walletRecordMatch;
-window.PhoenixWallet = {initForUser: async (uid) => { try { const s = await window.FB.getDoc(window.FB.doc(window.FB.db,'users',uid)); if(s.exists()){ const d = s.data(); playerProfile.gold = d.gold; if(d.wallet) playerProfile.wallet = d.wallet; if (d.inventory) playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory); saveProfile(); updateCurrencyUI(); } } catch(e){} }};
+window.PhoenixWallet = {initForUser: async (uid) => { try { const s = await window.FB.getDoc(window.FB.doc(window.FB.db,'users',uid)); if(s.exists()){ const d = s.data(); playerProfile.gold = d.gold; if(d.wallet) playerProfile.wallet = d.wallet; if (d.inventory) playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory); if (Array.isArray(d.promoCodes)) playerProfile.promoCodes = d.promoCodes; saveProfile(); updateCurrencyUI(); } } catch(e){} }};
 window.openPhoenixWallet = () => { try { openLG(); LG.T='coins'; renderLG(); } catch(e) { showToast('Portefeuille : '+e.message, 'error'); } };
 async function sendInbox(uid, m) { m.id = mk(); m.ts = Date.now(); try { await window.FB.setDoc(sref(uid), {inbox: window.FB.arrayUnion(m)}, {merge:true}); } catch(e) { return false; } return true; }
 const online = uid => Date.now() - (LG.FS[uid] || 0) < 65000;
 const unread = () => LG.S.inbox.filter(m => m.ts > (LG.S.rd || 0)).length;
 function initSocial() {
   const u = me(); if (!u || LG.initSocial) return; LG.initSocial = true;
-  window.FB.onSnapshot(sref(u.uid), s => { const d = s.exists() ? s.data() : {}; LG.S = {friends:d.friends||[], inbox:d.inbox||[], rd:d.rd||0}; LG.S.friends.forEach(f => { if (!LG.FL[f.uid]) LG.FL[f.uid] = window.FB.onSnapshot(sref(f.uid), x => { LG.FS[f.uid] = x.exists() ? x.data().seen : 0; if (LG.open && LG.T === 'friends') renderLG(); }); }); if (LG.open) renderLG(); }, ()=>{});
+  window.FB.onSnapshot(sref(u.uid), s => { const d = s.exists() ? s.data() : {}; const nS = {friends:d.friends||[], inbox:d.inbox||[], rd:d.rd||0}; const sChanged = JSON.stringify(nS) !== JSON.stringify(LG.S); LG.S = nS; LG.S.friends.forEach(f => { if (!LG.FL[f.uid]) LG.FL[f.uid] = window.FB.onSnapshot(sref(f.uid), x => { LG.FS[f.uid] = x.exists() ? x.data().seen : 0; if (LG.open && LG.T === 'friends') renderLGSoft(); }); }); if (LG.open && sChanged) renderLGSoft(); }, ()=>{});
   const ping = () => { if (!document.hidden) window.FB.setDoc(sref(u.uid), {seen: Date.now(), pseudo: playerProfile.pseudo, av: playerProfile.avatarFile}, {merge:true}).catch(()=>{}); };
   ping(); setInterval(ping, 25000);
-  loadLG().then(() => { saveLG(); if (LG.open) renderLG(); });
+  loadLG().then(() => { saveLG(); if (LG.open) renderLGSoft(); });
 }
 async function pushLeaderboard() { if (!me()) return; try { const day = dayKey(), week = weekKey(), month = monthKey(); if (!LG.L._ld || LG.L._ld.d !== day) LG.L._ld = {d: day, pions: 0, wins: 0, parties: 0}; if (!LG.L._lw || LG.L._lw.w !== week) LG.L._lw = {w: week, pions: 0, wins: 0, parties: 0}; const stats = { pseudo: playerProfile.pseudo, av: playerProfile.avatarFile, xp: LG.L.xp, division: divOf(LG.L.xp).l, divisionName: divOf(LG.L.xp).n, pionsTotal: LG.L.ate || 0, day: LG.L._ld, week: LG.L._lw, month: LG.L.monthly || {m: month, pions: 0, wins: 0, parties: 0}, ts: Date.now() }; await window.FB.setDoc(window.FB.doc(window.FB.db, 'leaderboard', me().uid), stats, {merge: true}); } catch(e) { console.warn(e); } }
 window.pushLeaderboard = pushLeaderboard;
@@ -1305,14 +1701,15 @@ async function launchLeagueMatch(mode) {
   const div = divOf(LG.L.xp).l;
   const stake = getStakeForDivision(div);
   currentGameKind = mode;
+  currentQuickGame = !!quickOptions[mode];
+
   if (mode === 'solo') {
-    // FIX : la difficulté est imposée par la division
     state.botDifficulty = diffOf(div);
     setTimeout(() => startGameWithBots(diffOf(div)), 100);
   } else if (mode === 'online') {
-    setTimeout(() => createPrivateRoom(stake, 'mm'), 100);
+    setTimeout(() => createPrivateRoom(stake, 'mm', currentQuickGame), 100);
   } else if (mode === 'coop') {
-    setTimeout(() => createPrivateRoom(stake, 'coop'), 100);
+    setTimeout(() => createPrivateRoom(stake, 'coop', currentQuickGame), 100);
   }
 }
 /* === INVENTAIRE · BOUTIQUE · CODES PROMO · SAC === */
@@ -1320,6 +1717,7 @@ function applyWalletResult(res) {
   playerProfile.gold = res.coins;
   playerProfile.wallet = res.wallet;
   playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, res.inv);
+  if (Array.isArray(res.promoCodes)) playerProfile.promoCodes = res.promoCodes;
   saveProfile(); updateCurrencyUI();
 }
 function showReward(icon, title, items) {
@@ -1333,15 +1731,115 @@ function showReward(icon, title, items) {
   o.addEventListener('click', close);
   setTimeout(close, 3800);
 }
+function showThemeModal(icon, title, bodyHTML, okText = 'OK', onOk = null, showCancel = false) {
+  return new Promise(resolve => {
+    const o = document.createElement('div');
+    o.className = 'theme-modal show';
+    o.innerHTML = `
+      <div class="theme-modal-box">
+        <h2>${icon ? icon + ' ' : ''}${escapeHTML(title)}</h2>
+        <div class="theme-modal-body">${bodyHTML}</div>
+        <div class="theme-modal-actions">
+          ${showCancel ? '<button class="btn ghost" data-modal-cancel>Annuler</button>' : ''}
+          <button class="btn gold" data-modal-ok>${escapeHTML(okText)}</button>
+        </div>
+      </div>`;
+    document.body.appendChild(o);
+    let closed = false;
+    const close = (ok) => {
+      if (closed) return;
+      closed = true;
+      o.style.transition = 'opacity .25s';
+      o.style.opacity = '0';
+      setTimeout(() => o.remove(), 250);
+      resolve(ok);
+    };
+    o.querySelector('[data-modal-ok]').onclick = () => {
+      if (onOk) onOk();
+      close(true);
+    };
+    const cancel = o.querySelector('[data-modal-cancel]');
+    if (cancel) cancel.onclick = () => close(false);
+    o.addEventListener('click', e => {
+      if (e.target === o && showCancel) close(false);
+    });
+  });
+}
 function panel(icon, title, body) { return `<div class="lg-panel"><h3><span>${icon}</span>${title}</h3>${body}</div>`; }
 function invHTML() {
   const inv = Object.assign({ ...DEFAULT_INVENTORY }, playerProfile.inventory || {});
   return `<div class="inv-grid">${MAGIC_TYPES.map(t => { const n = inv[t] || 0; return `<div class="inv-slot ${t}${n > 0 ? ' has' : ''}"><div class="inv-count">×${n}</div><div class="inv-ico">${MAGIC_ICONS[t]}</div><div class="inv-name">${MAGIC_LABELS[t]} Magique</div></div>`; }).join('')}</div>`;
 }
 function promoHTML() {
-  const used = (playerProfile.wallet && Array.isArray(playerProfile.wallet.promos)) ? playerProfile.wallet.promos : [];
-  return `<div class="promo-row"><input id="lg-promo-input" class="promo-input" type="text" placeholder="Entre ton code promo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="promo-btn" data-lg="promo">Valider</button></div><div class="promo-hint">Entre un code promo pour recevoir ton cadeau.</div>`;
+  return `<div class="promo-row"><input id="lg-promo-input" class="promo-input" type="text" placeholder="Entre ton code promo" maxlength="20" autocomplete="off" autocapitalize="characters" spellcheck="false"><button class="promo-btn" data-lg="promo">Valider</button></div><div class="promo-hint">Entre ton code promo pour recevoir ton cadeau.</div>`;
 }
+
+/* ===== PACKS DE PIÈCES (verrouillés) ===== */
+const COIN_PACKS = [
+  { id:'coins1000', icon:'🪙', title:'1 000 pièces', price:'0,99 €', desc:'Pack de pièces', cls:'king' },
+  { id:'coins2500', icon:'🪙', title:'2 500 pièces', price:'1,99 €', desc:'Pack de pièces', cls:'seven' },
+  { id:'code250',   icon:'🎟️', title:'Code 250 pièces', price:'0,19 €', desc:'Code promo à offrir', cls:'five' },
+  { id:'code380',   icon:'🎟️', title:'Code 380 pièces', price:'0,39 €', desc:'Code promo à offrir', cls:'phoenix' }
+];
+function coinPacksHTML() {
+  return COIN_PACKS.map(p => `
+    <div class="shop-card ${p.cls}">
+      <span class="stock-badge">🔒 Bientôt</span>
+      <div class="shop-card-body">
+        <div class="shop-card-icon">${p.icon}</div>
+        <div class="shop-card-info">
+          <b>${p.title}</b>
+          <p>${p.desc}</p>
+          <p style="color:var(--gold-2);font-weight:900">${p.price}</p>
+        </div>
+      </div>
+      <button class="shop-btn ${p.cls}" disabled style="opacity:.55;cursor:not-allowed">🔒 Achat verrouillé</button>
+    </div>
+  `).join('');
+}
+function codesInventoryHTML() {
+  const items = Array.isArray(playerProfile.promoCodes) ? playerProfile.promoCodes : [];
+  const count = t => items.filter(x => x.type === t).length;
+  return `
+    <div style="margin-top:12px">
+      <div style="font-size:.8em;color:#9fc3ea;margin-bottom:8px;font-weight:800;text-transform:uppercase">🎟️ Codes promo en stock</div>
+      <div class="inv-grid">
+        <div class="inv-slot ${count('code250') ? 'has five' : ''}" data-code-item="code250" style="cursor:pointer">
+          <div class="inv-count">×${count('code250')}</div>
+          <div class="inv-ico">🎟️</div>
+          <div class="inv-name">Code 250 pièces</div>
+        </div>
+        <div class="inv-slot ${count('code380') ? 'has phoenix' : ''}" data-code-item="code380" style="cursor:pointer">
+          <div class="inv-count">×${count('code380')}</div>
+          <div class="inv-ico">🎟️</div>
+          <div class="inv-name">Code 380 pièces</div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+function showCodeItem(type) {
+  const items = Array.isArray(playerProfile.promoCodes) ? playerProfile.promoCodes : [];
+  const item = items.find(x => x.type === type);
+  if (!item) {
+    showToast('Aucun code en stock. Les achats sont verrouillés pour le moment.', 'error');
+    return;
+  }
+  showThemeModal(
+    '🎟️',
+    'Ton code promo',
+    `<p style="text-align:center">Donne ce code à un ami ou saisis-le toi-même.</p>
+     <div class="promo-code-display">${escapeHTML(item.code)}</div>
+     <p style="text-align:center;color:#9fc3ea;font-size:.85em">Une fois utilisé, ce code ne sera plus valable.</p>`,
+    '📋 Copier le code',
+    () => {
+      if (navigator.clipboard) navigator.clipboard.writeText(item.code).then(() => showToast('Code copié !', 'success'));
+      else showToast('Code : ' + item.code);
+    }
+  );
+}
+window.showCodeItem = showCodeItem;
+
 function shopCardHTML(type) { const price = MAGIC_PRICES[type], label = MAGIC_LABELS[type], count = (playerProfile.inventory && playerProfile.inventory[type]) || 0; return `<div class="shop-card ${type}"><span class="stock-badge${count > 0 ? ' has' : ''}">En stock : ${count}</span><div class="shop-card-body"><div class="shop-card-icon">${MAGIC_ICONS[type]}</div><div class="shop-card-info"><b>${label} Magique</b><p>${MAGIC_DESC[type]}</p></div></div><button class="shop-btn ${type}" data-lg="buy" data-v="${type}">Acheter · 🪙 ${coinFmt(price)}</button></div>`; }
 async function buyItem(id) {
   if (MAGIC_PRICES[id] === undefined) return;
@@ -1349,7 +1847,20 @@ async function buyItem(id) {
   if (!me()) return showToast('Connecte-toi pour acheter', 'error');
   await walletRefresh();
   if (balNow() < price) return showToast(`Il te manque ${coinFmt(price - balNow())} pièces`, 'error');
-  if (!confirm(`Acheter un ${label} Magique pour ${coinFmt(price)} pièces ?`)) return;
+  const okBuy = await showThemeModal(
+    '🛒',
+    'Confirmer l’achat',
+    `<div style="text-align:center">
+       <div style="font-size:2.4em;margin:8px 0">${MAGIC_ICONS[id]}</div>
+       <p><b>${label} Magique</b></p>
+       <p>Prix : <b style="color:var(--gold-2)">🪙 ${coinFmt(price)}</b></p>
+       <p style="color:#9fc3ea;font-size:.85em">Solde après achat : ${coinFmt(balNow() - price)} 🪙</p>
+     </div>`,
+    'Acheter',
+    null,
+    true
+  );
+  if (!okBuy) return;
   let res;
   try {
     res = await window.FB.runTransaction(window.FB.db, async tx => {
@@ -1372,33 +1883,72 @@ async function buyItem(id) {
   showReward(MAGIC_ICONS[id], `${label} Magique`, [`+1 ${MAGIC_ICONS[id]} ${label}`, `En stock : ×${res.inv[id]}`]);
 }
 async function redeemPromo(raw) {
-  const code = String(raw || '').trim().toUpperCase().replace(/\s+/g, '');
+  const code = String(raw || '').trim().toUpperCase().replace(/[^A-Z0-9_-]/g, '');
   if (!code) return showToast('Saisis un code promo', 'error');
   if (!me()) return showToast('Connecte-toi pour utiliser un code', 'error');
-  const promo = PROMO_CODES[code];
-  if (!promo) return showToast('Code promo invalide', 'error');
-  let res;
+
+  let res, promo = PROMO_CODES[code], dynamicCoins = 0;
+
   try {
-    res = await window.FB.runTransaction(window.FB.db, async tx => {
-      const ref = uref();
-      const snap = await tx.get(ref); if (!snap.exists()) throw new Error('Profil introuvable');
-      const d = snap.data(); const w = d.wallet || {coins: Number(d.gold||0)};
-      w.promos = Array.isArray(w.promos) ? w.promos : [];
-      if (!promo.unlimited && w.promos.includes(code)) throw new Error('Code déjà utilisé sur ce compte');
-      const inv = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory || {});
-      let delta = 0;
-      if (promo.coins) { w.coins = Number(w.coins || 0) + promo.coins; delta = promo.coins; }
-      if (promo.items) Object.keys(promo.items).forEach(k => { inv[k] = (inv[k] || 0) + promo.items[k]; });
-      if (!promo.unlimited) w.promos.push(code);
-      w.ledger = (w.ledger || []);
-      w.ledger.unshift({id:'promo-'+code+(promo.unlimited?'-'+Date.now():''), t:Date.now(), label:'Code promo '+code, delta, balance:w.coins});
-      w.ledger = w.ledger.slice(0,100);
-      tx.update(ref, {gold: w.coins, wallet: w, inventory: inv});
-      return {coins: w.coins, wallet: w, inv};
-    });
-  } catch(e) { showToast(e.message || 'Erreur code promo', 'error'); return; }
+    if (promo) {
+      res = await window.FB.runTransaction(window.FB.db, async tx => {
+        const ref = uref();
+        const snap = await tx.get(ref);
+        if (!snap.exists()) throw new Error('Profil introuvable');
+        const d = snap.data();
+        const w = d.wallet || { coins: Number(d.gold || 0) };
+        w.promos = Array.isArray(w.promos) ? w.promos : [];
+        if (!promo.unlimited && w.promos.includes(code)) throw new Error('Code déjà utilisé sur ce compte');
+
+        const inv = Object.assign({ ...DEFAULT_INVENTORY }, d.inventory || {});
+        let delta = 0;
+        if (promo.coins) { w.coins = Number(w.coins || 0) + promo.coins; delta = promo.coins; }
+        if (promo.items) Object.keys(promo.items).forEach(k => { inv[k] = (inv[k] || 0) + promo.items[k]; });
+        if (!promo.unlimited) w.promos.push(code);
+
+        w.ledger = (w.ledger || []);
+        w.ledger.unshift({ id:'promo-'+code+(promo.unlimited?'-'+Date.now():''), t:Date.now(), label:'Code promo '+code, delta, balance:w.coins });
+        w.ledger = w.ledger.slice(0, 100);
+        tx.update(ref, { gold: w.coins, wallet: w, inventory: inv });
+        return { coins: w.coins, wallet: w, inv };
+      });
+    } else {
+      const codeRef = window.FB.doc(window.FB.db, 'promoCodes', code);
+      res = await window.FB.runTransaction(window.FB.db, async tx => {
+        const cSnap = await tx.get(codeRef);
+        if (!cSnap.exists()) throw new Error('Code promo invalide');
+        const c = cSnap.data();
+        if (c.used) throw new Error('Ce code a déjà été utilisé');
+
+        const ref = uref();
+        const snap = await tx.get(ref);
+        if (!snap.exists()) throw new Error('Profil introuvable');
+        const d = snap.data();
+        const w = d.wallet || { coins: Number(d.gold || 0) };
+        const gain = Number(c.coins || 0);
+
+        w.coins = Number(w.coins || 0) + gain;
+        w.ledger = (w.ledger || []);
+        w.ledger.unshift({ id:'promo-'+code, t:Date.now(), label:'Code promo '+code, delta:gain, balance:w.coins });
+        w.ledger = w.ledger.slice(0, 100);
+
+        tx.update(codeRef, { used:true, usedBy: me().uid, usedAt: Date.now() });
+        tx.update(ref, { gold: w.coins, wallet: w });
+        return { coins: w.coins, wallet: w, inv: Object.assign({ ...DEFAULT_INVENTORY }, d.inventory || {}), rewardCoins: gain };
+      });
+      dynamicCoins = res.rewardCoins;
+      promo = { coins: dynamicCoins };
+    }
+  } catch(e) {
+    showToast(e.message || 'Erreur code promo', 'error');
+    return;
+  }
+
   applyWalletResult(res);
+  const inp0 = document.getElementById('lg-promo-input');
+  if (inp0) inp0.value = '';
   renderLG();
+
   const lines = [];
   if (promo.coins) lines.push(`+${coinFmt(promo.coins)} 🪙`);
   if (promo.items) Object.keys(promo.items).forEach(k => lines.push(`+${promo.items[k]} ${MAGIC_ICONS[k]} ${MAGIC_LABELS[k]}`));
@@ -1431,7 +1981,7 @@ window.closeBag = function() { const modal = document.getElementById('bag-modal'
 function renderBag() {
   const inv = Object.assign({ ...DEFAULT_INVENTORY }, playerProfile.inventory || {});
   const body = document.getElementById('bag-body'); if (!body) return;
-  body.innerHTML = `<p style="color:#9fc3ea;font-size:.85em;text-align:center;margin-bottom:10px">Clique sur un objet pour remplacer une carte de ta main. Utilisable pendant <b>ton tour</b> uniquement.</p>${MAGIC_TYPES.map(type => { const count = inv[type] || 0; return `<div class="bag-item ${count <= 0 ? 'disabled' : ''}" data-bag-item="${type}"><div class="bag-item-icon">${MAGIC_ICONS[type]}</div><div class="bag-item-body"><div class="bag-item-title">${MAGIC_LABELS[type]} Magique</div><div class="bag-item-desc">${MAGIC_DESC[type]}</div></div><div class="bag-item-count">×${count}</div></div>`; }).join('')}${MAGIC_TYPES.every(t => (inv[t]||0) <= 0) ? '<p style="text-align:center;color:#9fc3ea;font-size:.85em;margin-top:12px">Aucun objet. Achète des cartes magiques dans la boutique.</p>' : ''}`;
+  body.innerHTML = `<p style="color:#9fc3ea;font-size:.85em;text-align:center;margin-bottom:10px">Clique sur un objet pour remplacer une carte de ta main. Utilisable pendant <b>ton tour</b> uniquement.</p>${(state.turn === myPlayerIndex && !state.cardPlayedThisTurn && !state.mode && !state.pendingSelection) ? '' : '<p style="color:#ff8a80;font-size:.85em;text-align:center;margin-bottom:10px">⏳ Ce n\'est pas le moment : attends ton tour.</p>'}${MAGIC_TYPES.map(type => { const count = inv[type] || 0; return `<div class="bag-item ${count <= 0 ? 'disabled' : ''}" data-bag-item="${type}"><div class="bag-item-icon">${MAGIC_ICONS[type]}</div><div class="bag-item-body"><div class="bag-item-title">${MAGIC_LABELS[type]} Magique</div><div class="bag-item-desc">${MAGIC_DESC[type]}</div></div><div class="bag-item-count">×${count}</div></div>`; }).join('')}${MAGIC_TYPES.every(t => (inv[t]||0) <= 0) ? '<p style="text-align:center;color:#9fc3ea;font-size:.85em;margin-top:12px">Aucun objet. Achète des cartes magiques dans la boutique.</p>' : ''}`;
   body.querySelectorAll('[data-bag-item]').forEach(el => { el.onclick = () => startMagicSelection(el.dataset.bagItem); });
 }
 function startMagicSelection(type) {
@@ -1450,6 +2000,7 @@ async function useMagicItem(type, cardIdx) {
   try { await consumeMagicItem(type, 1); } catch(e) { showToast(e.message || 'Erreur', 'error'); return; }
   if (bad() || !state.hands[myPlayerIndex][cardIdx]) { try { await consumeMagicItem(type, -1); } catch(e) {} showToast('Le tour a changé — objet rendu', 'error'); closeBag(); return; }
   clearPathPreviews(); state.previewCardIdx = null;
+  const replaced = state.hands[myPlayerIndex][cardIdx]; if (replaced && !replaced.magic) state.discard.unshift(replaced);
   state.hands[myPlayerIndex][cardIdx] = { r: MAGIC_RANKS[type], s: null, magic: true };
   closeBag(); renderHand();
   if (currentRoomCode) saveGameState();
@@ -1463,6 +2014,7 @@ lgRoot.innerHTML = '<canvas style="position:absolute;inset:0;width:100%;height:1
 document.body.appendChild(lgRoot);
 const LG_TOP = lgRoot.children[1], LG_MAIN = lgRoot.children[2], LG_NAV = lgRoot.children[3];
 const NAVS = [['home','🏆','Ligue'],['career','🎯','Carrière'],['stats','📊','Stats'],['rankings','🏅','Top'],['coins','🛒','Boutique'],['friends','👥','Amis'],['inbox','✉️','Msg'],['profile','👤','Profil']];
+function renderLGSoft() { const a = document.activeElement; if (a && a.tagName === 'INPUT' && lgRoot.contains(a)) return; renderLG(); }
 function renderLG() {
   if (!LG.open) return;
   const d = divOf(LG.L.xp);
@@ -1470,14 +2022,21 @@ function renderLG() {
   fillAv(document.getElementById('lg-top-av'), playerProfile.avatarFile, playerProfile.pseudo);
   LG_NAV.innerHTML = NAVS.map(n => `<button data-lg="tab" data-v="${n[0]}" class="lg-tab${LG.T===n[0]?' on':''}"><b>${n[1]}</b>${n[2]}${n[0]==='inbox'?`<i class="lg-badge">${unread()}</i>`:''}</button>`).join('');
   const fresh = LG._lastT !== LG.T; LG._lastT = LG.T;
-  const keepScroll = fresh ? 0 : LG_MAIN.scrollTop;
+  const keepScroll = fresh ? 0 : LG_MAIN.scrollTop; const keepInputs = {}; if (!fresh) LG_MAIN.querySelectorAll('input[id]').forEach(i => { keepInputs[i.id] = i.value; });
   LG_MAIN.classList.toggle('fresh', fresh);
   LG_MAIN.innerHTML = (V[LG.T] || V.home)(d) + ((LG.T === 'career' || LG.T === 'profile') ? panel('🎒', 'Mon inventaire', invHTML()) : '');
-  LG_MAIN.scrollTop = keepScroll;
+  LG_MAIN.scrollTop = keepScroll; Object.keys(keepInputs).forEach(id => { const i = document.getElementById(id); if (i) i.value = keepInputs[id]; });
   if (LG.T === 'rankings') setTimeout(loadRankingsView, 20);
   setTimeout(postRenderLG, 20);
 }
-function postRenderLG() { const prAv = document.getElementById('lg-pr-av'); if (prAv) fillAv(prAv, playerProfile.avatarFile, playerProfile.pseudo); const ca = document.getElementById('career-av'); if (ca) fillAv(ca, playerProfile.avatarFile, playerProfile.pseudo); LG.S.friends.forEach(f => { const el = document.getElementById('lg-fr-' + f.uid); if (el) fillAv(el, f.av, f.pseudo); }); }
+function postRenderLG() {
+  const prAv = document.getElementById('lg-pr-av'); if (prAv) fillAv(prAv, playerProfile.avatarFile, playerProfile.pseudo);
+  const ca = document.getElementById('career-av'); if (ca) fillAv(ca, playerProfile.avatarFile, playerProfile.pseudo);
+  LG.S.friends.forEach(f => { const el = document.getElementById('lg-fr-' + f.uid); if (el) fillAv(el, f.av, f.pseudo); });
+  document.querySelectorAll('[data-code-item]').forEach(el => {
+    el.onclick = () => showCodeItem(el.dataset.codeItem);
+  });
+}
 function gaugeHTML(d) { const p = Math.min(100, (LG.L.xp - d.a) / (d.b - d.a) * 100); return `<div style="height:22px;border:1.5px solid var(--cyan);border-radius:12px;background:rgba(0,0,0,.6);overflow:hidden;position:relative"><div style="height:100%;width:${p.toFixed(1)}%;background:linear-gradient(90deg,var(--cyan),var(--gold));transition:width .6s"></div><span style="position:absolute;inset:0;text-align:center;font-size:12px;line-height:22px;font-weight:700;text-shadow:0 0 4px #000">${LG.L.xp.toLocaleString('fr-FR')} / ${d.b>1e8?'∞':d.b.toLocaleString('fr-FR')} XP · ${Math.floor(p)}%</span></div>`; }
 function stakeTableHTML(currentDiv) {
   return DV.slice().reverse().map(d => {
@@ -1560,6 +2119,10 @@ function V_leagues_online(d) {
         <span style="color:#cfe2ff">Gain en cas de victoire</span>
         <b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b>
       </div>
+      <label class="quick-row">
+        <input type="checkbox" id="quick-online" ${quickOptions.online ? 'checked' : ''} onchange="setQuickOption('online', this.checked)">
+        <span>⚡ Partie rapide (2 pions · récompenses ÷2)</span>
+      </label>
       <button data-lg="launch" data-v="online" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#00e5ff,#0090a8);color:#001;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(0,229,255,.4)">🌐 Chercher une partie · ${coinFmt(curStake)} 🪙</button>
       <button data-lg="launchFree" data-v="online" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #9fc3ea;background:rgba(4,16,48,.6);color:#9fc3ea;font-weight:700;font-size:.85em;cursor:pointer">Partie gratuite (hors ligue)</button>
     </div>
@@ -1577,7 +2140,6 @@ function V_leagues_online(d) {
     </div>
   `;
 }
-/* FIX : V_leagues_bot — plus de sélecteur, difficulté imposée par la division */
 function V_leagues_bot(d) {
   const curStake = getStakeForDivision(d.l);
   const st = (LG.L.st || {}).bots || {p:0,w:0,l:0};
@@ -1611,6 +2173,10 @@ function V_leagues_bot(d) {
       <div style="color:#9fc3ea;font-size:.8em;margin-top:8px;line-height:1.5">ℹ️ Plus tu montes de division, plus ton adversaire est fort. Tu ne peux pas choisir la difficulté en ligue.</div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin:8px 0 12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div>
+      <label class="quick-row">
+        <input type="checkbox" id="quick-solo" ${quickOptions.solo ? 'checked' : ''} onchange="setQuickOption('solo', this.checked)">
+        <span>⚡ Partie rapide (2 pions · récompenses ÷2)</span>
+      </label>
       <button data-lg="launch" data-v="solo" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#b04fd6,#6a2090);color:#fff;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(176,79,214,.4)">🤖 Jouer vs ${BOTS[d.l]} · ${coinFmt(curStake)} 🪙</button>
       <button data-lg="launchFree" data-v="solo" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #9fc3ea;background:rgba(4,16,48,.6);color:#9fc3ea;font-weight:700;font-size:.85em;cursor:pointer">Entraînement gratuit (hors ligue)</button>
     </div>
@@ -1647,6 +2213,10 @@ function V_leagues_coop(d) {
       <p style="color:#cfe2ff;font-size:.9em;margin-bottom:10px">Crée un salon Co-op et invite un ami. Vous affronterez deux bots ensemble.</p>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Mise (Div. ${d.l})</span><b style="color:var(--gold-2);font-size:1.2em">🪙 ${coinFmt(curStake)}</b></div>
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding:10px;border-radius:12px;background:rgba(0,0,0,.35)"><span style="color:#cfe2ff">Gain en cas de victoire</span><b style="color:#00ffa8;font-size:1.2em">🪙 ${coinFmt(curStake*2)}</b></div>
+      <label class="quick-row">
+        <input type="checkbox" id="quick-coop" ${quickOptions.coop ? 'checked' : ''} onchange="setQuickOption('coop', this.checked)">
+        <span>⚡ Partie rapide (2 pions · récompenses ÷2)</span>
+      </label>
       <button data-lg="launch" data-v="coop" style="width:100%;padding:14px;border-radius:14px;border:none;background:linear-gradient(180deg,#fff1b8,#b8860b);color:#2a1c02;font-weight:900;font-size:1em;cursor:pointer;text-transform:uppercase;box-shadow:0 0 20px rgba(230,195,92,.4)">🤝 Créer un salon Co-op · ${coinFmt(curStake)} 🪙</button>
       <button data-lg="tab" data-v="friends" style="width:100%;margin-top:8px;padding:10px;border-radius:12px;border:1.5px solid #00e5ff;background:rgba(0,229,255,.1);color:#00e5ff;font-weight:700;font-size:.85em;cursor:pointer">👥 Inviter un ami (Amis)</button>
     </div>
@@ -1705,7 +2275,7 @@ const V = {
     return `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:16px;background:linear-gradient(160deg,rgba(70,50,8,.4),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📊 Mes statistiques</h3><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.p}</b><span style="color:#9fc3ea;font-size:.75em">Parties</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#00ffa8;font-size:1.5em">${pc(a)}%</b><span style="color:#9fc3ea;font-size:.75em">Winrate</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#fff;font-size:1.5em">${a.w}</b><span style="color:#9fc3ea;font-size:.75em">Victoires</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:10px;text-align:center"><b style="display:block;color:#ff8a80;font-size:1.5em">${a.l}</b><span style="color:#9fc3ea;font-size:.75em">Défaites</span></div></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">📈 Détail par mode</h3>${row('🌐','Ligue en ligne', st.mm||{})}${row('🤖','Ligue Solo Bot', st.bots||{})}${row('🤝','Ligue Co-op', st.coop||{})}${row('🔒','Salon privé', st.priv||{})}</div>`;
   },
   rankings: () => `<div id="rankings-root"></div>`,
-  coins: () => `<div class="wallet-hero"><small>Solde disponible</small><div class="wallet-amount">🪙 ${coinFmt(balNow())}</div><div class="wallet-sub">Boutique du Phénix</div></div>${panel('🛒', 'Cartes Magiques', MAGIC_TYPES.map(shopCardHTML).join(''))}${panel('🎒', 'Ton inventaire', invHTML())}${panel('🎁', 'Code promo', promoHTML())}`,
+  coins: () => `<div class="wallet-hero"><small>Solde disponible</small><div class="wallet-amount">🪙 ${coinFmt(balNow())}</div><div class="wallet-sub">Boutique du Phénix</div></div>${panel('💰', 'Packs de pièces', coinPacksHTML())}${panel('🛒', 'Cartes Magiques', MAGIC_TYPES.map(shopCardHTML).join(''))}${panel('🎒', 'Ton inventaire', invHTML() + codesInventoryHTML())}${panel('🎁', 'Code promo', promoHTML())}`,
   friends: () => `<div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">👥 Mes amis (${LG.S.friends.length})</h3>${LG.S.friends.length?LG.S.friends.map(f => `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:8px"><div style="width:44px;height:44px;border-radius:50%;border:2px solid var(--gold);position:relative;overflow:hidden;flex:none" id="lg-fr-${f.uid}"></div><div style="flex:1"><b>${escapeHTML(f.pseudo)}</b><small style="display:block;color:#9fc3ea">${online(f.uid)?'🟢 En ligne':'⚫ Hors ligne'}</small></div>${online(f.uid) ? `<button data-lg="invite" data-v="${f.uid}" style="padding:6px 12px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.8em">Inviter</button>` : ''}</div>`).join(''):'<p style="color:#6a87b3">Pas encore d’amis.</p>'}</div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">🔍 Ajouter un ami</h3><input id="lg-friend-input" placeholder="Code ami (UID)" style="width:100%;padding:10px;border-radius:10px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:14px;margin-bottom:8px"><button data-lg="addfriend" style="padding:10px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85));color:#fff;font-weight:800;cursor:pointer;width:100%">Envoyer la demande</button></div>`,
   inbox: () => { const l = LG.S.inbox.slice().sort((a,b)=>b.ts-a.ts); return `<div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">✉️ Messagerie</h3>${l.length?l.map((m,idx) => `<div style="display:flex;align-items:center;gap:10px;padding:8px;border-radius:12px;background:rgba(0,0,0,.35);margin-bottom:8px"><div style="flex:1"><b>${m.type==='fr'?escapeHTML(m.name)+' veut être ton ami':m.type==='inv'?escapeHTML(m.name)+' t’invite':'Info'}</b><small style="display:block;color:#9fc3ea">${m.type==='info'?escapeHTML(m.text):m.type==='inv'?'Salon '+escapeHTML(m.code):''}</small></div>${m.type==='fr'?`<button data-lg="accept" data-v="${idx}" style="padding:6px 10px;border:1.5px solid #00ffa8;border-radius:10px;background:rgba(0,255,168,.15);color:#00ffa8;font-weight:800;cursor:pointer;font-size:.8em">✔</button>`:''}${m.type==='inv'?`<button data-lg="joininv" data-v="${idx}" style="padding:6px 10px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.8em">Rejoindre</button>`:''}<button data-lg="del" data-v="${idx}" style="padding:6px 10px;border:1.5px solid #ff5252;border-radius:10px;background:rgba(255,82,82,.15);color:#ff8a80;font-weight:800;cursor:pointer;font-size:.8em">✕</button></div>`).join(''):'<p style="color:#6a87b3">Aucun message.</p>'}</div>`; },
   profile: d => `<div style="border:1.5px solid var(--gold);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(70,50,8,.35),rgba(4,16,48,.9));text-align:center;margin-bottom:12px"><div style="width:96px;height:96px;border-radius:50%;border:3px solid var(--gold);position:relative;overflow:hidden;margin:0 auto 10px;cursor:pointer" id="lg-pr-av" data-lg="avs"></div><button data-lg="avs" style="padding:8px 12px;border:1.5px solid var(--cyan);border-radius:10px;background:rgba(0,229,255,.15);color:var(--cyan);font-weight:800;cursor:pointer;font-size:.85em">🖼️ Changer d’avatar</button><div style="display:flex;gap:8px;margin-top:12px"><input id="lg-pseudo-input" value="${escapeHTML(playerProfile.pseudo)}" maxlength="16" style="flex:1;padding:10px;border-radius:10px;border:1.5px solid #4a6fa5;background:rgba(0,0,0,.55);color:#fff;font-size:14px"><button data-lg="savepseudo" style="padding:8px 12px;border:1.5px solid var(--gold);border-radius:10px;background:linear-gradient(180deg,rgba(230,195,92,.3),rgba(40,28,4,.85));color:#fff;font-weight:800;cursor:pointer;font-size:.85em">OK</button></div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94));margin-bottom:12px"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:10px">🎨 Mon plateau</h3><div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">${BOARD_FILES.map((f, i) => `<button data-lg="board" data-v="${i}" style="padding:6px;border:2px solid ${boardChoice === i ? 'var(--gold)' : 'rgba(255,255,255,.18)'};border-radius:12px;background:rgba(0,0,0,.35);color:#fff;cursor:pointer;font-family:inherit;display:flex;flex-direction:column;align-items:center;gap:4px"><span style="display:block;width:100%;aspect-ratio:1;border-radius:8px;background:url('${f}') center/cover #0a1a3a"></span><b style="font-size:.75em">Plateau ${i+1}</b></button>`).join('')}</div></div><div style="border:1.5px solid rgba(0,229,255,.35);border-radius:18px;padding:14px;background:linear-gradient(160deg,rgba(10,35,85,.88),rgba(4,16,48,.94))"><h3 style="color:var(--gold);text-transform:uppercase;margin-bottom:8px">Division ${d.l} · ${escapeHTML(d.n)}</h3>${gaugeHTML(d)}<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-top:10px"><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.ws||0}</b><span style="color:#9fc3ea;font-size:.75em">Série</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">${LG.L.best||0}</b><span style="color:#9fc3ea;font-size:.75em">Record</span></div><div style="background:rgba(0,0,0,.4);border-radius:10px;padding:8px;text-align:center"><b style="display:block;color:#fff">×${d.m}</b><span style="color:#9fc3ea;font-size:.75em">Multi</span></div></div></div><button data-lg="logout" style="padding:12px;border:1.5px solid #ff5252;border-radius:12px;background:rgba(255,82,82,.15);color:#ff8a80;font-weight:800;cursor:pointer;width:100%;text-transform:uppercase">Se déconnecter</button>`
@@ -1748,8 +2318,9 @@ const LGActions = {
     const mode = e.dataset.v;
     closeLG();
     currentMatchStake = 0; currentMatchId = 'match-free-'+Date.now(); currentGameKind = mode;
+    currentQuickGame = !!quickOptions[mode];
     if (mode === 'solo') { state.botDifficulty = diffOf(divOf(LG.L.xp).l); setTimeout(() => { currentMatchStake = 0; currentMatchId = 'match-free-'+Date.now(); currentGameKind = 'solo'; state.botDifficulty = diffOf(divOf(LG.L.xp).l); startGame(false); }, 100); }
-    else if (mode === 'online') { setTimeout(() => createPrivateRoom(0, 'free'), 100); }
+    else if (mode === 'online') { setTimeout(() => createPrivateRoom(0, 'free', currentQuickGame), 100); }
   },
   avs: () => {
     const o = document.createElement('div'); o.style.cssText = 'position:fixed;inset:0;z-index:400;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(2,8,20,.88);backdrop-filter:blur(8px)';
@@ -1767,7 +2338,7 @@ const LGActions = {
 };
 lgRoot.addEventListener('click', e => { const t = e.target.closest('[data-lg]'); if (!t) return; const a = LGActions[t.dataset.lg]; if (a) Promise.resolve(a(t)).catch(x => showToast(x.message||'Erreur', 'error')); });
 lgRoot.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target && e.target.id === 'lg-promo-input') { e.preventDefault(); const b = lgRoot.querySelector('[data-lg="promo"]'); if (b) b.click(); } });
-function openLG() { if (!me()) return showToast('Connecte-toi d’abord !', 'error'); LG.open = true; LG._lastT = null; lgRoot.style.display = 'flex'; initSocial(); renderLG(); walletRefresh().then(() => { if (LG.open) renderLG(); }); requestAnimationFrame(() => { const c = lgRoot.querySelector('canvas'); if (c) { c.width = lgRoot.clientWidth; c.height = lgRoot.clientHeight; } }); }
+function openLG() { if (!me()) return showToast('Connecte-toi d’abord !', 'error'); LG.open = true; LG._lastT = null; lgRoot.style.display = 'flex'; initSocial(); renderLG(); walletRefresh().then(() => { if (LG.open) renderLGSoft(); }); requestAnimationFrame(() => { const c = lgRoot.querySelector('canvas'); if (c) { c.width = lgRoot.clientWidth; c.height = lgRoot.clientHeight; } }); }
 function closeLG() { LG.open = false; lgRoot.style.display = 'none'; }
 window.openLeagueView = function(tab) { openLG(); if (tab) { LG.T = tab === 'home' ? 'home' : tab; renderLG(); } };
 window.openDistributionLab = function() { const modal = document.createElement('div'); modal.style.cssText = 'position:fixed;inset:0;background:rgba(2,6,15,.94);z-index:900;display:flex;flex-direction:column;padding:20px'; modal.innerHTML = `<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px"><div style="flex:1;font-size:18px;font-weight:800;background:linear-gradient(90deg,#fff1b8,#00e5ff,#fff1b8);-webkit-background-clip:text;background-clip:text;color:transparent">🎴 Labo distribution</div><button id="labo-close" style="padding:8px 14px;background:rgba(255,82,82,.15);border:1.5px solid #ff5252;color:#ff8a80;border-radius:10px;font-weight:800;cursor:pointer">✕ Fermer</button></div><div style="flex:1;color:#dbe9ff;font-size:14px;line-height:1.6">Le laboratoire d'analyse des distributions sera disponible prochainement.</div>`; document.body.appendChild(modal); document.getElementById('labo-close').onclick = () => modal.remove(); };
@@ -1777,7 +2348,13 @@ function buildEmbers() {
   for (let i = 0; i < 18; i++) { const e = document.createElement('i'); e.style.setProperty('--x', (Math.random()*100).toFixed(1) + '%'); e.style.setProperty('--s', (3 + Math.random()*5).toFixed(1) + 'px'); e.style.setProperty('--t', (7 + Math.random()*7).toFixed(1) + 's'); e.style.setProperty('--d', (-Math.random()*10).toFixed(1) + 's'); e.style.setProperty('--dx', (Math.random()*80 - 40).toFixed(0) + 'px'); c.appendChild(e); }
   m.prepend(c);
 }
-window.onload = () => { try { applyProfileUI(); buildRegAvatarPicker(); buildEmbers(); } catch(e) { console.error(e); } applyBoard(); buildBoardPickers(); initPools(); const fill = document.getElementById('loader-fill'), pctEl = document.getElementById('loader-pct'), msgEl = document.getElementById('loader-msg'), loader = document.getElementById('loader'); let p = 0; const iv = setInterval(() => { p += 10; fill.style.width = p+'%'; pctEl.textContent = p+'%'; msgEl.textContent = p<40?'Allumage…':p<80?'Chargement…':'Prêt !'; if(p>=100){clearInterval(iv);setTimeout(()=>{loader.classList.add('done');setTimeout(()=>loader.style.display='none',700);},400);} }, 60); };
+window.onload = () => {
+  try { applyProfileUI(); buildRegAvatarPicker(); buildEmbers(); applyBeginnerMode(); } catch(e) { console.error(e); }
+  applyBoard(); buildBoardPickers(); initPools();
+  const fill = document.getElementById('loader-fill'), pctEl = document.getElementById('loader-pct'), msgEl = document.getElementById('loader-msg'), loader = document.getElementById('loader');
+  let p = 0;
+  const iv = setInterval(() => { p += 10; fill.style.width = p+'%'; pctEl.textContent = p+'%'; msgEl.textContent = p<40?'Allumage…':p<80?'Chargement…':'Prêt !'; if(p>=100){clearInterval(iv);setTimeout(()=>{loader.classList.add('done');setTimeout(()=>loader.style.display='none',700);},400);} }, 60);
+};
 </script>
 </body>
 </html>
