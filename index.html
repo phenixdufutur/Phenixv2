@@ -498,6 +498,8 @@ if(localStorage.getItem('phoenix_profile')) { try { playerProfile = Object.assig
 playerProfile.inventory = Object.assign({ ...DEFAULT_INVENTORY }, playerProfile.inventory || {});
 const AVATAR_FILES = ['az','ay','ax','aw','av','au','at','as','ar','aq','ap','ao','an','am','al','ak','aj','ai','ah','ag','af','ae','ad','ac'];
 let currentRoomCode = null, roomListener = null, roomStarted = false, authMode = 'login', regAvatar = 'az', lastRoomData = null;
+let hostSeat = 0;
+function isHostClient() { return myPlayerIndex === (currentRoomCode ? hostSeat : 0); }
 let myPlayerIndex = 0, gameStateListener = null, botTimeout = null, roomUids = null;
 let currentMatchStake = 0;
 let currentMatchId = null;
@@ -586,8 +588,8 @@ let turnTimerInterval = null, timeLeft = TURN_DURATION, lastTimerTurn = -2, time
 function updateTimerDisplay() { for (let i = 0; i < 4; i++) { const el = document.getElementById(`timer-p${i}`); if (el) el.classList.remove('active'); } const active = document.getElementById(`timer-p${state.turn}`); if (active) { active.classList.add('active'); active.textContent = timeLeft; } }
 function startTimer() { clearInterval(turnTimerInterval); timeLeft = TURN_DURATION; updateTimerDisplay(); turnTimerInterval = setInterval(() => { timeLeft--; if (timeLeft < 0) timeLeft = 0; updateTimerDisplay(); if (timeLeft <= 0) { clearInterval(turnTimerInterval); timeoutAction(); } }, 1000); }
 function stopTimer() { clearInterval(turnTimerInterval); document.querySelectorAll('.turn-timer').forEach(el => el.classList.remove('active')); }
-function updateTurnUI() { document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn')); const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`); if (activeAvatar) activeAvatar.classList.add('active-turn'); const isHost = !currentRoomCode || myPlayerIndex === 0; const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot; const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost) || (!currentRoomCode && PLAYERS[state.turn].isBot); if (!shouldRunTimer) { stopTimer(); return; } if (lastTimerTurn === state.turn) { updateTimerDisplay(); return; } startTimer(); lastTimerTurn = state.turn; }
-function timeoutAction() { if (state.gameOver || timeoutLock) return; const playerId = state.turn; const isHost = !currentRoomCode || myPlayerIndex === 0; if (!isHost) return; if (!currentRoomCode && playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; timeoutLock = true; setTimeout(() => { timeoutLock = false; if (state.gameOver) return; if (state.turn !== playerId) return; applyTimeoutAction(playerId); }, 500); }
+function updateTurnUI() { document.querySelectorAll('.in-game-avatar').forEach(el => el.classList.remove('active-turn')); const activeAvatar = document.getElementById(`avatar-game-p${state.turn}`); if (activeAvatar) activeAvatar.classList.add('active-turn'); const isHost = !currentRoomCode || isHostClient(); const isLocalHumanTurn = state.turn === myPlayerIndex && !PLAYERS[state.turn].isBot; const shouldRunTimer = isLocalHumanTurn || (currentRoomCode && isHost) || (!currentRoomCode && PLAYERS[state.turn].isBot); if (!shouldRunTimer) { stopTimer(); return; } if (lastTimerTurn === state.turn) { updateTimerDisplay(); return; } startTimer(); lastTimerTurn = state.turn; }
+function timeoutAction() { if (state.gameOver || timeoutLock) return; const playerId = state.turn; const isHost = !currentRoomCode || isHostClient(); if (!isHost) return; if (!currentRoomCode && playerId !== myPlayerIndex && !PLAYERS[playerId].isBot) return; timeoutLock = true; setTimeout(() => { timeoutLock = false; if (state.gameOver) return; if (state.turn !== playerId) return; applyTimeoutAction(playerId); }, 500); }
 function applyTimeoutAction(playerId) { clearSelection(); clearActions(); clearPathPreviews(); state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; state.forcedDiscardFor = null; state.pendingSkip = null; const hand = state.hands[playerId] || []; const hadPlayed = state.cardPlayedThisTurn; if (hadPlayed) { state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 400); return; } if (hand.length > 0) { const randIdx = Math.floor(Math.random() * hand.length); const card = hand.splice(randIdx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(playerId); } state.cardPlayedThisTurn = false; renderHand(); if (currentRoomCode) saveGameState(); setTimeout(endTurn, 500); }
 const pools = { rings: [], embers: [] };
 function initPools() { const board = document.getElementById('board'); for (let i = 0; i < 15; i++) { const el = document.createElement('div'); el.className = 'fx-ring'; board.appendChild(el); pools.rings.push(el); } for (let i = 0; i < 40; i++) { const el = document.createElement('div'); el.className = 'ember'; board.appendChild(el); pools.embers.push(el); } }
@@ -740,7 +742,7 @@ async function executePhoenixFire(playerId, pawnIdx, len = 6) { clearPathPreview
 async function executePhoenixTeleport(playerId, pawnIdx) { if (pawnsAt(state.phoenixNest).length > 0) return; clearPathPreviews(); const pawn = state.pawns[playerId][pawnIdx]; pawn.trackIdx = state.phoenixNest; updatePawnPositions(); if (currentRoomCode) saveGameState(); }
 function showSwapEnemyTargets(playerId) { clearActions(); for (let p = 0; p < 4; p++) for (let i = 0; i < 4; i++) { if (p === playerId && i === state.swapAlly) continue; if (state.pawns[p][i].state === 'TRACK' && !isPawnOnOwnBase(p, i)) document.getElementById(`pawn-${p}-${i}`).classList.add('selectable'); } addBtn('Annuler', () => { undoPlayedCard(); }); }
 async function executeSwap(playerA, pawnA, playerB, pawnB) { clearPathPreviews(); const a = state.pawns[playerA][pawnA], b = state.pawns[playerB][pawnB]; beep(400, 0.15); await sleep(350); const tmp = a.trackIdx; a.trackIdx = b.trackIdx; b.trackIdx = tmp; updatePawnPositions(); fxRing(trackPct(a.trackIdx), '#b04fd6', 14); fxRing(trackPct(b.trackIdx), '#b04fd6', 14); beep(800, 0.2); await sleep(550); if (currentRoomCode) saveGameState(); }
-function endTurn() { if (state.gameOver) return; stopTimer(); clearSelection(); clearActions(); state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; if (state.mandala) { state.mandala.turnsLeft--; if (state.mandala.turnsLeft <= 0) state.mandala = null; } state.cardPlayedThisTurn = false; updatePawnPositions(); if (checkWin()) return; state.turn = (state.turn + 1) % 4; if (state.pendingSkip === state.turn) { const skipPid = state.turn; state.pendingSkip = null; state.forcedDiscardFor = skipPid; renderHand(); updateTurnUI(); if (currentRoomCode) saveGameState(); if (PLAYERS[skipPid].isBot && (!currentRoomCode || myPlayerIndex === 0)) { setTimeout(() => { const hand = state.hands[skipPid]; if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(skipPid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); }, 1200); } return; } renderHand(); updateTurnUI(); if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot) scheduleBot(1200); if (currentRoomCode) saveGameState(); }
+function endTurn() { if (state.gameOver) return; stopTimer(); clearSelection(); clearActions(); state.mode = null; state.pendingSelection = null; state.swapAlly = -1; state.previewCardIdx = null; if (state.mandala) { state.mandala.turnsLeft--; if (state.mandala.turnsLeft <= 0) state.mandala = null; } state.cardPlayedThisTurn = false; updatePawnPositions(); if (checkWin()) return; state.turn = (state.turn + 1) % 4; if (state.pendingSkip === state.turn) { const skipPid = state.turn; state.pendingSkip = null; state.forcedDiscardFor = skipPid; renderHand(); updateTurnUI(); if (currentRoomCode) saveGameState(); if (PLAYERS[skipPid].isBot && (!currentRoomCode || isHostClient())) { setTimeout(() => { const hand = state.hands[skipPid]; if (hand.length > 0) { const idx = Math.floor(Math.random() * hand.length); const card = hand.splice(idx, 1)[0]; state.discard.push(card); showDiscard(card); beep(300, 0.15, 'square'); drawCard(skipPid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); setTimeout(endTurn, 450); }, 1200); } return; } renderHand(); updateTurnUI(); if (isHostClient() && PLAYERS[state.turn].isBot) scheduleBot(1200); if (currentRoomCode) saveGameState(); }
 function checkWin() { const winA = [...state.pawns[0], ...state.pawns[2]].every(p => p.state === 'SAFE'); const winB = [...state.pawns[1], ...state.pawns[3]].every(p => p.state === 'SAFE'); if (winA || winB) { state.gameOver = true; clearInterval(nestTimer); stopTimer(); if (currentRoomCode) saveGameState(); handleEndGame(winA); return true; } return false; }
 async function handleEndGame(winTeamA) {
   if (window.__endGameHandled) return;
@@ -934,19 +936,35 @@ function initGame(isHost = true) {
     const starts = new Set(PLAYERS.map(p => p.baseIdx)), cands = [];
     for (let i = 0; i < TRACK.length; i++) if (!starts.has(i)) cands.push(i);
     state.phoenixNest = cands[Math.floor(Math.random() * cands.length)];
-  } else { state.phoenixNest = -1; state.mandala = null; state.gameOver = false; state.forcedDiscardFor = null; state.pendingSkip = null; state.cardPlayedThisTurn = false; }
-  for (let i = 0; i < 4; i++) { const av = document.getElementById(`avatar-game-p${i}`); if (av) { av.style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`; av.className = `in-game-avatar square`; if (i === myPlayerIndex && playerProfile.avatarShape === 'round') av.classList.remove('square'); } const nm = document.getElementById(`name-game-p${i}`); if (nm) nm.textContent = PLAYERS[i].name; const pc = document.getElementById(`avatar-game-p${i}`)?.parentElement; if (pc) pc.style.setProperty('--c', PLAYERS[i].color); }
+  } else {
+    if (currentRoomCode && lastRoomData && lastRoomData.players) { const rp = seatList(lastRoomData.players); for (let k = 0; k < 4; k++) { if (rp[k]) { PLAYERS[k].name = rp[k].pseudo; PLAYERS[k].avatarFile = rp[k].avatarFile; PLAYERS[k].isBot = false; } } }
+    state.phoenixNest = -1; state.mandala = null; state.gameOver = false; state.forcedDiscardFor = null; state.pendingSkip = null; state.cardPlayedThisTurn = false; }
+  refreshPlayerBadges();
   lastTimerTurn = -2; timeoutLock = false;
   document.getElementById('overlay').classList.remove('show');
   renderBoard(); renderHand(); updateTurnUI();
 }
-function startGame(isMulti = false) { applyBoard(); if (!isMulti) myPlayerIndex = 0; setView(myPlayerIndex); lastTimerTurn = -2; timeoutLock = false; if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('game-screen').classList.add('active'); if (isMulti) { resetSync(); startWatchdog(); if (myPlayerIndex === 0) { initGame(true); saveGameState(); } else { initGame(false); } listenToGameState(); } else { initGame(true); } }
+function refreshPlayerBadges() {
+  for (let i = 0; i < 4; i++) {
+    const av = document.getElementById(`avatar-game-p${i}`);
+    if (av) {
+      av.style.backgroundImage = `url('avatar/${PLAYERS[i].avatarFile}.jpg')`;
+      const wasTurn = av.classList.contains('active-turn');
+      av.className = 'in-game-avatar square';
+      if (i === myPlayerIndex && playerProfile.avatarShape === 'round') av.classList.remove('square');
+      if (wasTurn) av.classList.add('active-turn');
+    }
+    const nm = document.getElementById(`name-game-p${i}`); if (nm) nm.textContent = PLAYERS[i].name;
+    const pc = av ? av.parentElement : null; if (pc) pc.style.setProperty('--c', PLAYERS[i].color);
+  }
+}
+function startGame(isMulti = false) { applyBoard(); if (!isMulti) myPlayerIndex = 0; setView(myPlayerIndex); lastTimerTurn = -2; timeoutLock = false; if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(()=>{}); document.querySelectorAll('.screen').forEach(s => s.classList.remove('active')); document.getElementById('game-screen').classList.add('active'); if (isMulti) { resetSync(); startWatchdog(); if (isHostClient()) { initGame(true); saveGameState(); } else { initGame(false); } listenToGameState(); } else { initGame(true); } }
 let syncSeq = 0, lastAppliedSeq = 0, hasApplied = false, lastRaw = '', pendingAnim = [], animHistory = [], saveTimer = null, applyChain = Promise.resolve(), lastDiscardKey = '';
 let myLastWriteSeq = 0;
 const REMOTE_STEP = 110;
 let lastActivity = Date.now(), syncWatch = null;
 function stopWatchdog() { clearInterval(syncWatch); syncWatch = null; }
-function startWatchdog() { stopWatchdog(); lastActivity = Date.now(); syncWatch = setInterval(() => { if (!currentRoomCode || state.gameOver || myPlayerIndex !== 0) return; const idle = Date.now() - lastActivity, pid = state.turn; if (PLAYERS[pid].isBot) { if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); } } else if (pid !== myPlayerIndex && idle > 45000) { lastActivity = Date.now(); const hand = state.hands[pid]; if (hand.length) { const card = hand.splice(Math.floor(Math.random() * hand.length), 1)[0]; state.discard.push(card); showDiscard(card); drawCard(pid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); endTurn(); } }, 2000); }
+function startWatchdog() { stopWatchdog(); lastActivity = Date.now(); syncWatch = setInterval(() => { if (!currentRoomCode || state.gameOver || !isHostClient()) return; const idle = Date.now() - lastActivity, pid = state.turn; if (PLAYERS[pid].isBot) { if (idle > 7000 && !botPlaying) { lastActivity = Date.now(); botPlay(); } } else if (pid !== myPlayerIndex && idle > 45000) { lastActivity = Date.now(); const hand = state.hands[pid]; if (hand.length) { const card = hand.splice(Math.floor(Math.random() * hand.length), 1)[0]; state.discard.push(card); showDiscard(card); drawCard(pid); } state.forcedDiscardFor = null; state.cardPlayedThisTurn = true; renderHand(); endTurn(); } }, 2000); }
 function resetSync() { lastActivity = Date.now(); syncSeq = 0; lastAppliedSeq = 0; hasApplied = false; lastRaw = ''; pendingAnim = []; animHistory = []; applyChain = Promise.resolve(); lastDiscardKey = ''; myLastWriteSeq = 0; clearTimeout(saveTimer); saveTimer = null; }
 function saveGameState() { if (!currentRoomCode || saveTimer) return; saveTimer = setTimeout(flushGameState, 0); }
 function flushGameState() { clearTimeout(saveTimer); saveTimer = null; const code = currentRoomCode; if (!code) return; try { syncSeq = Math.max(syncSeq, lastAppliedSeq) + 1; lastAppliedSeq = syncSeq; myLastWriteSeq = syncSeq; const ready = pendingAnim.filter(a => a.done); pendingAnim = pendingAnim.filter(a => !a.done); ready.forEach(a => { a.q = syncSeq; delete a.done; }); animHistory = animHistory.concat(ready).slice(-12); const syncData = { turn: state.turn, deck: state.deck, discard: state.discard, hands: state.hands, pawns: state.pawns, mandala: state.mandala, phoenixNest: state.phoenixNest, gameOver: state.gameOver, cardPlayedThisTurn: state.cardPlayedThisTurn, pendingSkip: state.pendingSkip, forcedDiscardFor: state.forcedDiscardFor, players: PLAYERS.map(p => ({ name: p.name, avatarFile: p.avatarFile, isBot: p.isBot })), seq: syncSeq, anim: animHistory, lastActionPlayer: myPlayerIndex, uids: roomUids }; lastActivity = Date.now(); window.FB.updateDoc(window.FB.doc(window.FB.db, 'rooms', code), { gameState: JSON.stringify(syncData) }).catch(e => console.error(e)); } catch(e) { console.error(e); } }
@@ -968,12 +986,12 @@ async function applyRemoteState(parsed, raw, closed) {
   if (prevNest !== state.phoenixNest) renderBoard();
   state.gameOver = parsed.gameOver; state.cardPlayedThisTurn = parsed.cardPlayedThisTurn;
   state.pendingSkip = parsed.pendingSkip; state.forcedDiscardFor = parsed.forcedDiscardFor;
-  if (parsed.players) for (let i = 0; i < 4; i++) { PLAYERS[i].name = parsed.players[i].name; PLAYERS[i].avatarFile = parsed.players[i].avatarFile; PLAYERS[i].isBot = parsed.players[i].isBot; }
+  if (parsed.players) for (let i = 0; i < 4; i++) { PLAYERS[i].name = parsed.players[i].name; PLAYERS[i].avatarFile = parsed.players[i].avatarFile; PLAYERS[i].isBot = parsed.players[i].isBot; } if (parsed.players) refreshPlayerBadges();
   if (!own) { state.mode = null; state.pendingSelection = null; state.previewCardIdx = null; clearSelection(); clearActions(); clearPathPreviews(); }
   updatePawnPositions(); renderHand(); updateTurnUI();
   if (state.gameOver && !wasOver) { const w = getWinnerTeam(state.pawns); if (w) { clearInterval(nestTimer); stopTimer(); handleEndGame(w === 'A'); } }
   if (closed && !getWinnerTeam(state.pawns)) { leaveGameRemote(); return; }
-  if (myPlayerIndex === 0 && PLAYERS[state.turn].isBot && !state.gameOver) scheduleBot(1200);
+  if (isHostClient() && PLAYERS[state.turn].isBot && !state.gameOver) scheduleBot(1200);
 }
 function getWinnerTeam(pawns) { const A = [...pawns[0], ...pawns[2]].every(p => p.state === 'SAFE'); const B = [...pawns[1], ...pawns[3]].every(p => p.state === 'SAFE'); return A ? 'A' : (B ? 'B' : null); }
 function listenToGameState() { if (gameStateListener) gameStateListener(); gameStateListener = window.FB.onSnapshot(window.FB.doc(window.FB.db, 'rooms', currentRoomCode), (docSnap) => { if (!docSnap.exists()) return; const data = docSnap.data(); if (!data.gameState) return; let parsed; try { parsed = JSON.parse(data.gameState); } catch(e) { return; } const closed = data.status === 'closed', raw = data.gameState; applyChain = applyChain.then(() => applyRemoteState(parsed, raw, closed)).catch(e => console.error(e)); }, (err) => { console.error(err); }); }
@@ -1084,6 +1102,7 @@ async function launchFromRoom() {
   myPlayerIndex = sl.findIndex(p => p && p.uid === user.uid);
   if (myPlayerIndex === -1) myPlayerIndex = 0;
   roomUids = sl.map(p => p ? p.uid : null);
+  hostSeat = sl.findIndex(p => p && p.uid === lastRoomData.host); if (hostSeat < 0) hostSeat = 0;
   if (roomListener) { roomListener(); roomListener = null; }
   currentRoomCode = lastRoomData.code;
   const div = divOf(LG.L.xp).l;
