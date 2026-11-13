@@ -574,6 +574,16 @@ body.in-salon #dock{display:none !important}
 .vr-tools .vr-ic.big{width:2.15em;height:2.15em;font-size:.92em}
 .vr-tools .vr-chatin{flex:1 1 auto;min-width:0;height:2.15em;font-size:.78em;padding:0 .8em}
 
+/* v20 : boutons latéraux (sac/cadeau à gauche, se lever à droite) + barre du bas un peu plus grosse */
+.vr-side{position:absolute;top:34.2%;transform:translateY(-50%);z-index:6;display:flex;flex-direction:column;gap:.3em}
+.vr-side-l{left:1.5%}.vr-side-r{right:1.5%}
+.vr-side .vr-ic{width:2.25em;height:2.25em;font-size:1.05em;box-shadow:0 3px 10px rgba(0,0,0,.5)}
+.vr-tools .vr-ic,.vr-tools .vr-ic.big{width:2.45em;height:2.45em;font-size:.98em}
+.vr-tools .vr-chatin{height:2.4em;font-size:.82em}
+.vr-gain{position:absolute;transform:translate(-50%,0);z-index:3;white-space:nowrap;padding:.3em .8em;border-radius:99px;font-weight:900;font-size:.95rem;
+  background:linear-gradient(180deg,rgba(253,230,138,.97),rgba(245,158,11,.97));color:#2a1700;box-shadow:0 4px 14px rgba(0,0,0,.5);border:1px solid #fde68a}
+.vr-chat .chat-msg.gain{background:rgba(120,80,0,.75);border-color:rgba(253,230,138,.6);color:#fef3c7}
+.dk .dk-star{position:absolute;top:1px;right:8px;color:#ef4444;font-size:15px;line-height:1;text-shadow:0 0 6px rgba(239,68,68,.8);pointer-events:none}
 /* aura vibrante autour de l'avatar qui parle (suit le volume de la voix via --lvl 0→1) */
 .vr-seat{--lvl:0}
 .vr-seat::before{content:'';position:absolute;inset:-5%;border-radius:50%;pointer-events:none;
@@ -710,6 +720,37 @@ body.in-salon #dock{display:none !important}
 .ms-body .item.mi .mi-na{width:100%;padding:5px 2px;border-radius:9px;font-size:.55em;font-weight:800;text-align:center;color:var(--muted);
   border:1px dashed rgba(148,163,184,.4)}
 </style>
+<style id="v19">
+.hub-mode.hub-salle{grid-column:1/-1;position:relative;overflow:visible;border:2px solid #fde68a;background:linear-gradient(135deg,rgba(168,85,247,.6),rgba(245,158,11,.45));padding:18px 8px;animation:salleBeat 1.15s ease-in-out infinite,salleGlow 1.15s ease-in-out infinite}
+.hub-mode.hub-salle b{font-size:2.1em}
+.hub-mode.hub-salle span{font-size:1.15em;letter-spacing:1.5px;text-transform:uppercase;text-shadow:0 0 8px rgba(253,230,138,.8)}
+@keyframes salleBeat{0%,100%{transform:scale(1)}14%{transform:scale(1.06)}28%{transform:scale(1)}42%{transform:scale(1.04)}}
+@keyframes salleGlow{0%,100%{box-shadow:0 0 8px 1px rgba(253,230,138,.5)}50%{box-shadow:0 0 26px 7px rgba(253,230,138,.95),0 0 44px 12px rgba(168,85,247,.6)}}
+.hub-salle .tw{position:absolute;pointer-events:none;font-style:normal;color:#fff7c2;font-size:1.15em;text-shadow:0 0 6px #fde68a,0 0 14px #f59e0b;opacity:0;animation:twk 1.6s ease-in-out infinite}
+.hub-salle .t1{top:-9px;left:10%}.hub-salle .t2{top:14%;right:-7px;animation-delay:.3s}.hub-salle .t3{bottom:-8px;left:32%;animation-delay:.7s}
+.hub-salle .t4{bottom:10%;right:10%;animation-delay:1s}.hub-salle .t5{top:-10px;right:34%;animation-delay:1.25s}.hub-salle .t6{top:42%;left:-7px;animation-delay:.5s}
+@keyframes twk{0%,100%{opacity:0;transform:scale(.3) rotate(0)}50%{opacity:1;transform:scale(1.25) rotate(90deg)}}
+@media (prefers-reduced-motion:reduce){.hub-mode.hub-salle,.hub-salle .tw,.emo{animation:none!important}.hub-salle .tw{opacity:.8}}
+.emo{display:inline-block;transform-origin:50% 60%;line-height:1}
+.emo-0{animation:emo0 .55s ease-in-out infinite}@keyframes emo0{0%,100%{transform:rotate(-14deg) scale(1)}50%{transform:rotate(14deg) scale(1.18)}}
+.emo-1{animation:emo1 .9s ease-in-out infinite}@keyframes emo1{0%,100%{transform:scale(1)}20%{transform:scale(1.3)}40%{transform:scale(1)}60%{transform:scale(1.2)}}
+.emo-2{animation:emo2 .8s ease-in-out infinite}@keyframes emo2{0%,100%{transform:translateY(0)}50%{transform:translateY(-22%)}}
+.emo-3{animation:emo3 .3s linear infinite}@keyframes emo3{0%,100%{transform:translateX(-8%) rotate(-6deg)}50%{transform:translateX(8%) rotate(6deg)}}
+.emo-4{animation:emo4 1.2s ease-in infinite}@keyframes emo4{0%,100%{transform:translateY(-10%) scale(1)}70%{transform:translateY(12%) scale(.95)}}
+.emo-5{animation:emo5 1.4s linear infinite}@keyframes emo5{to{transform:rotate(360deg)}}
+.emo-6{animation:emo6 .9s ease-in-out infinite}@keyframes emo6{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.28) rotate(18deg)}}
+.emo-7{animation:emo7 .45s ease-in-out infinite}@keyframes emo7{0%,100%{transform:scale(1,1)}50%{transform:scale(.85,1.25)}}
+.emo-8{animation:emo8 .5s ease-in-out infinite alternate}@keyframes emo8{from{transform:scale(.9,1) skewX(-6deg)}to{transform:scale(1.15,1.2) skewX(6deg)}}
+.emo-9{animation:emo9 2s ease-in-out infinite}@keyframes emo9{0%,100%{transform:translateY(6%);opacity:.6}50%{transform:translateY(-14%);opacity:1}}
+.emo-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.emo-btn{aspect-ratio:1;border-radius:14px;border:1.5px solid rgba(253,230,138,.4);background:rgba(0,0,0,.35);font-size:1.7em;display:flex;align-items:center;justify-content:center;padding:0;color:#fff}
+.emo-btn.sel{border-color:#4ade80;box-shadow:0 0 14px rgba(74,222,128,.6);background:rgba(74,222,128,.15)}
+.emo-btn:active{transform:scale(.92)}
+.vr-seat .avf .emo-badge{position:absolute;left:50%;bottom:2%;transform:translateX(-50%);width:42%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.5em;background:radial-gradient(circle,rgba(30,41,75,.92),rgba(8,12,22,.85));border:1.5px solid #fde68a;box-shadow:0 0 12px rgba(253,230,138,.8);z-index:5;pointer-events:none}
+.chest-slot{display:flex;flex-direction:column;align-items:center;gap:4px}
+#settings-buttons{gap:2cqw!important}
+#settings-buttons button.off{border-color:#ef4444!important;background:rgba(127,29,29,.75)!important}
+</style>
 </head>
 <body>
 <div id="app">
@@ -788,12 +829,16 @@ body.in-salon #dock{display:none !important}
       </div>
       <div id="vr-seats"></div>
       <div class="vr-chat" id="waiting-chat"><div class="chat-msg pin"><b>👋 Bienvenue dans la salle !</b><small>🔒 Ne partage jamais tes informations personnelles.</small></div></div>
+      <div class="vr-side vr-side-l">
+        <button class="vr-ic" title="Mon sac" aria-label="Mon sac" onclick="window.__openRoomBag&&window.__openRoomBag()">🎒</button>
+        <button class="vr-ic" title="Boutique" aria-label="Boutique" onclick="window.__openMiniShop&&window.__openMiniShop()">🎁</button>
+      </div>
+      <div class="vr-side vr-side-r">
+        <button class="vr-ic" id="btn-stand" style="display:none" title="Se lever" aria-label="Se lever" onclick="window.__salStand()">🪑</button>
+      </div>
       <div class="vr-tools">
         <input id="waiting-chat-in" class="vr-chatin" maxlength="200" placeholder="Écris un message…" onkeydown="if(event.key==='Enter')window.__sendChatMsg()">
         <button class="vr-ic big" onclick="window.__sendChatMsg()">➤</button>
-        <button class="vr-ic" title="Boutique" aria-label="Boutique" onclick="window.__openMiniShop&&window.__openMiniShop()">🎁</button>
-        <button class="vr-ic" title="Mon sac" aria-label="Mon sac" onclick="window.__openRoomBag&&window.__openRoomBag()">🎒</button>
-        <button class="vr-ic big" id="btn-stand" style="display:none" title="Se lever" onclick="window.__salStand()">🧍</button>
         <button class="vr-ic big" id="btn-deaf-lounge" onclick="window.__toggleDeafLounge&&window.__toggleDeafLounge()">🔊</button>
         <button class="vr-ic big" id="btn-mic-lounge" onclick="window.__toggleMicLounge&&window.__toggleMicLounge()">🎙️</button>
       </div>
@@ -832,7 +877,7 @@ body.in-salon #dock{display:none !important}
         <button id="btn-fullscreen" onclick="window.__toggleFullscreen&&window.__toggleFullscreen()">⛶</button>
         <button id="btn-beginner" onclick="window.__toggleBeginner&&window.__toggleBeginner()">🎓</button>
         <button id="btn-bag" onclick="window.__openBag&&window.__openBag()">🎒</button>
-        <button id="btn-mic" onclick="window.__toggleMic&&window.__toggleMic()">🎙️</button>
+        <button id="btn-spk" onclick="window.__toggleSpk&&window.__toggleSpk()">🎧</button><button id="btn-mic" onclick="window.__toggleMic&&window.__toggleMic()">🎙️</button>
       </div>
       <div id="hand"></div>
       <div id="stuck-hint">Aucune carte jouable · touche une carte pour la défausser</div>
@@ -849,7 +894,7 @@ body.in-salon #dock{display:none !important}
     <button class="dk" data-v="career" onclick="window.__nav&&window.__nav('career')"><b>🎖️</b>Carrière</button>
     <button class="dk" data-v="rankings" onclick="window.__nav&&window.__nav('rankings')"><b>🏅</b>Top</button>
     <button class="dk" data-v="shop" onclick="window.__nav&&window.__nav('shop')"><b>🛒</b>Boutique</button>
-    <button class="dk" data-v="quests" onclick="window.__nav&&window.__nav('quests')"><b>🎯</b>Quêtes</button>
+    <button class="dk" data-v="quests" onclick="window.__nav&&window.__nav('quests')"><b>🎯</b>Quêtes<span class="dk-star" id="dk-q-star" style="display:none">★</span></button>
     <button class="dk" data-v="mp" onclick="window.__nav&&window.__nav('mp')"><b>⚔️</b>Multi</button>
     <button class="dk" data-v="friends" onclick="window.__nav&&window.__nav('friends')"><b>👥</b>Amis<span class="dk-badge" id="dk-fr-badge" style="display:none">0</span></button>
     <button class="dk" data-v="msg" onclick="window.__nav&&window.__nav('msg')"><b>✉️</b>Msg<span class="dk-badge" id="dk-msg-badge" style="display:none">0</span></button>
@@ -1086,16 +1131,16 @@ try{MSG.list=JSON.parse(localStorage.getItem('phx_msgs')||'[]');}catch(e){}
 if(!MSG.list.length){MSG.list=[{id:'welcome',type:'info',ic:'🎉',title:'Bienvenue !',text:'Explore le jeu et réclame tes quêtes.',ts:Date.now()-86400000,read:false}];}
 function saveMsgs(){localStorage.setItem('phx_msgs',JSON.stringify(MSG.list));}
 function unreadCount(){return MSG.list.filter(m=>!m.read).length;}
-function updateBadges(){const fb=$('dk-fr-badge');if(fb&&typeof FRQ!=='undefined'){const k=FRQ.inc.length;fb.textContent=k;fb.style.display=k>0?'flex':'none';}const b=$('dk-msg-badge');if(b){const n=unreadCount();b.textContent=n;b.style.display=n>0?'flex':'none';}}
+function updateBadges(){const fb=$('dk-fr-badge');if(fb&&typeof FRQ!=='undefined'){const k=FRQ.inc.length;fb.textContent=k;fb.style.display=k>0?'flex':'none';}const b=$('dk-msg-badge');if(b){const n=unreadCount();b.textContent=n;b.style.display=n>0?'flex':'none';}const qs=$('dk-q-star');if(qs){let h=false;try{h=!!(window.__qHasClaim&&window.__qHasClaim());}catch(e){}qs.style.display=h?'block':'none';}}
 let GUEST=false;
 const me=()=>GUEST?{uid:'guest',isGuest:true}:(window.FB&&window.FB.auth.currentUser);
 const uref=()=>window.FB.doc(window.FB.db,'users',me().uid);
 const balNow=()=>{try{const v=Number((P.wallet&&P.wallet.coins)??P.gold??0);return isNaN(v)?0:Math.max(0,v);}catch(e){return 0;}};
 let _sp=null;
 function saveProfile(){try{localStorage.setItem('phoenix_profile',JSON.stringify(P));}catch(e){}if(me()){clearTimeout(_sp);_sp=setTimeout(()=>{try{window.FB.updateDoc(uref(),{pseudo:P.pseudo,avatarFile:P.avatarFile,avatarShape:P.avatarShape||'square',boardChoice:P.boardChoice,promoCodes:P.promoCodes||[],cardDeck:P.cardDeck||'carte',favSalons:P.favSalons||[]}).catch(()=>{});}catch(e){}},2000);}}
-async function walletRefresh(){if(GUEST)return;try{const s=await window.FB.getDoc(uref());if(s.exists()){const d=s.data();P.gold=d.gold;if(d.wallet)P.wallet=d.wallet;if(d.gems!==undefined)P.gems=d.gems;if(d.inventory)P.inventory=Object.assign({...DEFAULT_INVENTORY},d.inventory);saveProfile();updateHUD();}}catch(e){}}
+async function walletRefresh(){if(GUEST)return;try{const s=await window.FB.getDoc(uref());if(s.exists()){const d=s.data();P.gold=d.gold;if(d.wallet)P.wallet=d.wallet;if(d.gems!==undefined)P.gems=d.gems;if(d.chests)P.chests=d.chests;if(d.inventory)P.inventory=Object.assign({...DEFAULT_INVENTORY},d.inventory);saveProfile();updateHUD();}}catch(e){}}
 function updateHUD(){animateNum($('hud-coins'),balNow());animateNum($('hud-gems'),Number(P.gems||0));updateBadges();}
-async function walletTx(fn){if(GUEST){const d={gold:P.gold,shop:Object.assign({},P.shop||{}),inventory:Object.assign({},P.inventory),gems:P.gems||0};const w=JSON.parse(JSON.stringify(P.wallet||{coins:Number(P.gold||0)}));w.ledger=w.ledger||[];const extra=fn(d,w)||{};w.ledger=w.ledger.slice(0,100);return{coins:w.coins,wallet:w,extra};}const ref=uref();return window.FB.runTransaction(window.FB.db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');const d=snap.data();const w=d.wallet||{coins:Number(d.gold||0)};w.ledger=w.ledger||[];const extra=fn(d,w)||{};w.ledger=w.ledger.slice(0,100);tx.update(ref,Object.assign({gold:w.coins,wallet:w},extra));return{coins:w.coins,wallet:w,extra};});}
+async function walletTx(fn){if(GUEST){const d={gold:P.gold,shop:Object.assign({},P.shop||{}),inventory:Object.assign({},P.inventory),gems:P.gems||0,chests:(P.chests||[]).slice(),usedPromos:(P.usedPromos||[]).slice()};const w=JSON.parse(JSON.stringify(P.wallet||{coins:Number(P.gold||0)}));w.ledger=w.ledger||[];const extra=fn(d,w)||{};w.ledger=w.ledger.slice(0,100);return{coins:w.coins,wallet:w,extra};}const ref=uref();return window.FB.runTransaction(window.FB.db,async tx=>{const snap=await tx.get(ref);if(!snap.exists())throw new Error('Profil introuvable');const d=snap.data();const w=d.wallet||{coins:Number(d.gold||0)};w.ledger=w.ledger||[];const extra=fn(d,w)||{};w.ledger=w.ledger.slice(0,100);tx.update(ref,Object.assign({gold:w.coins,wallet:w},extra));return{coins:w.coins,wallet:w,extra};});}
 function applyRes(r){P.gold=r.coins;P.wallet=r.wallet;Object.keys(r.extra||{}).forEach(k=>{P[k]=r.extra[k];});saveProfile();updateHUD();}
 async function walletReserveMatch(stake,id){if(!stake)return;const r=await walletTx((d,w)=>{if(w.ledger.some(e=>e.id===id))return;if(w.coins<stake)throw new Error('Solde insuffisant');w.coins-=stake;w.ledger.unshift({id,t:Date.now(),label:'Mise',delta:-stake,balance:w.coins});});applyRes(r);showToast('Mise de '+fmt(stake)+' pièces réservée','success');}
 async function walletRecordMatch(win,id,stake){if(!stake)return;const sid=id+'-settled';const r=await walletTx((d,w)=>{if(w.ledger.some(e=>e.id===sid))return;const delta=win?stake*2:0;w.coins+=delta;w.ledger.unshift({id:sid,t:Date.now(),label:win?'Victoire +'+fmt(stake*2):'Défaite -'+fmt(stake),delta,balance:w.coins});});applyRes(r);showToast(win?'🏆 +'+fmt(stake*2)+' pièces':'💔 Mise perdue',win?'success':'error');}
@@ -1355,11 +1400,11 @@ function startWatchdog(){stopWatchdog();lastActivity=Date.now();syncWatch=setInt
 let lastActivity=Date.now();let presTimer=null,gameStartTs=Date.now(),roomPres={},roomReconnect={};
 function resetSync(){lastActivity=Date.now();syncSeq=0;lastAppliedSeq=0;hasApplied=false;lastRaw='';pendingAnim=[];animHistory=[];applyChain=Promise.resolve();myLastWriteSeq=0;clearTimeout(saveTimer);saveTimer=null;}
 function saveGameState(){if(!currentRoomCode||saveTimer)return;saveTimer=setTimeout(flushGameState,0);}
-function flushGameState(){clearTimeout(saveTimer);saveTimer=null;const code=currentRoomCode;if(!code)return;try{syncSeq=Math.max(syncSeq,lastAppliedSeq)+1;lastAppliedSeq=syncSeq;myLastWriteSeq=syncSeq;const ready=pendingAnim.filter(a=>a.done);pendingAnim=pendingAnim.filter(a=>!a.done);ready.forEach(a=>{a.q=syncSeq;delete a.done;});animHistory=animHistory.concat(ready).slice(-12);const syncData={turn:state.turn,deck:state.deck,discard:state.discard,hands:state.hands,pawns:state.pawns,mandala:state.mandala,phoenixNest:state.phoenixNest,gameOver:state.gameOver,cardPlayedThisTurn:state.cardPlayedThisTurn,pendingSkip:state.pendingSkip,forcedDiscardFor:state.forcedDiscardFor,players:PLAYERS.map((p,k)=>({name:p.name,avatarFile:p.avatarFile,isBot:p.isBot,sub:!!p.sub,div:k===myPlayerIndex?divOf(LG.L.xp||0).l:p.div})),seq:syncSeq,anim:animHistory,lastActionPlayer:myPlayerIndex,uids:roomUids,lastEffect:state.lastEffect};lastActivity=Date.now();window.FB.updateDoc(window.FB.doc(window.FB.db,'rooms',code),{gameState:JSON.stringify(syncData)}).catch(e=>console.error(e));}catch(e){console.error(e);}}
+function flushGameState(){clearTimeout(saveTimer);saveTimer=null;const code=currentRoomCode;if(!code)return;try{syncSeq=Math.max(syncSeq,lastAppliedSeq)+1;lastAppliedSeq=syncSeq;myLastWriteSeq=syncSeq;const ready=pendingAnim.filter(a=>a.done);pendingAnim=pendingAnim.filter(a=>!a.done);ready.forEach(a=>{a.q=syncSeq;delete a.done;});animHistory=animHistory.concat(ready).slice(-12);const syncData={turn:state.turn,deck:state.deck,discard:state.discard,hands:state.hands,pawns:state.pawns,mandala:state.mandala,phoenixNest:state.phoenixNest,gameOver:state.gameOver,cardPlayedThisTurn:state.cardPlayedThisTurn,pendingSkip:state.pendingSkip,forcedDiscardFor:state.forcedDiscardFor,players:PLAYERS.map((p,k)=>({name:p.name,avatarFile:p.avatarFile,isBot:p.isBot,sub:!!p.sub,div:k===myPlayerIndex?divOf(LG.L.xp||0).l:p.div})),seq:syncSeq,anim:animHistory,lastActionPlayer:myPlayerIndex,uids:roomUids,lastEffect:state.lastEffect,fx:(window.__fxFlush?window.__fxFlush(syncSeq):[])};lastActivity=Date.now();window.FB.updateDoc(window.FB.doc(window.FB.db,'rooms',code),{gameState:JSON.stringify(syncData)}).catch(e=>console.error(e));}catch(e){console.error(e);}}
 function replayPath(a){return(async()=>{const pw=state.pawns[a.p]&&state.pawns[a.p][a.i];if(!pw)return;for(let k=0;k<a.path.length;k++){const st=a.path[k];pw.state=st.s;pw.trackIdx=st.t;pw.safeIdx=st.f;updateSinglePawn(a.p,a.i);beep(400+k*20,0.05);await sleep(REMOTE_STEP);}})();}
-async function applyRemoteState(parsed,raw,closed){if(raw===lastRaw)return;const own=parsed.lastActionPlayer===myPlayerIndex,seq=parsed.seq||0;if(own&&seq<=myLastWriteSeq)return;const first=!hasApplied,prevSeq=lastAppliedSeq;lastActivity=Date.now();try{const u=window.FB.auth.currentUser;if(parsed.uids&&u){const idx=parsed.uids.indexOf(u.uid);if(idx>=0&&idx!==myPlayerIndex){myPlayerIndex=idx;setView(idx);renderBoard();}}}catch(e){}if(first){try{applyBoard();setView(myPlayerIndex);renderBoard();}catch(e){}}hasApplied=true;lastRaw=raw;lastAppliedSeq=Math.max(lastAppliedSeq,seq);if(!first&&!own&&!document.hidden&&Array.isArray(parsed.anim)){const todo=parsed.anim.filter(a=>a.q>prevSeq&&a.path&&a.path.length);for(const a of todo)await replayPath(a);}const wasOver=state.gameOver,prevTurn=state.turn,prevNest=state.phoenixNest;const turnChanged=prevTurn!==parsed.turn;const nowMyTurn=parsed.turn===myPlayerIndex;const keepLocal=!own&&!turnChanged&&nowMyTurn;state.turn=parsed.turn;state.deck=parsed.deck;state.discard=parsed.discard;state.hands=parsed.hands;state.pawns=parsed.pawns;state.mandala=parsed.mandala;if(Number.isInteger(parsed.phoenixNest)&&parsed.phoenixNest>=0)state.phoenixNest=parsed.phoenixNest;if(prevNest!==state.phoenixNest)renderBoard();state.gameOver=parsed.gameOver;if(!keepLocal)state.cardPlayedThisTurn=parsed.cardPlayedThisTurn;state.pendingSkip=parsed.pendingSkip;state.forcedDiscardFor=parsed.forcedDiscardFor;if(!own&&turnChanged){state.mode=null;state.pendingSelection=null;state.previewCardIdx=null;state.undo=null;clearSelection();clearActions();clearPathPreviews();}if(parsed.players){for(let i=0;i<4;i++){PLAYERS[i].name=parsed.players[i].name;PLAYERS[i].avatarFile=parsed.players[i].avatarFile;PLAYERS[i].isBot=parsed.players[i].isBot;{const ws=!!PLAYERS[i].sub;PLAYERS[i].sub=!!parsed.players[i].sub;if(i===myPlayerIndex&&ws!==PLAYERS[i].sub){if(PLAYERS[i].sub)showToast('🤖 Un bot légendaire joue à ta place · touche Reconnexion','error');else{lastTimerTurn=-2;showToast('✅ Reconnecté','success');}}}if(parsed.players[i].div)PLAYERS[i].div=parsed.players[i].div;}refreshPlayerBadges();}if(parsed.lastEffect&&parsed.lastEffect.by!==myPlayerIndex&&(!state.lastEffect||parsed.lastEffect.ts>state.lastEffect.ts)){state.lastEffect=parsed.lastEffect;playEffect(parsed.lastEffect);}else if(parsed.lastEffect&&parsed.lastEffect.ts>(state.lastEffect?.ts||0)){state.lastEffect=parsed.lastEffect;}updatePawnPositions();renderHand();updateTurnUI();if(state.gameOver&&!wasOver){const w=getWinnerTeam(state.pawns);if(w){clearInterval(nestTimer);stopTimer();handleEndGame(w==='A');}}if(closed&&!getWinnerTeam(state.pawns)){leaveGameRemote();return;}if(isHostClient()&&PLAYERS[state.turn].isBot&&!state.gameOver)scheduleBot(1200);}
+async function applyRemoteState(parsed,raw,closed){if(raw===lastRaw)return;const own=parsed.lastActionPlayer===myPlayerIndex,seq=parsed.seq||0;if(own&&seq<=myLastWriteSeq)return;const first=!hasApplied,prevSeq=lastAppliedSeq;lastActivity=Date.now();try{const u=window.FB.auth.currentUser;if(parsed.uids&&u){const idx=parsed.uids.indexOf(u.uid);if(idx>=0&&idx!==myPlayerIndex){myPlayerIndex=idx;setView(idx);renderBoard();}}}catch(e){}if(first){try{applyBoard();setView(myPlayerIndex);renderBoard();}catch(e){}}hasApplied=true;lastRaw=raw;lastAppliedSeq=Math.max(lastAppliedSeq,seq);if(!first&&!own&&!document.hidden&&Array.isArray(parsed.anim)){const todo=parsed.anim.filter(a=>a.q>prevSeq&&a.path&&a.path.length);for(const a of todo)await replayPath(a);}if(!first&&!own&&!document.hidden&&Array.isArray(parsed.fx)&&window.__fxReplay)window.__fxReplay(parsed.fx,prevSeq);const wasOver=state.gameOver,prevTurn=state.turn,prevNest=state.phoenixNest;const turnChanged=prevTurn!==parsed.turn;const nowMyTurn=parsed.turn===myPlayerIndex;const keepLocal=!own&&!turnChanged&&nowMyTurn;if(!first&&!own&&turnChanged&&!parsed.gameOver){try{playSfx(nowMyTurn?'turnmine':'turn');}catch(e){}}state.turn=parsed.turn;state.deck=parsed.deck;state.discard=parsed.discard;state.hands=parsed.hands;state.pawns=parsed.pawns;state.mandala=parsed.mandala;if(Number.isInteger(parsed.phoenixNest)&&parsed.phoenixNest>=0)state.phoenixNest=parsed.phoenixNest;if(prevNest!==state.phoenixNest)renderBoard();state.gameOver=parsed.gameOver;if(!keepLocal)state.cardPlayedThisTurn=parsed.cardPlayedThisTurn;state.pendingSkip=parsed.pendingSkip;state.forcedDiscardFor=parsed.forcedDiscardFor;if(!own&&turnChanged){state.mode=null;state.pendingSelection=null;state.previewCardIdx=null;state.undo=null;clearSelection();clearActions();clearPathPreviews();}if(parsed.players){for(let i=0;i<4;i++){PLAYERS[i].name=parsed.players[i].name;PLAYERS[i].avatarFile=parsed.players[i].avatarFile;PLAYERS[i].isBot=parsed.players[i].isBot;{const ws=!!PLAYERS[i].sub;PLAYERS[i].sub=!!parsed.players[i].sub;if(i===myPlayerIndex&&ws!==PLAYERS[i].sub){if(PLAYERS[i].sub)showToast('🤖 Un bot légendaire joue à ta place · touche Reconnexion','error');else{lastTimerTurn=-2;showToast('✅ Reconnecté','success');}}}if(parsed.players[i].div)PLAYERS[i].div=parsed.players[i].div;}refreshPlayerBadges();}if(parsed.lastEffect&&parsed.lastEffect.by!==myPlayerIndex&&(!state.lastEffect||parsed.lastEffect.ts>state.lastEffect.ts)){state.lastEffect=parsed.lastEffect;playEffect(parsed.lastEffect);}else if(parsed.lastEffect&&parsed.lastEffect.ts>(state.lastEffect?.ts||0)){state.lastEffect=parsed.lastEffect;}updatePawnPositions();renderHand();updateTurnUI();try{const _tp=state.discard&&state.discard[state.discard.length-1];const _k=_tp?(_tp.r+'|'+(_tp.s||'')+'|'+state.discard.length):'';if(_k!==window.__lastDiscKey){window.__lastDiscKey=_k;if(_tp)showDiscard(_tp);}}catch(e){}if(state.gameOver&&!wasOver){const w=getWinnerTeam(state.pawns);if(w){clearInterval(nestTimer);stopTimer();handleEndGame(w==='A');}}if(closed&&!getWinnerTeam(state.pawns)){leaveGameRemote();return;}if(isHostClient()&&PLAYERS[state.turn].isBot&&!state.gameOver)scheduleBot(1200);}
 function getWinnerTeam(pawns){const A=[...pawns[0],...pawns[2]].every(p=>p.state==='SAFE');const B=[...pawns[1],...pawns[3]].every(p=>p.state==='SAFE');return A?'A':(B?'B':null);}
-function listenToGameState(){if(gameStateListener)gameStateListener();gameStateListener=window.FB.onSnapshot(window.FB.doc(window.FB.db,'rooms',currentRoomCode),(docSnap)=>{if(!docSnap.exists())return;const data=docSnap.data();roomPres=data.pres||{};roomReconnect=data.reconnect||{};try{hostApplyReconnects();}catch(e){}if(!data.gameState)return;let parsed;try{parsed=JSON.parse(data.gameState);}catch(e){return;}const closed=data.status==='closed',raw=data.gameState;applyChain=applyChain.then(()=>applyRemoteState(parsed,raw,closed)).catch(e=>console.error(e));},(err)=>{});}
+function listenToGameState(){if(gameStateListener)gameStateListener();gameStateListener=window.FB.onSnapshot(window.FB.doc(window.FB.db,'rooms',currentRoomCode),(docSnap)=>{if(!docSnap.exists())return;const data=docSnap.data();roomPres=data.pres||{};roomReconnect=data.reconnect||{};try{window.__gameRtcSnap&&window.__gameRtcSnap(data.rtc||{});}catch(e){}try{hostApplyReconnects();}catch(e){}if(!data.gameState)return;let parsed;try{parsed=JSON.parse(data.gameState);}catch(e){return;}const closed=data.status==='closed',raw=data.gameState;applyChain=applyChain.then(()=>applyRemoteState(parsed,raw,closed)).catch(e=>console.error(e));},(err)=>{});}
 async function handleEndGame(winTeamA){
   if(window.__endGameHandled)return;
   window.__endGameHandled=true;
@@ -1455,7 +1500,7 @@ RENDER.hub=()=>{try{ensureLoginQ();}catch(e){}if(!FRQ.loaded&&!GUEST&&me())frqLo
     ${leagueSoloHTML(d,stake)}
     <button class="hub-mode" onclick="window.__nav&&window.__nav('career')"><b>🎖️</b><span>Carrière Solo</span><small>Divisions</small></button>
     <button class="hub-mode" onclick="window.__nav&&window.__nav('lobby')"><b>🔒</b><span>Partie Privée</span><small>Avec tes amis</small></button>
-    <button class="hub-mode" onclick="window.__nav&&window.__nav('salons')"><b>🛋️</b><span>Salle d'attente</span><small>Chat & cadeaux</small></button>
+    <button class="hub-mode hub-salle" onclick="window.__nav&&window.__nav('salons')"><i class="tw t1">✦</i><i class="tw t2">✧</i><i class="tw t3">✦</i><i class="tw t4">✧</i><i class="tw t5">✦</i><i class="tw t6">✧</i><b>🛋️</b><span>Salle d'attente</span><small>Chat, vocal & cadeaux</small></button>
   </div>
   <div class="tiles">
     <button class="tile" onclick="window.__nav&&window.__nav('rankings')"><b>🏅</b>Top</button>
@@ -1514,7 +1559,7 @@ RENDER.shop=()=>{
     <div><div class="h-title">Boutique</div></div>
     <div class="wallet"><small>Solde</small><div class="amt">🪙 ${fmt(bal)}</div><div class="amt gem">💎 ${fmt(P.gems||0)}</div></div>
     <div class="card"><h3>🔑 Saisir un code promo</h3><div class="row"><input id="promo-in" class="inp" placeholder="PHX-XXXXXX" style="text-transform:uppercase;min-width:0;flex:1"><button class="btn gold" onclick="window.__redeemPromo&&window.__redeemPromo()">Activer</button></div></div>
-    <div class="cat-tabs">${CATS.map(c=>`<button class="chip ${c.k===SH.cat?'on':''}" onclick="window.__shopcat&&window.__shopcat('${c.k}')">${c.i} ${c.n}</button>`).join('')}</div>
+    <div class="cat-tabs">${CATS.filter(c=>c.k!=='plateaux').map(c=>`<button class="chip ${c.k===SH.cat?'on':''}" onclick="window.__shopcat&&window.__shopcat('${c.k}')">${c.i} ${c.n}</button>`).join('')}</div>
     ${content}`;
 };
 window.__shopcat=k=>{SH.cat=k;RENDER.shop();};
@@ -1576,7 +1621,7 @@ window.__redeemPromo=async function(){
       if(!GUEST)await walletRefresh();
       const used=(P.usedPromos||[]);
       if(!BI.unlimited&&used.includes(pid))return showToast('Code déjà utilisé','error');
-      const got=await grantMagic(BI.coins||0,BI.cards||0,BI.unlimited?null:(d,w)=>({usedPromos:(d.usedPromos||[]).concat([pid])}));
+      let got={};if((BI.cards||0)>0){const r0=await walletTx((d,w)=>{const ch=(d.chests||[]).slice();ch.push({id:'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),ts:Date.now(),kind:'promo',ic:'🎁',label:'Code promo',coins:BI.coins||0,cards:BI.cards});const ex={chests:ch};if(!BI.unlimited)ex.usedPromos=(d.usedPromos||[]).concat([pid]);return ex;});applyRes(r0);saveProfile();inp.value='';if(curScreen.name==='shop')RENDER.shop();rewardPop('🧰','Coffre reçu !',['Ouvre-le dans ton inventaire 🎒']);return;}got=await grantMagic(BI.coins||0,0,BI.unlimited?null:(d,w)=>({usedPromos:(d.usedPromos||[]).concat([pid])}));
       saveProfile();inp.value='';
       if(curScreen.name==='shop')RENDER.shop();
       const lines=[];if(BI.coins)lines.push(`+${fmt(BI.coins)} 🪙`);rewardPop('🎉','Code activé !',lines.concat(magicLines(got)));
@@ -1607,8 +1652,8 @@ window.__redeemPromo=async function(){
     rewardPop('🎉','Code activé !',[`+${fmt(entry.value)} 🪙`]);
   }catch(e){showToast(e.message,'error');}
 };
-RENDER.trophies=()=>{bumpQ('trophyVisit');const cl=LG.L.tcl||[];$('s-trophies').innerHTML=`<div><div class="h-title">Panthéon</div><div class="h-sub">${trophyCount()} / ${TROPHIES.length}</div></div><div class="card">${TROPHIES.map((t,ti)=>{const ok=t.v()>=t.m;const got=cl.includes(t.n);return`<div class="qcard ${ok?'done':''}"><div class="qhead"><div class="qic">${t.i}</div><div style="flex:1"><b>${esc(t.n)}</b><div class="small muted">${esc(t.d)}</div></div>${ok?(got?'<span class="small muted">🧰 ✓</span>':`<button class="btn gold" onclick="window.__openTrophyChest&&window.__openTrophyChest(${ti})">🧰 Coffre</button>`):'<span class="small muted">🔒</span>'}</div></div>`;}).join('')}</div>`;};
-function chestReveal(got){return new Promise(res=>{const t=Object.keys(got)[0];const o=document.createElement('div');o.className='chest-fx';let sp='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2,d=110+Math.random()*90;sp+=`<span class="cx-spark" style="--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-40}px;animation-delay:${1+Math.random()*.25}s">${i%2?'✨':'⭐'}</span>`;}o.innerHTML=`<div class="cx-glow"></div><div class="cx-chest">🧰</div>${sp}<div class="cx-card"><b>${MAGIC_ICONS[t]}</b><small>${esc(MAGIC_LABELS[t])} Magique</small></div><div class="muted small cx-hint">TOUCHE POUR CONTINUER</div>`;document.body.appendChild(o);beep(520,.2,'triangle',.05);setTimeout(()=>beep(990,.25,'triangle',.07),1000);let done=false;const c=()=>{if(done)return;done=true;o.style.transition='opacity .3s';o.style.opacity=0;setTimeout(()=>{o.remove();res();},300);};o.onclick=()=>{if(performance.now()-t0>1800)c();};const t0=performance.now();setTimeout(c,5500);});}
+RENDER.trophies=()=>{bumpQ('trophyVisit');const cl=LG.L.tcl||[];$('s-trophies').innerHTML=`<div><div class="h-title">Panthéon</div><div class="h-sub">${trophyCount()} / ${TROPHIES.length}</div></div><div class="card">${TROPHIES.map((t,ti)=>{const ok=t.v()>=t.m;const got=cl.includes(t.n);return`<div class="qcard ${ok?'done':''}"><div class="qhead"><div class="qic">${t.i}</div><div style="flex:1"><b>${esc(t.n)}</b><div class="small muted">${esc(t.d)}</div></div>${ok?(got?'<span class="small muted">🧰 ✓</span>':`<button class="btn gold" onclick="window.__openTrophyChest&&window.__openTrophyChest(${ti})">🧰 Récupérer</button>`):'<span class="small muted">🔒</span>'}</div></div>`;}).join('')}</div>`;};
+function chestReveal(got,coins){return new Promise(res=>{const t=Object.keys(got)[0];const o=document.createElement('div');o.className='chest-fx';let sp='';for(let i=0;i<14;i++){const a=i/14*Math.PI*2,d=110+Math.random()*90;sp+=`<span class="cx-spark" style="--dx:${Math.cos(a)*d}px;--dy:${Math.sin(a)*d-40}px;animation-delay:${1+Math.random()*.25}s">${i%2?'✨':'⭐'}</span>`;}o.innerHTML=`<div class="cx-glow"></div><div class="cx-chest">🧰</div>${sp}<div class="cx-card"><b>${t?MAGIC_ICONS[t]:'🪙'}</b><small>${t?esc(MAGIC_LABELS[t])+' Magique':fmt(coins||0)+' 🪙'}</small></div><div class="muted small cx-hint">TOUCHE POUR CONTINUER</div>`;document.body.appendChild(o);beep(520,.2,'triangle',.05);setTimeout(()=>beep(990,.25,'triangle',.07),1000);let done=false;const c=()=>{if(done)return;done=true;o.style.transition='opacity .3s';o.style.opacity=0;setTimeout(()=>{o.remove();res();},300);};o.onclick=()=>{if(performance.now()-t0>1800)c();};const t0=performance.now();setTimeout(c,5500);});}
 window.__openTrophyChest=async function(ti){const t=TROPHIES[ti];if(!t||t.v()<t.m)return;LG.L.tcl=LG.L.tcl||[];if(LG.L.tcl.includes(t.n))return showToast('Coffre déjà ouvert','error');LG.L.tcl.push(t.n);saveLG();try{const got=await grantMagic(0,1);await chestReveal(got);rewardPop('🧰','Coffre ouvert !',magicLines(got));}catch(e){LG.L.tcl=LG.L.tcl.filter(x=>x!==t.n);saveLG();showToast('Erreur','error');}RENDER.trophies();};
 RENDER.inventory=()=>{bumpQ('invVisit');const rows=[];MAGIC_TYPES.forEach(k=>{const q=P.inventory[k]||0;if(q)rows.push({ic:MAGIC_ICONS[k],n:MAGIC_LABELS[k]+' Magique',q});});$('s-inventory').innerHTML=`<div><div class="h-title">Inventaire</div></div><div class="card">${rows.length?`<div class="inv-grid">${rows.map(r=>`<div class="inv-slot has"><div class="inv-count">×${r.q}</div><div style="font-size:2em">${r.ic}</div><div>${esc(r.n)}</div></div>`).join('')}</div>`:'<p class="muted" style="text-align:center;padding:24px">Rien ici.</p>'}</div>`;};
 function friendRow(f){const bg=`background:url('avatar/${safeAv(f.av)}.jpg') center/cover #1e3a6f`;return`<div class="fr-row pc-click"${pcReg({uid:f.uid,pseudo:f.pseudo,av:f.av,sub:f.online?'🟢 En ligne':'⚫ Hors ligne'})}><div class="status" style="${f.online?'':'background:var(--muted)'}"></div><div class="avf" style="${bg}"></div><div class="info"><b>${esc(f.pseudo)}</b><small>${f.online?'🟢 En ligne':'⚫ Hors ligne'}</small></div></div>`;}
@@ -1635,11 +1680,14 @@ function qClaimKey(tab,day){if(tab==='daily')return'qclaims_daily_'+getQCycle().
 function ensureLoginQ(){const k=new Date().toDateString();if(LG.L._lastLoginQ!==k){LG.L._lastLoginQ=k;bumpQ('login');}}
 function getQWeek(){const now=new Date();const dow=now.getDay();const offset=dow===0?6:dow-1;const mon=new Date(now.getFullYear(),now.getMonth(),now.getDate()-offset);const ws=mon.getTime();if(!LG.L.qweek)LG.L.qweek={start:ws,index:0,stats:{}};if(LG.L.qweek.start!==ws){LG.L.qweek.start=ws;LG.L.qweek.stats={};}const wom=Math.min(3,Math.floor((now.getDate()+offset-1)/7));LG.L.qweek.index=wom;return{index:wom,stats:LG.L.qweek.stats};}
 function getQMonth(){const now=new Date();const mk=now.getFullYear()+'-'+String(now.getMonth()+1).padStart(2,'0');if(!LG.L.qmonth)LG.L.qmonth={key:mk,stats:{}};if(LG.L.qmonth.key!==mk){LG.L.qmonth.key=mk;LG.L.qmonth.stats={};}return{stats:LG.L.qmonth.stats};}
-function bumpQ(stat,count){if(!count)count=1;[getQCycle().stats,getQWeek().stats,getQMonth().stats].forEach(s=>{s[stat]=(s[stat]||0)+count;if(stat==='streak')s.bestStreak=Math.max(s.bestStreak||0,s.streak);});try{saveLG();}catch(e){}}
+function bumpQ(stat,count){if(!count)count=1;[getQCycle().stats,getQWeek().stats,getQMonth().stats].forEach(s=>{s[stat]=(s[stat]||0)+count;if(stat==='streak')s.bestStreak=Math.max(s.bestStreak||0,s.streak);});try{saveLG();}catch(e){}try{updateBadges();}catch(e){}}
 const QS={tab:'daily'};
+window.__qHasClaim=function(){const qc=getQCycle(),qw=getQWeek(),qm=getQMonth();const sets=[['daily',QUESTS_DAILY[qc.day]||QUESTS_DAILY[0],qc.stats,qc.day],['weekly',QUESTS_WEEKLY[qw.index]||QUESTS_WEEKLY[0],qw.stats,qw.index],['monthly',QUESTS_MONTHLY,qm.stats,0]];
+  return sets.some(([tab,qs,st,day])=>{let cl=[];try{cl=JSON.parse(localStorage.getItem(qClaimKey(tab,day))||'[]');}catch(e){}return (qs||[]).some((q,i)=>(st[q[0]]||0)>=q[1]&&!cl.includes(i));});};
 RENDER.quests=()=>{try{ensureLoginQ();}catch(e){}const qc=getQCycle(),qw=getQWeek(),qm=getQMonth();const tab=QS.tab;let quests,stats,day,period;if(tab==='daily'){quests=QUESTS_DAILY[qc.day]||QUESTS_DAILY[0];stats=qc.stats;day=qc.day;period=`Jour ${qc.day+1}/31`;}else if(tab==='weekly'){quests=QUESTS_WEEKLY[qw.index]||QUESTS_WEEKLY[0];stats=qw.stats;day=qw.index;period=`Semaine ${qw.index+1}/4`;}else{quests=QUESTS_MONTHLY;stats=qm.stats;day=0;period='Mensuel';}const claimsKey=qClaimKey(tab,day);let claims=[];try{claims=JSON.parse(localStorage.getItem(claimsKey)||'[]');}catch(e){}const done=claims.length;const html=quests.map((q,i)=>{const[stat,target,coins,xp,isChest]=q;const progress=Math.min(stats[stat]||0,target);const ok=progress>=target;const claimed=claims.includes(i);const reward=isChest?`<span style="color:var(--purple);font-weight:900">🎁 Coffre</span><span>+${xp} XP</span>`:`<span>+${coins} 🪙</span><span>+${xp} XP</span>`;return`<div class="qcard ${ok&&!claimed?'done':''} ${claimed?'claimed':''}"><div class="qhead"><div class="qic">${claimed?'✔':ok?'🎁':'🎯'}</div><div style="flex:1"><b>${esc(qTitle(stat,target))}</b><div class="small muted">${progress}/${target}</div></div></div><div class="bar"><i style="width:${progress/target*100}%"></i></div><div class="qfoot"><div class="qrw">${reward}</div>${ok&&!claimed?`<button class="btn gold" style="padding:8px 14px" onclick="window.__qClaim&&window.__qClaim(${i})">Réclamer</button>`:claimed?'<span style="color:var(--green)">✔</span>':'<span class="small muted">En cours</span>'}</div></div>`;}).join('');$('s-quests').innerHTML=`<div><div class="h-title">Quêtes</div><div class="h-sub">${done}/${quests.length} · ${period}</div></div><div class="quest-tabs"><button class="quest-tab ${tab==='daily'?'on':''}" onclick="window.__qtab&&window.__qtab('daily')">☀️ Quotidiennes</button><button class="quest-tab ${tab==='weekly'?'on':''}" onclick="window.__qtab&&window.__qtab('weekly')">📅 Hebdo</button><button class="quest-tab ${tab==='monthly'?'on':''}" onclick="window.__qtab&&window.__qtab('monthly')">📆 Mensuel</button></div><div>${html}</div>`;};
 window.__qtab=t=>{QS.tab=t;RENDER.quests();};
-window.__qClaim=async function(idx){const qc=getQCycle(),qw=getQWeek(),qm=getQMonth();const tab=QS.tab;let quests,stats,day;if(tab==='daily'){quests=QUESTS_DAILY[qc.day];stats=qc.stats;day=qc.day;}else if(tab==='weekly'){quests=QUESTS_WEEKLY[qw.index];stats=qw.stats;day=qw.index;}else{quests=QUESTS_MONTHLY;stats=qm.stats;day=0;}const q=quests[idx];if(!q)return;const[stat,target,coins,xp,isChest]=q;if((stats[stat]||0)<target)return showToast('Non terminée','error');const claimsKey=qClaimKey(tab,day);let claims=[];try{claims=JSON.parse(localStorage.getItem(claimsKey)||'[]');}catch(e){}if(claims.includes(idx))return showToast('Déjà réclamée','error');claims.push(idx);localStorage.setItem(claimsKey,JSON.stringify(claims));if(isChest){const rCoins=200+Math.floor(Math.random()*301);const types=['king','seven','five','phoenix'];const rType=types[Math.floor(Math.random()*4)];try{await walletTx((d,w)=>{w.coins+=rCoins;const inv=Object.assign({...DEFAULT_INVENTORY},d.inventory||{});inv[rType]=(inv[rType]||0)+1;return{inventory:inv};}).then(applyRes);LG.L.xp=(LG.L.xp||0)+xp;saveLG();rewardPop('🎁','Coffre !',[`+${rCoins} 🪙`,`+1 ${MAGIC_ICONS[rType]}`]);}catch(e){showToast('Erreur','error');}}else{try{await walletTx((d,w)=>{w.coins+=coins;}).then(applyRes);LG.L.xp=(LG.L.xp||0)+xp;saveLG();rewardPop('🎯','Accompli !',[`+${coins} 🪙`,`+${xp} XP`]);}catch(e){showToast('Erreur','error');}}RENDER.quests();};
+setTimeout(()=>{const f=window.__qClaim;if(typeof f!=='function')return;window.__qClaim=async function(){try{return await f.apply(this,arguments);}finally{try{updateBadges();}catch(e){}}};},0);
+window.__qClaim=async function(idx){const qc=getQCycle(),qw=getQWeek(),qm=getQMonth();const tab=QS.tab;let quests,stats,day;if(tab==='daily'){quests=QUESTS_DAILY[qc.day];stats=qc.stats;day=qc.day;}else if(tab==='weekly'){quests=QUESTS_WEEKLY[qw.index];stats=qw.stats;day=qw.index;}else{quests=QUESTS_MONTHLY;stats=qm.stats;day=0;}const q=quests[idx];if(!q)return;const[stat,target,coins,xp,isChest]=q;if((stats[stat]||0)<target)return showToast('Non terminée','error');const claimsKey=qClaimKey(tab,day);let claims=[];try{claims=JSON.parse(localStorage.getItem(claimsKey)||'[]');}catch(e){}if(claims.includes(idx))return showToast('Déjà réclamée','error');claims.push(idx);localStorage.setItem(claimsKey,JSON.stringify(claims));if(isChest){const rCoins=200+Math.floor(Math.random()*301);try{await addChests([{kind:'quest',ic:'🎁',label:'Coffre de quête',coins:rCoins,cards:1}]);LG.L.xp=(LG.L.xp||0)+xp;saveLG();rewardPop('🎁','Coffre reçu !',['Ouvre-le dans ton inventaire 🎒']);}catch(e){showToast('Erreur','error');}}else{try{await walletTx((d,w)=>{w.coins+=coins;}).then(applyRes);LG.L.xp=(LG.L.xp||0)+xp;saveLG();rewardPop('🎯','Accompli !',[`+${coins} 🪙`,`+${xp} XP`]);}catch(e){showToast('Erreur','error');}}RENDER.quests();};
 const RK={cat:'xp',scope:'world',cache:null,t:0,err:null,loading:false};
 const RK_CATS={xp:['🏅','XP'],daily:['☀️','Jour'],weekly:['📅','Semaine'],monthly:['📆','Mois'],streak:['🔥','Série']};
 const perW=(o,k,cur)=>o&&o[k]===cur?(+o.wins||0):0;
@@ -1865,7 +1913,7 @@ window.__salOpen=async function(id,skipPwd){const d=online()?(SAL.list.find(s=>s
   SAL.unsub=F().onSnapshot(ref,s=>{if(!s.exists()){showToast('Salle fermée','error');salLeave();return go('salons')}SAL.data=s.data();{const here=ownerHere(SAL.data);if(SAL.ownerWas&&!here&&!isStaff(SAL.data)){SAL.ownerWas=false;showToast('👑 Le propriétaire a quitté la salle','error');salLeave();go('hub');return;}SAL.ownerWas=here;}if(curScreen.name==='waiting')RENDER.waiting();syncPeers();});
   SAL.chatUnsub=F().onSnapshot(F().query(F().collection(F().db,'salons',id,'chat'),F().orderBy('t','desc'),F().limit(40)),q=>{q.docChanges().reverse().forEach(c=>{if(c.type!=='added')return;const m=c.doc.data();addChat(m.pseudo,m.txt);try{window.__salChatEvt&&window.__salChatEvt(c.doc.id,m)}catch(e){}});});}
  go('waiting');};
-function addChat(who,txt){const chat=$('waiting-chat');chat.insertAdjacentHTML('beforeend',`<div class="chat-msg"><b>${esc(who)}:</b> ${esc(txt)}</div>`);chat.scrollTop=chat.scrollHeight;}
+function addChat(who,txt){const chat=$('waiting-chat');chat.insertAdjacentHTML('beforeend',`<div class="chat-msg${String(who).indexOf('Rentabilit')>=0?' gain':''}"><b>${esc(who)}:</b> ${esc(txt)}</div>`);chat.scrollTop=chat.scrollHeight;}
 async function salLeave(){const id=SAL.id;if(!id)return;const u=myUid();clearInterval(SAL.hb);SAL.hb=null;if(SAL.unsub)SAL.unsub();if(SAL.chatUnsub)SAL.chatUnsub();SAL.unsub=SAL.chatUnsub=null;stopVoice();
  const seat=mySeat();if(online()){const upd={['pres.'+u]:F().deleteField()};const oth=Object.entries((SAL.data&&SAL.data.pres)||{}).some(([k,t])=>k!==u&&Date.now()-Number(t)<70000);if(!oth)upd.seats={};else if(seat!=null)upd['seats.'+seat]=null;F().updateDoc(F().doc(F().db,'salons',id),upd).catch(()=>{});}else if(seat!=null)SAL.data.seats[seat]=null;SAL.id=null;SAL.data=null;try{window.__salBubble&&window.__salBubble()}catch(e){}}
 window.__salLeave=salLeave;window.addEventListener('beforeunload',()=>{try{salLeave()}catch(e){}});
@@ -2111,7 +2159,7 @@ async function stockAdd(it,delta){
 function localChat(who,txt){const c=g('waiting-chat');if(!c)return;c.insertAdjacentHTML('beforeend',`<div class="chat-msg"><b>${esc(who)}:</b> ${esc(txt)}</div>`);c.scrollTop=c.scrollHeight;}
 async function roomSend(it,tg){
   if(!SAL.id)throw new Error("Tu n'es plus dans la salle");
-  const u=myUid(),self=tg.uid===u,keep=self&&it.give;       // s'offrir un objet à soi-même : rien n'est consommé
+  const u=myUid(),self=tg.uid===u,keep=false;       // s'offrir un objet à soi-même : rien n'est consommé
   if(!keep)await stockAdd(it,-1);
   const to=self?'':(it.give?' à ':' sur ')+tg.pseudo;
   const txt=(it.give?(self?"s'offre":'offre'):(self?'se lance':'lance'))+` ${it.ic} ${it.n}${to} !`;
@@ -2138,11 +2186,12 @@ const SEEN=new Set();
 window.__salChatEvt=function(id,m){
   const e=m&&m.evt;if(!e||SEEN.has(id))return;SEEN.add(id);if(SEEN.size>300)SEEN.delete(SEEN.values().next().value);
   if(!(Number(m.t)>=(SAL.joinAt||0)-3000))return;           // on ignore l'historique rejoué à l'arrivée
+  if(e.t==='gain'){gainLabel(e.to,e.txt);return;}
   fly(e.ic,m.uid,e.to,e.t);
   const u=myUid();
-  if(e.to===u&&m.uid!==u){
-    if(e.t==='give'){stockAdd({k:e.k,id:e.k==='shop'?Number(e.id):e.id},1).then(()=>{showToast(`🎁 ${m.pseudo} t'offre ${e.ic} ${e.n}`,'success');refreshPanels();}).catch(()=>{});}
-    else showToast(`${e.ic} ${m.pseudo} te lance ${e.n} !`,'error');
+  if(e.to===u){
+    if(e.t!=='give'&&m.uid!==u)showToast(`${e.ic} ${m.pseudo} te lance ${e.n} !`,'error');
+    if(window.__giftReward)window.__giftReward(e,m).then(()=>refreshPanels()).catch(err=>{console.error('Rentabilité',err);showToast('Rentabilité non créditée : '+(err&&err.message||'erreur'),'error');});
   }
 };
 function fxLayer(){let L=document.getElementById('fx-layer');if(!L){L=document.createElement('div');L.id='fx-layer';document.getElementById('app').appendChild(L);}return L;}
@@ -2158,6 +2207,15 @@ function fullFx(ic,kind,x,y){            /* animation plein écran, fond 100 % t
     p.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(0)',opacity:1},{transform:`translate(calc(-50% + ${tx}px),calc(-50% + ${ty}px)) scale(1.1) rotate(${Math.random()*540-270}deg)`,opacity:0}],{duration:900+Math.random()*700,easing:'cubic-bezier(.15,.7,.3,1)',delay:Math.random()*120}).onfinish=()=>p.remove();
   }
 }
+function gainLabel(toUid,txt){            /* rentabilité affichée sous l'animation de l'objet */
+  const L=fxLayer(),to=curScreen.name==='waiting'?seatEl(toUid):null,lr=L.getBoundingClientRect();
+  let x=L.clientWidth/2,y=L.clientHeight/2+70;
+  if(to){const r=to.getBoundingClientRect();x=r.left+r.width/2-lr.left;y=r.bottom-lr.top+6;}
+  const el=document.createElement('div');el.className='vr-gain';el.textContent=txt;el.style.left=x+'px';el.style.top=y+'px';L.appendChild(el);
+  const w=el.offsetWidth,W=L.clientWidth;if(x-w/2<4)el.style.left=(w/2+4)+'px';else if(x+w/2>W-4)el.style.left=(W-w/2-4)+'px';
+  el.animate([{opacity:0,transform:'translate(-50%,10px) scale(.6)'},{opacity:1,transform:'translate(-50%,0) scale(1.1)',offset:.12},{opacity:1,transform:'translate(-50%,0) scale(1)',offset:.85},{opacity:0,transform:'translate(-50%,-14px) scale(1)'}],{duration:3200,easing:'ease-out'}).onfinish=()=>el.remove();
+}
+window.__gainLabel=gainLabel;
 function fly(ic,fromUid,toUid,kind){
   const u=myUid(),onRoom=curScreen.name==='waiting',to=onRoom?seatEl(toUid):null;
   try{beep(kind==='give'?880:220,.12,kind==='give'?'triangle':'square',.05)}catch(e){}
@@ -2175,6 +2233,255 @@ function fly(ic,fromUid,toUid,kind){
   anim.onfinish=()=>{el.remove();fullFx(ic,kind,bx,by);
     const cls=kind==='give'?'hit-give':'hit-proj';to.classList.add(cls);setTimeout(()=>to.classList.remove(cls),650);};
 }
+})();
+</script>
+<script id="v19-js">
+/* ============ v19 : coffres · récompense des cadeaux · smileys · sync de partie · vocal de partie ============ */
+(function(){
+const F=()=>window.FB;
+const g=id=>document.getElementById(id);
+const uidNow=()=>{try{const u=me();return u?u.uid:null}catch(e){return null}};
+const cid=()=>'c'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+
+async function addChests(list){
+  const r=await walletTx((d,w)=>{const ch=(d.chests||[]).slice();list.forEach(c=>ch.push(Object.assign({id:cid(),ts:Date.now()},c)));return{chests:ch};});
+  applyRes(r);return r;
+}
+window.addChests=addChests;
+let busy=false;
+window.__openChest=async function(id){
+  if(busy)return;busy=true;
+  try{
+    let got={},coins=0,chest=null;
+    const r=await walletTx((d,w)=>{
+      const ch=(d.chests||[]).slice();const i=ch.findIndex(c=>c.id===id);if(i<0)throw new Error('Coffre introuvable');
+      chest=ch.splice(i,1)[0];coins=Number(chest.coins)||0;got=rollMagic(Number(chest.cards)||0);
+      w.coins+=coins;w.ledger.unshift({id:'chest-'+id,t:Date.now(),label:'Coffre ouvert',delta:coins,balance:w.coins});
+      const inv=Object.assign({...DEFAULT_INVENTORY},d.inventory||{});Object.keys(got).forEach(t=>{inv[t]=(inv[t]||0)+got[t];});
+      return{chests:ch,inventory:inv};
+    });
+    applyRes(r);
+    if(curScreen.name==='inventory')RENDER.inventory();
+    await chestReveal(got,coins);
+    const lines=[];if(coins)lines.push('+'+fmt(coins)+' 🪙');
+    rewardPop((chest&&chest.ic)||'🧰','Coffre ouvert !',lines.concat(magicLines(got)));
+  }catch(e){showToast(e.message||'Erreur','error');}
+  busy=false;
+};
+RENDER.inventory=()=>{
+  bumpQ('invVisit');
+  const rows=[];MAGIC_TYPES.forEach(k=>{const q=(P.inventory&&P.inventory[k])||0;if(q)rows.push({ic:MAGIC_ICONS[k],n:MAGIC_LABELS[k]+' Magique',q});});
+  const chests=Array.isArray(P.chests)?P.chests:[];
+  const ch=chests.length?`<div class="inv-grid">${chests.map(c=>`<div class="inv-slot has chest-slot"><div style="font-size:2.3em">${esc(c.ic||'🧰')}</div><div class="small"><b>${esc(c.label||'Coffre')}</b></div><div class="small muted">${c.coins?fmt(c.coins)+' 🪙':''}${c.coins&&c.cards?' · ':''}${c.cards?c.cards+' carte'+(c.cards>1?'s':'')+' magique'+(c.cards>1?'s':''):''}</div><button class="btn gold block" style="margin-top:6px;padding:8px" onclick="window.__openChest('${safeId(c.id)}')">✨ Ouvrir</button></div>`).join('')}</div>`
+    :'<p class="muted" style="text-align:center;padding:14px">Aucun coffre pour le moment.<br><small>Les coffres de quêtes, trophées, packs et cadeaux arrivent ici.</small></p>';
+  $('s-inventory').innerHTML=`<div><div class="h-title">Inventaire</div></div><div class="card gold"><h3>🧰 Coffres (${chests.length})</h3>${ch}</div><div class="card"><h3>🃏 Cartes magiques</h3>${rows.length?`<div class="inv-grid">${rows.map(r=>`<div class="inv-slot has"><div class="inv-count">×${r.q}</div><div style="font-size:2em">${r.ic}</div><div>${esc(r.n)}</div></div>`).join('')}</div>`:'<p class="muted" style="text-align:center;padding:14px">Aucune carte.</p>'}</div>`;
+};
+window.__openTrophyChest=async function(ti){
+  const t=TROPHIES[ti];if(!t||t.v()<t.m)return;
+  LG.L.tcl=LG.L.tcl||[];if(LG.L.tcl.includes(t.n))return showToast('Coffre déjà récupéré','error');
+  LG.L.tcl.push(t.n);saveLG();
+  try{await addChests([{kind:'trophy',ic:'🧰',label:'Coffre · '+t.n,coins:0,cards:1}]);showToast('🧰 Coffre ajouté à ton inventaire','success');}
+  catch(e){LG.L.tcl=LG.L.tcl.filter(x=>x!==t.n);saveLG();showToast('Erreur','error');}
+  RENDER.trophies();
+};
+window.__grantEuroPack=async function(id){
+  const k=EURO_PACKS.find(x=>x.id===id);if(!k)return;
+  try{await addChests([{kind:'pack',ic:k.ic,label:k.n,coins:k.coins,cards:k.cards}]);if(curScreen.name==='shop')RENDER.shop();rewardPop(k.ic,'Pack reçu !',['Ouvre-le dans ton inventaire 🎒']);}
+  catch(e){showToast(e.message,'error');}
+};
+
+function giftValue(e){
+  if(e.k==='inv')return MAGIC_PRICES[e.id]||1000;
+  const it=ITEM(Number(e.id));if(!it)return 0;
+  if(it.c>0)return it.c;if(it.e>0)return Math.round(it.e*1000);return 0;
+}
+function rollGift(v){
+  const r=Math.random()*11;let lo,hi;
+  if(r<5){lo=.8;hi=1}else if(r<8){lo=1.1;hi=1.9}else if(r<10){lo=2;hi=3}else{lo=3;hi=4}
+  const pct=lo+Math.random()*(hi-lo);return{pct,coins:Math.max(1,Math.round(v*pct))};
+}
+window.__giftReward=async function(e,m){
+  const v=giftValue(e);if(!(v>0))return;
+  const roll=rollGift(v),pack=Math.random()<0.01,pk=EURO_PACKS[0];
+  const r=await walletTx((d,w)=>{
+    w.coins+=roll.coins;w.ledger.unshift({id:'gift-'+cid(),t:Date.now(),label:(e.t==='give'?'Cadeau de ':'Objet de ')+m.pseudo,delta:roll.coins,balance:w.coins});
+    const ex={};if(pack){const ch=(d.chests||[]).slice();ch.push({id:cid(),ts:Date.now(),kind:'pack',ic:pk.ic,label:pk.n,coins:pk.coins,cards:pk.cards});ex.chests=ch;}
+    return ex;
+  });
+  applyRes(r);
+  const lines=['+'+fmt(roll.coins)+' 🪙 ('+Math.round(roll.pct*100)+' %)'];if(pack)lines.push('🧰 '+pk.n+' → inventaire');
+  rewardPop(e.ic,(m.uid===uidNow()?'Tu reçois ':m.pseudo+(e.t==='give'?" t'offre ":' te lance '))+e.n,lines);
+  try{if(g('ms-wallet'))g('ms-wallet').innerHTML=`<span>🪙 ${fmt(balNow())}</span><span class="g">💎 ${fmt(P.gems||0)}</span>`;}catch(x){}
+  /* rentabilité publiée dans le chat de la salle (visible par tous) */
+  const who=P.pseudo||'Joueur',gain='+'+fmt(roll.coins)+' 🪙 ('+Math.round(roll.pct*100)+' %)'+(pack?' + 🧰 '+pk.n:'');
+  const txt=`💰 ${who} · ${e.ic} ${e.n} → ${gain}`;
+  const doc={uid:uidNow(),pseudo:'💰 Rentabilité',txt:`${who} reçoit ${e.ic} ${e.n} : ${gain}`,t:Date.now(),evt:{t:'gain',to:uidNow(),txt}};
+  const online=!GUEST&&F()&&SAL&&SAL.id&&!SAL.offline;
+  if(online){try{await F().addDoc(F().collection(F().db,'salons',SAL.id,'chat'),doc);return;}catch(x){}}
+  const c=g('waiting-chat');if(c){c.insertAdjacentHTML('beforeend',`<div class="chat-msg gain"><b>${esc(doc.pseudo)}:</b> ${esc(doc.txt)}</div>`);c.scrollTop=c.scrollHeight;}
+  if(window.__gainLabel)window.__gainLabel(uidNow(),txt);
+};
+
+const SAL=window.SAL;
+const EMOTES=['😂','😍','😎','😡','😭','🥳','🤩','😱','🔥','💤'];
+async function setEmote(i,silent){
+  if(!SAL||!SAL.id||!SAL.data)return;
+  const u=uidNow(),cur=(SAL.data.emotes||{})[u];if(i==null&&!cur)return;
+  const val=i==null?null:{i,t:Date.now()};
+  const on=!GUEST&&F()&&u&&!SAL.offline;
+  if(on){try{await F().updateDoc(F().doc(F().db,'salons',SAL.id),{['emotes.'+u]:val===null?F().deleteField():val});}
+    catch(e){if(!silent)showToast('Smiley refusé'+(e&&e.code?' ('+e.code+')':''),'error');return;}}
+  const em=Object.assign({},SAL.data.emotes||{});if(val)em[u]=val;else delete em[u];SAL.data.emotes=em;
+  if(curScreen.name==='waiting')RENDER.waiting();
+}
+function boardEl(){let b=g('emote-board');if(b)return b;b=document.createElement('div');b.id='emote-board';b.className='ms-overlay';b.onclick=e=>{if(e.target===b)closeBoard();};g('app').appendChild(b);return b;}
+function closeBoard(){const b=g('emote-board');if(b)b.classList.remove('show');}
+window.__emoClose=closeBoard;
+window.__salSeatMenu=function(){
+  const b=boardEl(),cur=((SAL.data&&SAL.data.emotes)||{})[uidNow()];
+  b.innerHTML=`<div class="ms-board"><button class="ms-x" onclick="window.__emoClose()" aria-label="Fermer">✕</button><div class="ms-title">😀 Mon humeur</div><div class="small muted" style="text-align:center">Choisis un smiley : il s'animera sur ton avatar</div><div class="ms-body"><div class="emo-grid">${EMOTES.map((e,i)=>`<button class="emo-btn ${cur&&cur.i===i?'sel':''}" onclick="window.__emoPick(${i})"><span class="emo emo-${i}">${e}</span></button>`).join('')}</div><button class="btn ghost block" onclick="window.__emoPick(-1)">✖ Retirer mon smiley</button></div></div>`;
+  b.classList.add('show');
+};
+window.__emoPick=async function(i){closeBoard();await setEmote(i<0?null:i);if(i>=0)showToast(EMOTES[i]+' Smiley envoyé','success');};
+function paintEmotes(){
+  const em=(SAL&&SAL.data&&SAL.data.emotes)||{};
+  document.querySelectorAll('#vr-seats .vr-seat[data-uid]').forEach(el=>{
+    const e=em[el.dataset.uid],f=el.querySelector('.avf');if(!f||!e||!EMOTES[e.i])return;
+    f.insertAdjacentHTML('beforeend',`<span class="emo-badge"><span class="emo emo-${e.i}">${EMOTES[e.i]}</span></span>`);
+  });
+}
+const _rw=RENDER.waiting;
+RENDER.waiting=function(){const r=_rw.apply(this,arguments);try{paintEmotes();}catch(e){}return r;};
+const seated=()=>{const s=(SAL&&SAL.data&&SAL.data.seats)||{},u=uidNow();return Object.values(s).some(x=>x&&x.uid===u);};
+const _stand=window.__salStand;
+window.__salStand=function(){try{setEmote(null,true);}catch(e){}return _stand.apply(this,arguments);};
+const _sit=window.__salSit;
+window.__salSit=async function(){const r=await _sit.apply(this,arguments);try{if(seated())setEmote(null,true);}catch(e){}return r;};
+
+const FXO={};['fxRing','fxEmbers','addKillCross','showKillBanner','playSfx'].forEach(n=>{FXO[n]=window[n];});
+let FXP=[],FXH=[];
+const live=()=>{try{return !!currentRoomCode&&!state.gameOver}catch(e){return false}};
+function toDesc(p){
+  let best=null,bd=1e9;
+  for(let k=0;k<TRACK.length;k++){const q=trackPct(k),d=Math.hypot(q.x-p.x,q.y-p.y);if(d<bd){bd=d;best={t:'T',k};}}
+  for(let pl=0;pl<4;pl++)for(let j=0;j<4;j++){const q=coordToPct(SAFE_ZONES[seatOf(pl)][j]),d=Math.hypot(q.x-p.x,q.y-p.y);if(d<bd){bd=d;best={t:'S',p:pl,j};}}
+  return bd<1.2?best:{t:'R',x:p.x,y:p.y};
+}
+function fromDesc(d){if(d.t==='T')return trackPct(d.k);if(d.t==='S')return coordToPct(SAFE_ZONES[seatOf(d.p)][d.j]);return{x:d.x,y:d.y};}
+const SFX_OK=new Set(['draw','play','capture','spawn','safe','magic']);
+window.fxRing=function(pct,color,size){if(live()&&pct)FXP.push({k:'ring',p:toDesc(pct),c:color||'#ffb300',s:size||14});return FXO.fxRing.apply(this,arguments);};
+window.fxEmbers=function(pct,n,ess){if(live()&&ess&&pct)FXP.push({k:'emb',p:toDesc(pct),n:n||4});return FXO.fxEmbers.apply(this,arguments);};
+window.addKillCross=function(pct){if(live()&&pct)FXP.push({k:'cross',p:toDesc(pct)});return FXO.addKillCross.apply(this,arguments);};
+window.showKillBanner=function(a,b){if(live())FXP.push({k:'kb',a:String(a),b:String(b)});return FXO.showKillBanner.apply(this,arguments);};
+window.playSfx=function(n){if(live()&&SFX_OK.has(n))FXP.push({k:'sfx',n});return FXO.playSfx.apply(this,arguments);};
+window.__fxFlush=function(seq){FXP.forEach(e=>{e.q=seq;});FXH=FXH.concat(FXP).slice(-30);FXP=[];return FXH;};
+window.__fxReplay=function(list,prev){
+  list.filter(e=>e&&e.q>prev).forEach((e,i)=>setTimeout(()=>{try{
+    if(e.k==='ring')FXO.fxRing(fromDesc(e.p),e.c,e.s);
+    else if(e.k==='emb')FXO.fxEmbers(fromDesc(e.p),e.n||4,true);
+    else if(e.k==='cross')FXO.addKillCross(fromDesc(e.p));
+    else if(e.k==='kb')FXO.showKillBanner(e.a,e.b);
+    else if(e.k==='sfx')FXO.playSfx(e.n);
+  }catch(x){}},Math.min(i*70,700)));
+};
+const _rs=window.resetSync;
+window.resetSync=function(){FXP=[];FXH=[];window.__lastDiscKey=null;return _rs.apply(this,arguments);};
+
+const STUN={iceServers:[{urls:['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']}]};
+const GV={on:false,stream:null,mic:true,spk:true,peers:{},code:null,rtc:{}};
+window.GV=GV;
+const pairKey=(a,b)=>Math.min(a,b)+'_'+Math.max(a,b);
+function gvUI(){
+  const m=g('btn-mic'),s=g('btn-spk');
+  if(m){m.textContent=GV.mic?'🎙️':'🔇';m.classList.toggle('off',!GV.mic);}
+  if(s){s.textContent=GV.spk?'🎧':'🔈';s.classList.toggle('off',!GV.spk);}
+}
+window.__toggleMic=function(){
+  GV.mic=!GV.mic;if(GV.stream)GV.stream.getAudioTracks().forEach(t=>{t.enabled=GV.mic;});
+  gvUI();showToast(GV.mic?'🎙️ Micro activé':'🔇 Micro coupé','success');
+  if(!GV.on)setTimeout(()=>showToast('Le vocal est disponible en partie multijoueur','success'),1200);
+};
+window.__toggleSpk=function(){
+  GV.spk=!GV.spk;Object.values(GV.peers).forEach(p=>{if(p.audio)p.audio.muted=!GV.spk;});
+  gvUI();showToast(GV.spk?'🎧 Haut-parleur activé':'🔈 Haut-parleur coupé','success');
+};
+function gvPc(seat,caller,pair){
+  const pc=new RTCPeerConnection(STUN),p={pc,seat,caller,pair,v:null,answered:null,busy:false,applied:new Set(),audio:null};
+  if(GV.stream)GV.stream.getTracks().forEach(t=>pc.addTrack(t,GV.stream));else pc.addTransceiver('audio',{direction:'recvonly'});
+  pc.ontrack=e=>{if(!p.audio){p.audio=document.createElement('audio');p.audio.autoplay=true;p.audio.playsInline=true;document.body.appendChild(p.audio);}
+    p.audio.srcObject=e.streams[0]||new MediaStream([e.track]);p.audio.muted=!GV.spk;p.audio.play().catch(()=>{});};
+  pc.onicecandidate=e=>{if(e.candidate&&GV.code)F().updateDoc(rRef(GV.code),{['rtc.'+pair+(caller?'.ca':'.cb')]:F().arrayUnion(JSON.stringify(e.candidate.toJSON()))}).catch(()=>{});};
+  pc.onconnectionstatechange=()=>{if(pc.connectionState==='failed'&&caller&&GV.on&&GV.peers[seat]===p){gvClose(seat);setTimeout(()=>{if(GV.on)gvOpen(seat);},1500);}};
+  return p;
+}
+function gvOpen(seat){
+  const caller=myPlayerIndex<seat,pair=pairKey(myPlayerIndex,seat),code=GV.code;
+  const p=gvPc(seat,caller,pair);GV.peers[seat]=p;
+  if(caller){(async()=>{
+    p.v=Date.now();
+    await F().updateDoc(rRef(code),{['rtc.'+pair]:{v:p.v,offer:null,answer:null,ca:[],cb:[]}});
+    const off=await p.pc.createOffer();await p.pc.setLocalDescription(off);
+    await F().updateDoc(rRef(code),{['rtc.'+pair+'.offer']:{type:off.type,sdp:off.sdp}});
+  })().catch(e=>console.warn('gv',e));}
+}
+function gvClose(seat){
+  const p=GV.peers[seat];if(!p)return;
+  try{p.pc.close();}catch(e){}
+  if(p.audio){try{p.audio.srcObject=null;}catch(e){}p.audio.remove();}
+  delete GV.peers[seat];
+}
+function applyIce(p,list){(list||[]).forEach(c=>{if(!p.applied.has(c)){p.applied.add(c);p.pc.addIceCandidate(JSON.parse(c)).catch(()=>{});}});}
+async function gvData(rtc){
+  GV.rtc=rtc||{};
+  for(const key of Object.keys(GV.peers)){
+    let p=GV.peers[key];if(!p||p.busy)continue;
+    const d=GV.rtc[p.pair];if(!d)continue;
+    p.busy=true;
+    try{
+      if(p.caller){
+        if(d.v===p.v){
+          if(d.answer&&!p.pc.currentRemoteDescription)await p.pc.setRemoteDescription(d.answer);
+          if(p.pc.currentRemoteDescription)applyIce(p,d.cb);
+        }
+      }else if(d.offer){
+        if(p.answered!==null&&p.answered!==d.v){gvClose(+key);const np=gvPc(+key,false,p.pair);GV.peers[key]=np;p=np;p.busy=true;}
+        if(p.answered!==d.v){
+          p.answered=d.v;p.v=d.v;
+          await p.pc.setRemoteDescription(d.offer);
+          const ans=await p.pc.createAnswer();await p.pc.setLocalDescription(ans);
+          await F().updateDoc(rRef(GV.code),{['rtc.'+p.pair+'.answer']:{type:ans.type,sdp:ans.sdp}});
+        }
+        if(p.pc.currentRemoteDescription)applyIce(p,d.ca);
+      }
+    }catch(e){console.warn('gv rtc',e);}
+    p.busy=false;
+  }
+}
+async function gvStart(){
+  if(GV.on||typeof currentRoomCode==='undefined'||!currentRoomCode||!roomUids)return;
+  const humans=[];roomUids.forEach((u,i)=>{if(u)humans.push(i);});
+  if(humans.length<2||!navigator.mediaDevices||!window.RTCPeerConnection)return;
+  GV.on=true;GV.code=currentRoomCode;gvUI();
+  try{GV.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true}});GV.stream.getAudioTracks().forEach(t=>{t.enabled=GV.mic;});}
+  catch(e){GV.stream=null;showToast('Micro refusé : tu entendras seulement les autres','error');}
+  if(!GV.on){if(GV.stream){GV.stream.getTracks().forEach(t=>t.stop());GV.stream=null;}return;}
+  humans.forEach(s=>{if(s!==myPlayerIndex)gvOpen(s);});
+  gvData(GV.rtc);
+}
+function gvStop(){
+  GV.on=false;Object.keys(GV.peers).forEach(k=>gvClose(k));
+  if(GV.stream){GV.stream.getTracks().forEach(t=>t.stop());GV.stream=null;}
+  GV.rtc={};GV.code=null;
+}
+window.__gameVoiceStop=gvStop;
+window.__gameRtcSnap=function(r){GV.rtc=r||{};if(GV.on)gvData(GV.rtc);};
+const _lg=window.listenToGameState;
+window.listenToGameState=function(){const r=_lg.apply(this,arguments);try{gvStart().catch(()=>{});}catch(e){}return r;};
+const _eg=window.__endGameToMenu;
+window.__endGameToMenu=function(){try{gvStop();}catch(e){}return _eg.apply(this,arguments);};
+const _bm=window.__backToMenu;
+window.__backToMenu=function(){const r=_bm.apply(this,arguments);try{if(typeof currentRoomCode==='undefined'||!currentRoomCode)gvStop();}catch(e){}return r;};
+gvUI();
 })();
 </script>
 </body>
